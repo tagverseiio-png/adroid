@@ -1,0 +1,52 @@
+
+🚀 Adroit Backend Server Running
+📍 Environment: development
+🌐 API URL: http://localhost:3333
+📡 Server listening on port 3333
+
+📚 API Documentation:
+   - POST   http://localhost:3333/api/auth/login
+   - GET    http://localhost:3333/api/projects
+   - GET    http://localhost:3333/api/blog
+   - POST   http://localhost:3333/api/inquiries
+
+✅ Database connected successfully
+❌ Odoo authentication failed: 
+❌ Odoo call error (crm.lead.search): 
+❌ Failed to fetch Odoo leads: 
+⚠️ Odoo unavailable, fetching from local database: Odoo returned no results, falling back to local database
+❌ Odoo authentication failed: 
+❌ Odoo call error (crm.lead.search): 
+❌ Failed to fetch Odoo leads: 
+⚠️ Odoo unavailable, fetching from local database: Odoo returned no results, falling back to local database
+✅ Fetched 5 inquiries from local database
+✅ Fetched 5 inquiries from local database
+❌ Odoo authentication failed: 
+❌ Odoo call error (crm.lead.search): 
+❌ Failed to fetch Odoo leads: 
+⚠️ Odoo unavailable, fetching from local database: Odoo returned no results, falling back to local database
+✅ Fetched 5 inquiries from local database
+Database query error: Connection terminated unexpectedly
+Get featured projects error: Error: Connection terminated unexpectedly
+    at /Users/user/Workspace/Projects/Strucureo_Projects/Harry_projects/Adroit_design/backend/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async query (/Users/user/Workspace/Projects/Strucureo_Projects/Harry_projects/Adroit_design/backend/src/config/database.js:26:17)
+    at async exports.getFeaturedProjects (/Users/user/Workspace/Projects/Strucureo_Projects/Harry_projects/Adroit_design/backend/src/controllers/projectController.js:219:20)
+Database query error: Connection terminated unexpectedly
+Get featured projects error: Error: Connection terminated unexpectedly
+    at /Users/user/Workspace/Projects/Strucureo_Projects/Harry_projects/Adroit_design/backend/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async query (/Users/user/Workspace/Projects/Strucureo_Projects/Harry_projects/Adroit_design/backend/src/config/database.js:26:17)
+    at async exports.getFeaturedProjects (/Users/user/Workspace/Projects/Strucureo_Projects/Harry_projects/Adroit_design/backend/src/controllers/projectController.js:219:20)
+Database query error: Connection terminated unexpectedly
+Get featured projects error: Error: Connection terminated unexpectedly
+    at /Users/user/Workspace/Projects/Strucureo_Projects/Harry_projects/Adroit_design/backend/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async query (/Users/user/Workspace/Projects/Strucureo_Projects/Harry_projects/Adroit_design/backend/src/config/database.js:26:17)
+    at async exports.getFeaturedProjects (/Users/user/Workspace/Projects/Strucureo_Projects/Harry_projects/Adroit_design/backend/src/controllers/projectController.js:219:20)
+Database query error: Connection terminated unexpectedly
+Get featured projects error: Error: Connection terminated unexpectedly
+    at /Users/user/Workspace/Projects/Strucureo_Projects/Harry_projects/Adroit_design/backend/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async query (/Users/user/Workspace/Projects/Strucureo_Projects/Harry_projects/Adroit_design/backend/src/config/database.js:26:17)
+    at async exports.getFeaturedProjects (/Users/user/Workspace/Projects/Strucureo_Projects/Harry_projects/Adroit_design/backend/src/controllers/projectController.js:219:20)
