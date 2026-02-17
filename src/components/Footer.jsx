@@ -75,12 +75,12 @@ const Footer = ({ setPage }) => {
         : [];
 
     return (
-        <footer className="bg-[#050505] text-white pt-24 pb-12 px-6 md:px-12 border-t border-white/5 cursor-default relative">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        <footer className="bg-[#050505] text-white pt-16 md:pt-24 pb-10 md:pb-12 px-6 md:px-12 border-t border-white/5 cursor-default relative">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12 mb-12 md:mb-16">
 
                 {/* QUICK LINKS */}
                 <div>
-                    <h4 className="text-[#C5A059] text-xs font-bold uppercase tracking-[0.2em] mb-8 font-sans">Quick Links</h4>
+                    <h4 className="text-[#C5A059] text-xs font-bold uppercase tracking-[0.2em] mb-6 md:mb-8 font-sans">Quick Links</h4>
                     <ul className="space-y-4 text-xs tracking-widest text-white/60 font-light font-sans uppercase">
                         <li className="hover:text-[#C5A059] transition-colors cursor-pointer" onClick={() => setPage('Projects')}>Architecture Projects</li>
                         <li className="hover:text-[#C5A059] transition-colors cursor-pointer" onClick={() => setPage('Projects')}>Interiors Projects</li>
@@ -178,14 +178,14 @@ const Footer = ({ setPage }) => {
             </div>
 
             {/* BOTTOM BAR */}
-            <div className="max-w-7xl mx-auto pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-8 relative">
+            <div className="max-w-7xl mx-auto pt-10 md:pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-10 md:gap-8 relative">
 
                 {/* Copyright */}
-                <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full border-2 border-[#C5A059] flex items-center justify-center text-[#C5A059] font-bold text-xl">
+                <div className="flex items-center gap-4 text-center md:text-left flex-col md:flex-row">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-[#C5A059] flex items-center justify-center text-[#C5A059] font-bold text-lg md:text-xl">
                         C
                     </div>
-                    <p className="text-[10px] lg:text-xs uppercase tracking-[0.3em] text-white/40 font-bold font-sans">
+                    <p className="text-[9px] lg:text-xs uppercase tracking-[0.2em] md:tracking-[0.3em] text-white/40 font-bold font-sans max-w-[250px] md:max-w-none">
                         © 2021 ADROIT DESIGNS INDIA PRIVATE LIMITED
                     </p>
                 </div>
@@ -214,7 +214,7 @@ const Footer = ({ setPage }) => {
                 {/* Back to top button */}
                 <div
                     onClick={scrollToTop}
-                    className="md:absolute md:-right-4 md:-top-6 bg-[#2563eb] text-white p-3 cursor-pointer hover:bg-[#1d4ed8] transition-colors shadow-xl"
+                    className="static md:absolute md:-right-4 md:-top-6 bg-[#2563eb] text-white p-3 cursor-pointer hover:bg-[#1d4ed8] transition-colors shadow-xl rounded-sm"
                 >
                     <ArrowUp size={20} />
                 </div>

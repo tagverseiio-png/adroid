@@ -13,7 +13,7 @@ const BlogPost = ({ post, onBack }) => {
     if (!post) return null;
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-stone-200 pt-32 pb-24 px-6 md:px-24">
+        <div className="min-h-screen bg-[#0a0a0a] text-stone-200 pt-24 md:pt-32 pb-16 md:pb-24 px-6 md:px-24">
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -21,17 +21,17 @@ const BlogPost = ({ post, onBack }) => {
             >
                 <button
                     onClick={onBack}
-                    className="flex items-center gap-2 text-white/40 hover:text-[#C5A059] transition-colors text-xs uppercase tracking-widest mb-12"
+                    className="flex items-center gap-2 text-white/40 hover:text-[#C5A059] transition-colors text-[10px] md:text-xs uppercase tracking-widest mb-8 md:mb-12"
                 >
                     <ArrowLeft size={14} /> Back to Journal
                 </button>
 
                 {/* Header */}
-                <header className="mb-12">
-                    <span className="text-[#C5A059] text-xs uppercase tracking-[0.2em] font-bold block mb-4">
+                <header className="mb-10 md:mb-12">
+                    <span className="text-[#C5A059] text-[10px] md:text-xs uppercase tracking-[0.2em] font-bold block mb-3 md:mb-4">
                         {post.category}
                     </span>
-                    <h1 className="text-4xl md:text-6xl font-serif text-white mb-8 leading-tight">
+                    <h1 className="text-3xl md:text-6xl font-serif text-white mb-6 md:mb-8 leading-tight">
                         {post.title}
                     </h1>
                     <div className="flex flex-wrap gap-8 text-xs uppercase tracking-wider text-white/40 font-sans border-b border-white/10 pb-8">

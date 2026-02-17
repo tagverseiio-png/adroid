@@ -84,7 +84,7 @@ export default function ProjectDetailPage({ project, onBack }) {
                             initial={{ y: "100%" }}
                             animate={{ y: 0 }}
                             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
-                            className="text-4xl md:text-[6rem] font-logo uppercase max-w-5xl leading-[0.9] tracking-tighter"
+                            className="text-3xl sm:text-5xl md:text-[6rem] font-logo uppercase max-w-5xl leading-[0.9] tracking-tighter"
                         >
                             {project.title}
                         </motion.h1>
@@ -94,23 +94,23 @@ export default function ProjectDetailPage({ project, onBack }) {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1, delay: 0.6 }}
-                        className="flex flex-wrap gap-8 mt-12 text-white/70 text-sm tracking-wide"
+                        className="flex flex-wrap gap-x-6 gap-y-4 md:gap-8 mt-10 md:mt-12 text-white/70 text-[13px] md:text-sm tracking-wide"
                     >
                         <div className="flex items-center gap-2">
-                            <MapPin size={16} className="text-[#C5A059]" /> {project.location}
+                            <MapPin size={14} className="text-[#C5A059]" /> {project.location}
                         </div>
                         <div className="flex items-center gap-2">
-                            <Maximize2 size={16} className="text-[#C5A059]" /> {project.area}
+                            <Maximize2 size={14} className="text-[#C5A059]" /> {project.area}
                         </div>
                         <div className="flex items-center gap-2">
-                            <Calendar size={16} className="text-[#C5A059]" /> {project.year}
+                            <Calendar size={14} className="text-[#C5A059]" /> {project.year}
                         </div>
                     </motion.div>
                 </div>
             </div>
 
             {/* --- CONTENT GRID --- */}
-            <div className="max-w-7xl mx-auto px-6 md:px-12 py-20 md:py-32 grid grid-cols-1 md:grid-cols-[1.5fr_1fr] gap-20 relative z-10 bg-[#0a0a0a]">
+            <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-32 grid grid-cols-1 md:grid-cols-[1.5fr_1fr] gap-12 md:gap-20 relative z-10 bg-[#0a0a0a]">
 
                 {/* Left: Description & Highlights */}
                 <div>
@@ -119,7 +119,7 @@ export default function ProjectDetailPage({ project, onBack }) {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
-                        className="text-3xl md:text-5xl font-logo uppercase mb-10 text-white/90 tracking-wide"
+                        className="text-2xl md:text-5xl font-logo uppercase mb-8 md:mb-10 text-white/90 tracking-wide"
                     >
                         The Vision
                     </motion.h2>
@@ -128,7 +128,7 @@ export default function ProjectDetailPage({ project, onBack }) {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, delay: 0.1 }}
-                        className="text-lg md:text-xl leading-relaxed text-stone-400 mb-16 font-light"
+                        className="text-base md:text-xl leading-relaxed text-stone-400 mb-12 md:mb-16 font-light"
                     >
                         {project.description}
                     </motion.p>
@@ -218,9 +218,9 @@ export default function ProjectDetailPage({ project, onBack }) {
             {/* --- GALLERY --- */}
             {
                 project.images && project.images.length > 0 && (
-                    <section className="bg-white text-black py-24 md:py-32 px-6 md:px-12">
+                    <section className="bg-white text-black py-16 md:py-32 px-6 md:px-12">
                         <div className="max-w-7xl mx-auto">
-                            <div className="text-center mb-20 overflow-hidden">
+                            <div className="text-center mb-12 md:mb-20 overflow-hidden">
                                 <motion.div
                                     initial={{ y: "100%" }}
                                     whileInView={{ y: 0 }}
@@ -228,7 +228,7 @@ export default function ProjectDetailPage({ project, onBack }) {
                                     transition={{ duration: 0.8, ease: "circOut" }}
                                 >
                                     <span className="text-[#C5A059] tracking-[0.4em] uppercase text-[10px] md:text-xs font-bold font-sans">Visual Journey</span>
-                                    <h2 className="text-4xl md:text-5xl font-logo uppercase mt-4 tracking-widest">Gallery</h2>
+                                    <h2 className="text-3xl md:text-5xl font-logo uppercase mt-4 tracking-widest">Gallery</h2>
                                 </motion.div>
                             </div>
 

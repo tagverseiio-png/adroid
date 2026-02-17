@@ -24,14 +24,14 @@ const BlogPage = ({ onReadMore }) => {
         }
     };
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-stone-200 pt-40 md:pt-48 pb-24 px-6 md:px-24">
+        <div className="min-h-screen bg-[#0a0a0a] text-stone-200 pt-32 md:pt-48 pb-16 md:pb-24 px-6 md:px-24">
 
             {/* Header */}
-            <div className="max-w-7xl mx-auto mb-20 text-center">
+            <div className="max-w-7xl mx-auto mb-12 md:mb-20 text-center">
                 <motion.span
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-[#C5A059] text-xs uppercase tracking-[0.3em] font-bold block mb-4"
+                    className="text-[#C5A059] text-[10px] md:text-xs uppercase tracking-[0.3em] font-bold block mb-3 md:mb-4"
                 >
                     Insights & Articles
                 </motion.span>
@@ -39,7 +39,7 @@ const BlogPage = ({ onReadMore }) => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="text-5xl md:text-6xl font-serif text-white mb-6 font-light"
+                    className="text-3xl md:text-6xl font-serif text-white mb-4 md:mb-6 font-light"
                 >
                     Design Stories
                 </motion.h1>

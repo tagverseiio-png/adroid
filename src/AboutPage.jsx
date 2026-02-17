@@ -34,7 +34,7 @@ export default function AboutPage() {
         <div ref={containerRef} className="bg-[#0a0a0a] text-stone-200 overflow-hidden">
 
             {/* HERO */}
-            <section className="relative h-[90vh] flex items-center justify-center pt-32">
+            <section className="relative h-[70vh] md:h-[90vh] flex items-center justify-center pt-24 md:pt-32">
                 <motion.img
                     style={{ y: heroY, opacity: heroOpacity }}
                     src="https://images.unsplash.com/photo-1497366216548-37526070297c"
@@ -50,14 +50,14 @@ export default function AboutPage() {
                 >
                     <motion.span
                         variants={fadeUp}
-                        className="text-[#C5A059] text-xs md:text-xs tracking-[0.3em] uppercase font-sans font-bold"
+                        className="text-[#C5A059] text-[10px] md:text-xs tracking-[0.3em] uppercase font-sans font-bold"
                     >
                         About Us
                     </motion.span>
 
                     <motion.h1
                         variants={fadeUp}
-                        className="text-5xl md:text-7xl font-logo text-white mt-6 leading-tight uppercase tracking-[0.05em] font-light"
+                        className="text-3xl sm:text-5xl md:text-7xl font-logo text-white mt-4 md:mt-6 leading-tight uppercase tracking-[0.05em] font-light"
                     >
                         Designing<br />
                         <span className="font-light text-white/50">Enduring Architecture</span>
@@ -65,16 +65,16 @@ export default function AboutPage() {
 
                     <motion.div
                         initial={{ height: 0 }}
-                        animate={{ height: 90 }}
+                        animate={{ height: 60 }}
                         transition={{ duration: 1.4, ease: "easeOut" }}
-                        className="w-px bg-white/30 mx-auto mt-10"
+                        className="w-px bg-white/30 mx-auto mt-8 md:mt-10"
                     />
                 </motion.div>
             </section>
 
             {/* FOUNDER */}
-            <section className="py-20 px-6 md:px-24 bg-stone-900">
-                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-14 items-center">
+            <section className="py-16 md:py-20 px-6 md:px-24 bg-stone-900">
+                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 md:gap-14 items-center">
 
                     <Reveal>
                         <motion.div
@@ -85,27 +85,27 @@ export default function AboutPage() {
                         >
                             <img
                                 src="/assets/Founder.jpg"
-                                className="w-full h-[520px] object-cover grayscale hover:grayscale-0 transition duration-1000"
+                                className="w-full h-[350px] md:h-[520px] object-cover grayscale hover:grayscale-0 transition duration-1000"
                             />
                         </motion.div>
                     </Reveal>
 
                     <Reveal delay={0.15}>
-                        <span className="text-[#C5A059] uppercase tracking-widest text-xs">
+                        <span className="text-[#C5A059] uppercase tracking-widest text-[10px] md:text-xs">
                             Founder & Managing Director
                         </span>
 
-                        <h2 className="text-3xl md:text-5xl font-logo text-white mt-6 uppercase tracking-wider">
+                        <h2 className="text-2xl md:text-5xl font-logo text-white mt-4 md:mt-6 uppercase tracking-wider">
                             Franklin Maxwell A
                         </h2>
 
-                        <p className="mt-6 text-stone-400 text-lg leading-relaxed">
+                        <p className="mt-6 text-stone-400 text-base md:text-lg leading-relaxed">
                             Adroit Design India Pvt. Ltd was founded by Architect Franklin Maxwell A,
                             holding an M.Arch in Building Management from Sathyabama University and
                             a B.Arch from AMACE, University of Madras.
                         </p>
 
-                        <p className="mt-4 text-stone-400 text-lg leading-relaxed">
+                        <p className="mt-4 text-stone-400 text-base md:text-lg leading-relaxed">
                             With over <strong>19 years</strong> of experience, he leads Corporate,
                             Industrial, Commercial, Institutional & Residential Architecture,
                             including Turnkey Interiors and PEB Constructions.
@@ -167,13 +167,13 @@ function TeamSection() {
     const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.1, 1, 1.1]);
 
     return (
-        <section ref={sectionRef} className="relative py-32 px-6 md:px-16 overflow-hidden">
+        <section ref={sectionRef} className="relative py-16 md:py-32 px-6 md:px-16 overflow-hidden">
 
             {/* Title */}
             <Reveal>
-                <div className="max-w-7xl mx-auto mb-16">
+                <div className="max-w-7xl mx-auto mb-10 md:mb-16">
                     <motion.span
-                        className="text-[#C5A059] uppercase tracking-[0.3em] text-xs mb-4 block"
+                        className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-3 md:mb-4 block"
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
@@ -181,7 +181,7 @@ function TeamSection() {
                     >
                         The People Behind Excellence
                     </motion.span>
-                    <h2 className="text-4xl md:text-7xl font-logo text-white leading-tight uppercase tracking-widest">
+                    <h2 className="text-3xl md:text-7xl font-logo text-white leading-tight uppercase tracking-widest">
                         Our Team
                     </h2>
                 </div>
@@ -193,7 +193,7 @@ function TeamSection() {
                 {/* Parallax Image Container */}
                 <motion.div
                     ref={imageRef}
-                    className="relative h-[180vh] md:h-[200vh] overflow-hidden"
+                    className="relative h-[80vh] md:h-[200vh] overflow-hidden"
                     initial={{ opacity: 0, scale: 1.1 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true, margin: "-100px" }}
@@ -217,7 +217,7 @@ function TeamSection() {
 
                 {/* Team Description Below Photo */}
                 <Reveal delay={0.4}>
-                    <div className="mt-16 md:mt-24 grid md:grid-cols-2 gap-12 items-start">
+                    <div className="mt-12 md:mt-24 grid md:grid-cols-2 gap-10 md:gap-12 items-start">
 
                         <div>
                             <motion.div
@@ -225,17 +225,17 @@ function TeamSection() {
                                 whileInView={{ width: "100px" }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 1, delay: 0.6 }}
-                                className="h-px bg-gradient-to-r from-[#C5A059] to-transparent mb-8"
+                                className="h-px bg-gradient-to-r from-[#C5A059] to-transparent mb-6 md:mb-8"
                             />
 
-                            <h3 className="text-3xl md:text-4xl font-logo text-white mb-6 leading-tight uppercase tracking-wider">
+                            <h3 className="text-2xl md:text-4xl font-logo text-white mb-4 md:mb-6 leading-tight uppercase tracking-wider">
                                 United by <span className="font-light text-white/60">Excellence</span>
                             </h3>
                         </div>
 
-                        <div className="space-y-6">
+                        <div className="space-y-4 md:space-y-6">
                             <motion.p
-                                className="text-stone-400 text-lg leading-relaxed"
+                                className="text-stone-400 text-base md:text-lg leading-relaxed"
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}

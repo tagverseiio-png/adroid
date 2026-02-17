@@ -63,7 +63,7 @@ const Hero = () => {
                             initial={{ y: "100%" }}
                             animate={{ y: 0 }}
                             transition={{ duration: 1, delay: 0.5, ease: [0.76, 0, 0.24, 1] }}
-                            className="text-white font-logo text-6xl md:text-[8rem] leading-none tracking-[0.2em] font-bold mix-blend-difference uppercase"
+                            className="text-white font-logo text-4xl sm:text-6xl md:text-[8rem] leading-none tracking-[0.1em] sm:tracking-[0.2em] font-bold mix-blend-difference uppercase"
                         >
                             ADROIT
                         </motion.h1>
@@ -74,7 +74,7 @@ const Hero = () => {
                             initial={{ y: "100%" }}
                             animate={{ y: 0 }}
                             transition={{ duration: 1, delay: 0.7, ease: [0.76, 0, 0.24, 1] }}
-                            className="text-white font-logo text-6xl md:text-[8rem] leading-none tracking-[0.2em] font-light text-[#e0e0e0] mix-blend-difference uppercase"
+                            className="text-white font-logo text-4xl sm:text-6xl md:text-[8rem] leading-none tracking-[0.1em] sm:tracking-[0.2em] font-light text-[#e0e0e0] mix-blend-difference uppercase"
                         >
                             DESIGN
                         </motion.h1>
@@ -84,16 +84,16 @@ const Hero = () => {
                         initial={{ width: 0 }}
                         animate={{ width: "80px" }}
                         transition={{ delay: 1.2, duration: 1, ease: "easeInOut" }}
-                        className="h-[1px] bg-[#C5A059] my-10"
+                        className="h-[1px] bg-[#C5A059] my-6 md:my-10"
                     />
 
                     <motion.p
                         initial={{ opacity: 0, letterSpacing: "0em" }}
-                        animate={{ opacity: 1, letterSpacing: "0.4em" }}
+                        animate={{ opacity: 1, letterSpacing: window.innerWidth < 768 ? "0.1em" : "0.4em" }}
                         transition={{ delay: 1.5, duration: 1.5 }}
-                        className="text-white/90 text-[10px] md:text-sm uppercase font-medium tracking-[0.5em] font-sans"
+                        className="text-white/90 text-[10px] md:text-sm uppercase font-medium tracking-[0.1em] md:tracking-[0.5em] font-sans px-4"
                     >
-                        Architecture <span className="text-[#C5A059] px-2">&</span> Interiors <span className="text-[#C5A059] px-2">&</span> Construction
+                        Architecture <span className="text-[#C5A059] px-1 md:px-2">&</span> Interiors <span className="text-[#C5A059] px-1 md:px-2">&</span> Construction
                     </motion.p>
                 </motion.div>
             </div>
@@ -128,15 +128,15 @@ const ServicesSection = () => {
     ];
 
     return (
-        <section className="py-32 bg-[#0a0a0a] text-white relative z-10">
+        <section className="py-20 md:py-32 bg-[#0a0a0a] text-white relative z-10">
             <div className="px-6 md:px-24">
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-16">
-                    <div className="md:col-span-4 sticky top-32 self-start">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16">
+                    <div className="md:col-span-4 sticky md:top-32 self-start">
                         <motion.span
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
-                            className="text-xs font-bold tracking-[0.2em] text-[#C5A059] uppercase"
+                            className="text-[10px] md:text-xs font-bold tracking-[0.2em] text-[#C5A059] uppercase"
                         >
                             What We Do
                         </motion.span>
@@ -145,17 +145,17 @@ const ServicesSection = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: 0.2 }}
-                            className="text-5xl md:text-6xl font-serif mt-8 leading-[1.15] font-light text-white"
+                            className="text-4xl md:text-6xl font-serif mt-6 md:mt-8 leading-[1.15] font-light text-white"
                         >
                             Comprehensive <br className="hidden md:block" />
                             Design Solutions
                         </motion.h2>
-                        <p className="mt-8 text-sm text-white/70 leading-relaxed font-light max-w-sm">
+                        <p className="mt-6 md:mt-8 text-sm text-white/70 leading-relaxed font-light max-w-sm">
                             From concept to completion, we deliver integrated design services that transform spaces and create lasting impact.
                         </p>
                     </div>
 
-                    <div className="md:col-span-8">
+                    <div className="md:col-span-8 mt-12 md:mt-0">
                         <div className="divide-y divide-white/10">
                             {services.map((service, idx) => (
                                 <motion.div
@@ -253,8 +253,8 @@ const FeaturedProjectsSection = ({ setPage }) => {
 
 
     return (
-        <section ref={containerRef} className="py-40 bg-[#f4f4f4] overflow-hidden">
-            <div className="px-6 md:px-24 mb-16 flex justify-between items-end">
+        <section ref={containerRef} className="py-20 md:py-40 bg-[#f4f4f4] overflow-hidden">
+            <div className="px-6 md:px-24 mb-12 md:mb-16 flex justify-between items-end gap-4">
                 <div>
                     <motion.span
                         initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
@@ -264,16 +264,16 @@ const FeaturedProjectsSection = ({ setPage }) => {
                     </motion.span>
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}
-                        className="text-4xl md:text-6xl font-serif text-stone-900 mt-4 font-light"
+                        className="text-3xl md:text-6xl font-serif text-stone-900 mt-3 md:mt-4 font-light"
                     >
                         Curated Excellence
                     </motion.h2>
                 </div>
                 <button
                     onClick={() => setPage('Projects')}
-                    className="hidden md:flex items-center gap-2 text-xs tracking-widest uppercase hover:text-[#C5A059] transition-colors pb-2 border-b border-transparent hover:border-[#C5A059]"
+                    className="flex items-center gap-2 text-[10px] md:text-xs tracking-widest uppercase hover:text-[#C5A059] transition-colors pb-1 md:pb-2 border-b border-transparent hover:border-[#C5A059] whitespace-nowrap"
                 >
-                    View All <ArrowRight size={14} />
+                    View All <ArrowRight size={14} className="md:w-4 md:h-4 w-3 h-3" />
                 </button>
             </div>
 

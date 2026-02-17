@@ -302,16 +302,16 @@ const ServiceDetailPage = ({ service }) => {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/60" />
 
-        <div className="absolute bottom-20 md:bottom-32 left-5 md:left-20 max-w-5xl text-white">
+        <div className="absolute bottom-16 md:bottom-32 left-6 md:left-20 right-6 md:right-20 max-w-5xl text-white">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
-            <span className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-sm border border-white/20 text-xs tracking-widest mb-6">
+            <span className="inline-block px-3 py-1 md:px-4 md:py-1.5 bg-white/10 backdrop-blur-sm border border-white/20 text-[10px] md:text-xs tracking-widest mb-4 md:mb-6">
               {service.subtitle}
             </span>
-            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-logo uppercase leading-[1.1] tracking-tight">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-logo uppercase leading-[1.1] tracking-tight">
               {service.title}
             </h1>
           </motion.div>
@@ -319,18 +319,18 @@ const ServiceDetailPage = ({ service }) => {
       </section>
 
       {/* PHILOSOPHY - Split Layout */}
-      <section className="px-5 md:px-20 py-20 md:py-32 max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-start">
+      <section className="px-6 md:px-20 py-16 md:py-32 max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-10 md:gap-20 items-start">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="text-3xl md:text-5xl font-logo uppercase leading-tight mb-8 tracking-wide">
+            <h2 className="text-2xl md:text-5xl font-logo uppercase leading-tight mb-6 md:mb-8 tracking-wide">
               {content.philosophy.title}
             </h2>
-            <div className="w-20 h-1 bg-gradient-to-r from-[#C5A059] to-transparent" />
+            <div className="w-16 md:w-20 h-1 bg-gradient-to-r from-[#C5A059] to-transparent" />
           </motion.div>
 
           <motion.p
@@ -338,7 +338,7 @@ const ServiceDetailPage = ({ service }) => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg md:text-xl leading-relaxed text-stone-600 pt-0 md:pt-12"
+            className="text-base md:text-xl leading-relaxed text-stone-600 pt-0 md:pt-12"
           >
             {content.philosophy.text}
           </motion.p>
@@ -416,10 +416,10 @@ const ServiceDetailPage = ({ service }) => {
       </CompactSection>
 
       {/* PROCESS */}
-      <section className="px-5 md:px-20 py-20 bg-gradient-to-b from-white to-stone-50">
+      <section className="px-6 md:px-20 py-16 md:py-20 bg-gradient-to-b from-white to-stone-50">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl md:text-6xl font-serif mb-16 text-center">Our Process</h2>
-          <div className="grid md:grid-cols-3 gap-10 md:gap-16">
+          <h2 className="text-3xl md:text-6xl font-serif mb-12 md:mb-16 text-center">Our Process</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-16">
             {content.process.map((p, i) => (
               <motion.div
                 key={i}
@@ -430,11 +430,11 @@ const ServiceDetailPage = ({ service }) => {
                 className="relative"
               >
                 <div className="absolute -left-2 top-0 w-1 h-full bg-gradient-to-b from-[#C5A059] to-transparent opacity-30" />
-                <span className="text-7xl font-logo text-[#C5A059]/20 leading-none uppercase">
+                <span className="text-5xl md:text-7xl font-logo text-[#C5A059]/20 leading-none uppercase">
                   {p.step}
                 </span>
-                <h4 className="mt-4 text-xl md:text-2xl font-logo mb-4 uppercase tracking-tight">{p.title}</h4>
-                <p className="text-stone-600 text-lg leading-relaxed">{p.desc}</p>
+                <h4 className="mt-4 text-lg md:text-2xl font-logo mb-3 md:mb-4 uppercase tracking-tight">{p.title}</h4>
+                <p className="text-stone-600 text-base md:text-lg leading-relaxed">{p.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -442,24 +442,24 @@ const ServiceDetailPage = ({ service }) => {
       </section>
 
       {/* CASE STUDY */}
-      <section className="px-5 md:px-20 py-20 md:py-28 bg-stone-900 text-white">
+      <section className="px-6 md:px-20 py-16 md:py-28 bg-stone-900 text-white">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <span className="text-xs tracking-[0.3em] text-[#C5A059] uppercase mb-4 block">
+            <span className="text-[10px] md:text-xs tracking-[0.3em] text-[#C5A059] uppercase mb-4 block">
               Featured Work
             </span>
-            <h3 className="text-3xl md:text-5xl font-logo uppercase tracking-wider mb-6">
+            <h3 className="text-2xl md:text-5xl font-logo uppercase tracking-wider mb-6">
               {content.caseStudy.title}
             </h3>
-            <p className="text-lg md:text-xl text-stone-300 leading-relaxed mb-12 max-w-3xl">
+            <p className="text-base md:text-xl text-stone-300 leading-relaxed mb-10 md:mb-12 max-w-3xl">
               {content.caseStudy.desc}
             </p>
 
-            <div className="grid grid-cols-3 gap-8 md:gap-12 border-t border-white/10 pt-10">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-12 border-t border-white/10 pt-10">
               {content.caseStudy.stats.map((stat, i) => (
                 <motion.div
                   key={i}
@@ -468,10 +468,10 @@ const ServiceDetailPage = ({ service }) => {
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
                 >
-                  <p className="text-3xl md:text-5xl font-logo text-[#C5A059] mb-2 uppercase tracking-tighter">
+                  <p className="text-2xl md:text-5xl font-logo text-[#C5A059] mb-1 md:mb-2 uppercase tracking-tighter">
                     {stat.value}
                   </p>
-                  <p className="text-sm md:text-base text-stone-400">{stat.label}</p>
+                  <p className="text-xs md:text-sm md:text-base text-stone-400">{stat.label}</p>
                 </motion.div>
               ))}
             </div>
@@ -535,27 +535,27 @@ const ServiceDetailPage = ({ service }) => {
       </section>
 
       {/* CTA */}
-      <section className="px-5 md:px-20 pb-32 pt-12">
+      <section className="px-6 md:px-20 pb-20 md:pb-32 pt-10 md:pt-12">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="max-w-7xl mx-auto border-t border-stone-300 pt-16"
+          className="max-w-7xl mx-auto border-t border-stone-300 pt-12 md:pt-16"
         >
-          <div className="grid md:grid-cols-2 gap-12 items-end">
+          <div className="grid md:grid-cols-2 gap-10 md:gap-12 items-end">
             <div>
-              <h3 className="text-3xl md:text-5xl font-logo uppercase leading-tight tracking-tight">
+              <h3 className="text-2xl md:text-5xl font-logo uppercase leading-tight tracking-tight">
                 Let's create something exceptional.
               </h3>
-              <p className="mt-6 text-lg md:text-xl text-stone-600 leading-relaxed max-w-xl">
+              <p className="mt-4 md:mt-6 text-base md:text-xl text-stone-600 leading-relaxed max-w-xl">
                 Whether you're planning a new build, renovation, or seeking expert consultation—our team is ready to bring your vision to life with precision and care.
               </p>
             </div>
-            <div className="flex gap-4 md:justify-end">
-              <button className="px-8 py-4 bg-stone-900 text-white hover:bg-[#C5A059] transition-colors duration-300 text-base md:text-lg">
+            <div className="flex flex-col sm:flex-row gap-4 md:justify-end">
+              <button className="px-6 py-3.5 md:px-8 md:py-4 bg-stone-900 text-white hover:bg-[#C5A059] transition-colors duration-300 text-sm md:text-lg">
                 Start a Project
               </button>
-              <button className="px-8 py-4 border border-stone-300 hover:border-stone-900 hover:bg-stone-900 hover:text-white transition-all duration-300 text-base md:text-lg">
+              <button className="px-6 py-3.5 md:px-8 md:py-4 border border-stone-300 hover:border-stone-900 hover:bg-stone-900 hover:text-white transition-all duration-300 text-sm md:text-lg">
                 Schedule Call
               </button>
             </div>
@@ -567,9 +567,9 @@ const ServiceDetailPage = ({ service }) => {
 };
 
 const CompactSection = ({ title, children }) => (
-  <section className="px-5 md:px-20 py-16 md:py-24 max-w-7xl mx-auto">
+  <section className="px-6 md:px-20 py-12 md:py-24 max-w-7xl mx-auto">
     {title && (
-      <h2 className="text-4xl md:text-5xl font-logo uppercase mb-12 md:mb-16 tracking-widest">
+      <h2 className="text-2xl md:text-5xl font-logo uppercase mb-10 md:mb-16 tracking-widest">
         {title}
       </h2>
     )}

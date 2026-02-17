@@ -128,7 +128,9 @@ const App = () => {
         .font-logo { font-family: 'Michroma', sans-serif; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        body { cursor: none; } /* Hide default cursor */
+        @media (hover: hover) and (pointer: fine) {
+          body { cursor: none; }
+        }
       `}</style>
 
       {/* Intro Loader */}
@@ -146,7 +148,7 @@ const App = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 3 }}
       >
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between gap-12">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between gap-4 md:gap-12">
           
           {/* Logo - Left Anchor */}
           <div 

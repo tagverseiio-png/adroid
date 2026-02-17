@@ -36,6 +36,11 @@ const AIChatbot = ({ setPage = () => {} }) => {
                 }
             } catch (error) {
                 console.error('Failed to fetch projects:', error);
+                // Fallback for UI testing
+                setProjects([
+                    { id: 1, title: "Sample Villa", location: "Chennai", category: "Architecture", slug: "sample-villa" },
+                    { id: 2, title: "Office Space", location: "Dubai", category: "Interior", slug: "office-space" }
+                ]);
             }
         };
         fetchProjects();
