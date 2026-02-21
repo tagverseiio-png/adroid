@@ -39,7 +39,6 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState('Home');
   const [selectedService, setSelectedService] = useState(null);
   const [contactSection] = useState('enquiry');
-  const [isScrolled, setIsScrolled] = useState(false);
 
   // Blog State
   const [selectedPost, setSelectedPost] = useState(null);
@@ -52,14 +51,6 @@ const App = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [currentPage, adminPage, selectedPost]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -149,56 +140,71 @@ const App = () => {
         transition={{ duration: 1, delay: 3 }}
       >
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between gap-4 md:gap-12">
-          
+
           {/* Logo - Left Anchor */}
-          <div 
-            onClick={() => setCurrentPage('Home')} 
+          <div
+            onClick={() => setCurrentPage('Home')}
             className="flex-shrink-0 cursor-pointer group"
           >
             <div className="flex flex-col">
               <div className="text-xl md:text-2xl font-logo tracking-[0.15em] font-bold text-white group-hover:text-[#C5A059] transition-colors duration-300 uppercase">
-                ADROIT
-              </div>
-              <div className="text-[8px] tracking-[0.3em] text-white/50 group-hover:text-white/70 transition-colors duration-300 uppercase mt-0.5">
-                Design
+                ADROIT DESIGN
               </div>
             </div>
           </div>
 
           {/* Center Navigation - Primary Pages */}
           <nav className="hidden lg:flex items-center gap-10">
-            <span 
-              onClick={() => setCurrentPage('Projects')} 
+            <span
+              onClick={() => setCurrentPage('About Us')}
               className="text-xs font-medium tracking-[0.15em] uppercase cursor-pointer text-white/70 hover:text-white transition-colors duration-300"
             >
-              Projects
+              About Us
             </span>
-            <span 
-              onClick={() => setCurrentPage('Services')} 
+            <span
+              onClick={() => setCurrentPage('Services')}
               className="text-xs font-medium tracking-[0.15em] uppercase cursor-pointer text-white/70 hover:text-white transition-colors duration-300"
             >
               Services
             </span>
-            <span 
-              onClick={() => setCurrentPage('About')} 
+            <span
+              onClick={() => setCurrentPage('Projects')}
               className="text-xs font-medium tracking-[0.15em] uppercase cursor-pointer text-white/70 hover:text-white transition-colors duration-300"
             >
-              About
+              Projects
+            </span>
+            <span
+              onClick={() => setCurrentPage('Insights')}
+              className="text-xs font-medium tracking-[0.15em] uppercase cursor-pointer text-white/70 hover:text-white transition-colors duration-300"
+            >
+              Insights
+            </span>
+            <span
+              onClick={() => setCurrentPage('Shop')}
+              className="text-xs font-medium tracking-[0.15em] uppercase cursor-pointer text-white/70 hover:text-white transition-colors duration-300"
+            >
+              Shop
+            </span>
+            <span
+              onClick={() => setCurrentPage('Careers')}
+              className="text-xs font-medium tracking-[0.15em] uppercase cursor-pointer text-white/70 hover:text-white transition-colors duration-300"
+            >
+              Careers
             </span>
           </nav>
 
           {/* Right CTA & Menu */}
           <div className="flex items-center gap-8 ml-auto">
-            {/* Blog Link */}
+            {/* Contact Us Link */}
             <button
-              onClick={() => setCurrentPage('Blog')}
+              onClick={() => setCurrentPage('Contact Us')}
               className="hidden md:inline-flex text-xs font-medium tracking-[0.15em] uppercase text-white/70 hover:text-white transition-colors duration-300"
             >
-              Blog
+              Contact Us
             </button>
 
             {/* Menu Button - Icon Only */}
-            <button 
+            <button
               onClick={() => setIsNavOpen(true)}
               className="flex items-center justify-center w-10 h-10 text-white hover:text-[#C5A059] transition-colors duration-300 group"
               aria-label="Open navigation menu"
@@ -221,20 +227,21 @@ const App = () => {
             <ServicesPage onServiceClick={setSelectedService} />
           )
         )}
-        {currentPage === 'Blog' && (
+        {currentPage === 'Insights' && (
           selectedPost ? (
             <BlogPost post={selectedPost} onBack={() => setSelectedPost(null)} />
           ) : (
             <BlogPage onReadMore={(post) => setSelectedPost(post)} />
           )
         )}
-        {currentPage === 'About' && <AboutPage />}
-        {currentPage === 'Contact' && <ContactPage initialSection={contactSection} />}
+        {currentPage === 'About Us' && <AboutPage />}
+        {currentPage === 'Contact Us' && <ContactPage initialSection={contactSection} />}
         {currentPage === 'Careers' && <CareersPage />}
+        {currentPage === 'Shop' && <div className="min-h-screen pt-40 px-6 md:px-24 flex items-center justify-center text-center"><h1 className="text-3xl font-logo uppercase tracking-widest text-stone-400">Shop - Coming Soon</h1></div>}
       </main>
 
       <AIChatbot setPage={setCurrentPage} />
-      {currentPage !== 'Contact' && <Footer setPage={setCurrentPage} />}
+      {currentPage !== 'Contact Us' && <Footer setPage={setCurrentPage} />}
     </div>
   );
 };

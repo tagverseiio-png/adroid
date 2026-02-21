@@ -1,6 +1,6 @@
 // data/projectCategories.js
 
-export const MAIN_DIVISIONS = ["ALL", "ARCHITECTURE", "INTERIOR"];
+export const MAIN_DIVISIONS = ["ALL", "ARCHITECTURE", "INTERIOR", "ONGOING"];
 
 export const ARCHITECTURE_CATEGORIES = [
     "ALL",

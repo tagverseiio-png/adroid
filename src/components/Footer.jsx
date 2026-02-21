@@ -35,7 +35,7 @@ const Footer = ({ setPage }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!formData.name || !formData.phone || !formData.email) {
             setSubmitMessage('Please fill in all fields');
             return;
@@ -85,7 +85,7 @@ const Footer = ({ setPage }) => {
                         <li className="hover:text-[#C5A059] transition-colors cursor-pointer" onClick={() => setPage('Projects')}>Architecture Projects</li>
                         <li className="hover:text-[#C5A059] transition-colors cursor-pointer" onClick={() => setPage('Projects')}>Interiors Projects</li>
                         <li className="hover:text-[#C5A059] transition-colors cursor-pointer" onClick={() => setPage('Projects')}>Ongoing Projects</li>
-                        <li className="hover:text-[#C5A059] transition-colors cursor-pointer" onClick={() => setPage('About')}>Shop</li>
+                        <li className="hover:text-[#C5A059] transition-colors cursor-pointer" onClick={() => setPage('Shop')}>Shop</li>
                     </ul>
                 </div>
 
@@ -96,34 +96,34 @@ const Footer = ({ setPage }) => {
                         Let us know your project needs. We'll respond within 24 hours.
                     </p>
                     <form className="space-y-3" onSubmit={handleSubmit}>
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             name="name"
-                            placeholder="Full Name" 
+                            placeholder="Full Name"
                             value={formData.name || ''}
                             onChange={handleInputChange}
-                            className="w-full bg-white px-3 py-3 text-sm text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#C5A059] rounded-sm transition-all" 
+                            className="w-full bg-white px-3 py-3 text-sm text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#C5A059] rounded-sm transition-all"
                             required
                         />
-                        <input 
-                            type="tel" 
+                        <input
+                            type="tel"
                             name="phone"
-                            placeholder="Phone Number" 
+                            placeholder="Phone Number"
                             value={formData.phone || ''}
                             onChange={handleInputChange}
-                            className="w-full bg-white px-3 py-3 text-sm text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#C5A059] rounded-sm transition-all" 
+                            className="w-full bg-white px-3 py-3 text-sm text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#C5A059] rounded-sm transition-all"
                             required
                         />
-                        <input 
-                            type="email" 
+                        <input
+                            type="email"
                             name="email"
-                            placeholder="Email Address" 
+                            placeholder="Email Address"
                             value={formData.email || ''}
                             onChange={handleInputChange}
-                            className="w-full bg-white px-3 py-3 text-sm text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#C5A059] rounded-sm transition-all" 
+                            className="w-full bg-white px-3 py-3 text-sm text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#C5A059] rounded-sm transition-all"
                             required
                         />
-                        <button 
+                        <button
                             type="submit"
                             disabled={isSubmitting}
                             className="w-full bg-[#C5A059] text-white py-3 text-sm font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-sm"

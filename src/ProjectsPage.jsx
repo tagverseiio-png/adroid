@@ -25,9 +25,9 @@ export default function ProjectsPage() {
       console.error('Failed to fetch projects:', error);
       // Fallback data for testing/dev if API is blocked
       setProjects([
-        { id: 1, title: "Modernist Villa", location: "Chennai", area: "4500 sqft", category: "ARCHITECTURE", slug: "modernist-villa", published: true, is_featured: true },
-        { id: 2, title: "Penthouse Suite", location: "Bangalore", area: "3200 sqft", category: "INTERIOR", slug: "penthouse-suite", published: true, is_featured: true },
-        { id: 3, title: "Tech Hub HQ", location: "Hyderabad", area: "15000 sqft", category: "ARCHITECTURE", slug: "tech-hub-hq", published: true, is_featured: true }
+        { id: 1, title: "Modernist Villa", location: "Chennai", area: "4500 sqft", type: "ARCHITECTURE", category: "VILLAS", slug: "modernist-villa", published: true, is_featured: true, status: "COMPLETED" },
+        { id: 2, title: "Penthouse Suite", location: "Bangalore", area: "3200 sqft", type: "INTERIOR", category: "RESIDENTIAL INTERIORS", slug: "penthouse-suite", published: true, is_featured: true, status: "COMPLETED" },
+        { id: 3, title: "Tech Hub HQ", location: "Hyderabad", area: "15000 sqft", type: "ARCHITECTURE", category: "COMMERCIAL BUILDINGS", slug: "tech-hub-hq", published: true, is_featured: true, status: "ONGOING" }
       ]);
     }
   };
@@ -47,9 +47,9 @@ export default function ProjectsPage() {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     fetchProjects();
-    
+
     // Check if a project was selected from chatbot
     if (window.projectToLoad) {
       const slug = window.projectToLoad;
@@ -79,10 +79,17 @@ export default function ProjectsPage() {
   }
 
   const filtered = projects.filter((project) => {
-    const matchesDivision =
-      selectedDivision === "ALL" || project.type === selectedDivision;
-    const matchesCategory =
-      selectedCategory === "ALL" || project.category === selectedCategory;
+    if (selectedDivision === "ALL") {
+      return selectedCategory === "ALL" || project.category === selectedCategory;
+    }
+
+    if (selectedDivision === "ONGOING") {
+      return project.status === "ONGOING";
+    }
+
+    const matchesDivision = project.type === selectedDivision;
+    const matchesCategory = selectedCategory === "ALL" || project.category === selectedCategory;
+
     return matchesDivision && matchesCategory;
   });
 

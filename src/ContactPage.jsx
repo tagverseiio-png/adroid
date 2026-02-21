@@ -16,7 +16,7 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
         setActiveSection(initialSection);
     }, [initialSection]);
     const [formState, setFormState] = useState({
-        name: '', email: '', subject: '', message: '', company: '', phone: ''
+        name: '', email: '', subject: '', message: '', company: '', phone: '', category: '', subCategory: ''
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -30,7 +30,9 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                 name: formState.name,
                 email: formState.email,
                 phone: formState.phone || '',
-                subject: formState.subject || (activeSection === 'vendor' ? 'Vendor Registration' : 'General Inquiry'),
+                subject: activeSection === 'enquiry' 
+                    ? (formState.category && formState.subCategory ? `${formState.category} - ${formState.subCategory}` : 'General Inquiry')
+                    : (formState.subject || (activeSection === 'vendor' ? 'Vendor Registration' : 'General Inquiry')),
                 message: formState.message || (activeSection === 'vendor' ? `Company: ${formState.company}, Service: ${formState.subject}` : ''),
                 type: activeSection,
                 company: formState.company || null,
@@ -39,7 +41,7 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
             await inquiriesAPI.create(inquiryData);
             
             setIsSuccess(true);
-            setFormState({ name: '', email: '', subject: '', message: '', company: '', phone: '' });
+            setFormState({ name: '', email: '', subject: '', message: '', company: '', phone: '', category: '', subCategory: '' });
             setTimeout(() => setIsSuccess(false), 5000);
         } catch (error) {
             console.error('Submission error:', error);
@@ -138,8 +140,34 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
                                             <input type="text" name="phone" placeholder="Phone Number" value={formState.phone} className={inputClasses} onChange={handleChange} />
-                                            <input type="text" name="subject" placeholder="Project Type / Subject" value={formState.subject} className={inputClasses} onChange={handleChange} />
+                                            <select 
+                                                name="category" 
+                                                value={formState.category} 
+                                                className={`${inputClasses} cursor-pointer bg-transparent appearance-none`} 
+                                                onChange={(e) => setFormState(prev => ({ ...prev, category: e.target.value, subCategory: '' }))}
+                                                required
+                                            >
+                                                <option value="" disabled className="bg-[#050505] text-white/50">Select Category</option>
+                                                <option value="Residence" className="bg-[#050505] text-white">Residence</option>
+                                                <option value="Commercial" className="bg-[#050505] text-white">Commercial</option>
+                                            </select>
                                         </div>
+                                        {formState.category && (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+                                                <select 
+                                                    name="subCategory" 
+                                                    value={formState.subCategory} 
+                                                    className={`${inputClasses} cursor-pointer bg-transparent appearance-none`} 
+                                                    onChange={handleChange}
+                                                    required
+                                                >
+                                                    <option value="" disabled className="bg-[#050505] text-white/50">Select Sub-Category</option>
+                                                    <option value="Interior" className="bg-[#050505] text-white">Interior</option>
+                                                    <option value="Construction" className="bg-[#050505] text-white">Construction</option>
+                                                </select>
+                                                <div className="hidden md:block"></div>
+                                            </div>
+                                        )}
                                         <textarea name="message" placeholder="Message / Specifications" rows={4} required value={formState.message} className={`${inputClasses} resize-none`} onChange={handleChange} />
 
                                         <button type="submit" disabled={isSubmitting} className="group relative px-8 md:px-10 py-4 md:py-5 bg-[#C5A059] text-black text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase transition-all duration-300 hover:bg-white">

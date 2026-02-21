@@ -65,18 +65,7 @@ const Hero = () => {
                             transition={{ duration: 1, delay: 0.5, ease: [0.76, 0, 0.24, 1] }}
                             className="text-white font-logo text-4xl sm:text-6xl md:text-[8rem] leading-none tracking-[0.1em] sm:tracking-[0.2em] font-bold mix-blend-difference uppercase"
                         >
-                            ADROIT
-                        </motion.h1>
-                    </div>
-
-                    <div className="overflow-hidden">
-                        <motion.h1
-                            initial={{ y: "100%" }}
-                            animate={{ y: 0 }}
-                            transition={{ duration: 1, delay: 0.7, ease: [0.76, 0, 0.24, 1] }}
-                            className="text-white font-logo text-4xl sm:text-6xl md:text-[8rem] leading-none tracking-[0.1em] sm:tracking-[0.2em] font-light text-[#e0e0e0] mix-blend-difference uppercase"
-                        >
-                            DESIGN
+                            ADROIT DESIGN
                         </motion.h1>
                     </div>
 
@@ -93,7 +82,7 @@ const Hero = () => {
                         transition={{ delay: 1.5, duration: 1.5 }}
                         className="text-white/90 text-[10px] md:text-sm uppercase font-medium tracking-[0.1em] md:tracking-[0.5em] font-sans px-4"
                     >
-                        Architecture <span className="text-[#C5A059] px-1 md:px-2">&</span> Interiors <span className="text-[#C5A059] px-1 md:px-2">&</span> Construction
+                        Architecture <span className="text-[#C5A059] px-1 md:px-2">|</span> Interiors <span className="text-[#C5A059] px-1 md:px-2">|</span> Construction
                     </motion.p>
                 </motion.div>
             </div>
@@ -173,7 +162,7 @@ const ServicesSection = () => {
                                         <div className="flex-1 pr-8">
                                             <h3 className="text-2xl font-serif font-light text-white group-hover:text-[#C5A059] transition-colors duration-300 mb-3">
                                                 {service.title}
-                            </h3>
+                                            </h3>
                                             <p className="text-sm text-white/60 group-hover:text-white/80 transition-colors duration-300 font-light leading-relaxed">
                                                 {service.desc}
                                             </p>
@@ -208,29 +197,29 @@ const FeaturedProjectsSection = ({ setPage }) => {
                 console.error('Failed to fetch featured projects:', error);
                 // Fallback to static data if API fails
                 setProjects([
-                    { 
-                        title: "Azure Villa", 
-                        location: "Malibu, California", 
-                        cover_image: IMAGES.exterior, 
-                        category: "VILLAS" 
+                    {
+                        title: "Azure Villa",
+                        location: "Malibu, California",
+                        cover_image: IMAGES.exterior,
+                        category: "VILLAS"
                     },
-                    { 
-                        title: "The Onyx", 
-                        location: "Dubai, UAE", 
-                        cover_image: IMAGES.interior, 
-                        category: "IT & ITES OFFICES" 
+                    {
+                        title: "The Onyx",
+                        location: "Dubai, UAE",
+                        cover_image: IMAGES.interior,
+                        category: "IT & ITES OFFICES"
                     },
-                    { 
-                        title: "Serenity Spa", 
-                        location: "Kyoto, Japan", 
-                        cover_image: IMAGES.detail, 
-                        category: "CLUBS & RESTO BARS" 
+                    {
+                        title: "Serenity Spa",
+                        location: "Kyoto, Japan",
+                        cover_image: IMAGES.detail,
+                        category: "CLUBS & RESTO BARS"
                     },
-                    { 
-                        title: "Vanguard HQ", 
-                        location: "Berlin, Germany", 
-                        cover_image: IMAGES.office, 
-                        category: "IT & ITES OFFICES" 
+                    {
+                        title: "Vanguard HQ",
+                        location: "Berlin, Germany",
+                        cover_image: IMAGES.office,
+                        category: "IT & ITES OFFICES"
                     },
                 ]);
             } finally {

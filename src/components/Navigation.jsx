@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { X, Instagram, Linkedin, Facebook } from 'lucide-react';
 
-const SECTIONS = ['Home', 'Projects', 'Services', 'About', 'Blogs', 'Contact'];
+const SECTIONS = ['About Us', 'Services', 'Projects', 'Insights', 'Shop', 'Careers', 'Contact Us'];
 
 const SOCIAL_LINKS = {
     instagram: import.meta.env.VITE_SOCIAL_INSTAGRAM_URL,
@@ -34,7 +34,7 @@ const Navigation = ({ isOpen, setIsOpen, setPage }) => {
                     exit={{ opacity: 0 }}
                 />
             )}
-            
+
             {/* Menu Panel */}
             <motion.div
                 className="fixed top-0 right-0 h-screen w-full md:w-[55vw] bg-[#0a0a0a] z-50 flex flex-col justify-between px-12 md:px-16 py-8 shadow-2xl overflow-y-auto"
@@ -44,8 +44,8 @@ const Navigation = ({ isOpen, setIsOpen, setPage }) => {
             >
                 {/* Header with Close Button */}
                 <div className="flex justify-end items-center pb-10 border-b border-white/10">
-                    <button 
-                        onClick={() => setIsOpen(false)} 
+                    <button
+                        onClick={() => setIsOpen(false)}
                         className="text-white hover:text-[#C5A059] transition-colors duration-300 cursor-pointer p-2 rounded-lg hover:bg-white/5"
                         aria-label="Close menu"
                     >
