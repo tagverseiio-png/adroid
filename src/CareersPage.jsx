@@ -73,7 +73,7 @@ const Careers = () => {
                                 onChange={(e) => setFormState({ ...formState, applicantType: e.target.value })}
                             >
                                 <option value="" disabled>Select Application Type</option>
-                                <option value="Intern">Intern</option>
+                                <option value="Internship">Internship</option>
                                 <option value="Career">Career / Full-Time</option>
                             </select>
 

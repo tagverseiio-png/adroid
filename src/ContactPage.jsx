@@ -5,7 +5,7 @@ import { inquiriesAPI } from './services/api';
 
 const CONTACT_SECTIONS = [
     { id: 'enquiry', label: 'Project Enquiry', icon: MessageSquare },
-    { id: 'location', label: 'Location', icon: MapPin },
+    { id: 'location', label: 'Office Locations', icon: MapPin },
     { id: 'vendor', label: 'Vendor Registration', icon: UserPlus },
 ];
 
@@ -30,7 +30,7 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                 name: formState.name,
                 email: formState.email,
                 phone: formState.phone || '',
-                subject: activeSection === 'enquiry' 
+                subject: activeSection === 'enquiry'
                     ? (formState.category && formState.subCategory ? `${formState.category} - ${formState.subCategory}` : 'General Inquiry')
                     : (formState.subject || (activeSection === 'vendor' ? 'Vendor Registration' : 'General Inquiry')),
                 message: formState.message || (activeSection === 'vendor' ? `Company: ${formState.company}, Service: ${formState.subject}` : ''),
@@ -39,7 +39,7 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
             };
 
             await inquiriesAPI.create(inquiryData);
-            
+
             setIsSuccess(true);
             setFormState({ name: '', email: '', subject: '', message: '', company: '', phone: '', category: '', subCategory: '' });
             setTimeout(() => setIsSuccess(false), 5000);
@@ -98,9 +98,7 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                             <h3 className="text-[10px] text-white/40 uppercase tracking-[0.3em] font-sans font-bold mb-6">Social Connect</h3>
                             <div className="flex gap-8">
                                 {[
-                                    { icon: Instagram, url: "https://www.instagram.com/adroitdesignsofficial/" },
-                                    { icon: Linkedin, url: "https://www.linkedin.com/company/adroit-design-india-pvt-ltd" },
-                                    { icon: Facebook, url: "https://www.facebook.com/adroitdesignsprivatelimited" }
+                                    { icon: Linkedin, url: "https://www.linkedin.com/company/adroit-design-india-pvt-ltd" }
                                 ].map((item, idx) => (
                                     <motion.a
                                         key={idx}
@@ -140,24 +138,24 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
                                             <input type="text" name="phone" placeholder="Phone Number" value={formState.phone} className={inputClasses} onChange={handleChange} />
-                                            <select 
-                                                name="category" 
-                                                value={formState.category} 
-                                                className={`${inputClasses} cursor-pointer bg-transparent appearance-none`} 
+                                            <select
+                                                name="category"
+                                                value={formState.category}
+                                                className={`${inputClasses} cursor-pointer bg-transparent appearance-none`}
                                                 onChange={(e) => setFormState(prev => ({ ...prev, category: e.target.value, subCategory: '' }))}
                                                 required
                                             >
                                                 <option value="" disabled className="bg-[#050505] text-white/50">Select Category</option>
-                                                <option value="Residence" className="bg-[#050505] text-white">Residence</option>
+                                                <option value="Residential" className="bg-[#050505] text-white">Residential</option>
                                                 <option value="Commercial" className="bg-[#050505] text-white">Commercial</option>
                                             </select>
                                         </div>
                                         {formState.category && (
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
-                                                <select 
-                                                    name="subCategory" 
-                                                    value={formState.subCategory} 
-                                                    className={`${inputClasses} cursor-pointer bg-transparent appearance-none`} 
+                                                <select
+                                                    name="subCategory"
+                                                    value={formState.subCategory}
+                                                    className={`${inputClasses} cursor-pointer bg-transparent appearance-none`}
                                                     onChange={handleChange}
                                                     required
                                                 >

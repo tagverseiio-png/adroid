@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { useScroll, useTransform, useInView, motion } from "framer-motion";
+import { Quote, Star } from "lucide-react";
 
 const fadeUp = {
     hidden: { opacity: 0, y: 40 },
@@ -15,12 +16,38 @@ const stagger = {
     visible: { transition: { staggerChildren: 0.08 } }
 };
 
-const STRENGTHS = [
-    "Passion for Design Excellence",
-    "Precision in Quality Processes",
-    "Timely Execution & Delivery",
-    "Meticulous Project Planning",
-    "Early Adoption of Technology",
+const CORE_COMPETENCIES = [
+    "Corporate & Commercial Architecture",
+    "Turnkey Interior Execution",
+    "High-End Residential Design",
+    "Institutional Planning",
+    "Industrial & PEB Constructions",
+    "Project Management Consulting",
+];
+
+const ACCOMPLISHMENTS = [
+    { number: "19+", label: "Years of Excellence" },
+    { number: "500+", label: "Projects Delivered" },
+    { number: "3M+", label: "Sq.Ft Designed" },
+    { number: "100%", label: "Client Satisfaction" },
+];
+
+const REVIEWS = [
+    {
+        name: "Arun Kumar",
+        role: "Corporate Client",
+        text: "Adroit Design brought our corporate vision to life with exceptional precision. Their attention to detail and commitment to quality is truly unmatched in the industry."
+    },
+    {
+        name: "Priya Sharma",
+        role: "Homeowner",
+        text: "The team beautifully blended luxury and functionality for our residence. The turnkey execution made the entire process seamless and stress-free."
+    },
+    {
+        name: "David Chen",
+        role: "Retail Director",
+        text: "A truly professional team that consistently delivers premium quality within strict timelines. Their commercial architecture expertise elevated our brand presence."
+    }
 ];
 
 export default function AboutPage() {
@@ -31,16 +58,16 @@ export default function AboutPage() {
     const heroOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0.6]);
 
     return (
-        <div ref={containerRef} className="bg-[#0a0a0a] text-stone-200 overflow-hidden">
+        <div ref={containerRef} className="bg-[#050505] text-stone-200 overflow-hidden pt-24 md:pt-32 pb-24 font-sans">
 
             {/* HERO */}
-            <section className="relative h-[70vh] md:h-[90vh] flex items-center justify-center pt-24 md:pt-32">
+            <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center -mt-24 md:-mt-32">
                 <motion.img
                     style={{ y: heroY, opacity: heroOpacity }}
                     src="https://images.unsplash.com/photo-1497366216548-37526070297c"
                     className="absolute inset-0 w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-black/65" />
+                <div className="absolute inset-0 bg-black/75" />
 
                 <motion.div
                     variants={stagger}
@@ -50,233 +77,225 @@ export default function AboutPage() {
                 >
                     <motion.span
                         variants={fadeUp}
-                        className="text-[#C5A059] text-[10px] md:text-xs tracking-[0.3em] uppercase font-sans font-bold"
+                        className="text-[#C5A059] text-[10px] md:text-xs tracking-[0.3em] uppercase font-bold"
                     >
-                        About Us
+                        Adroit Design India
                     </motion.span>
 
                     <motion.h1
                         variants={fadeUp}
-                        className="text-3xl sm:text-5xl md:text-7xl font-logo text-white mt-4 md:mt-6 leading-tight uppercase tracking-[0.05em] font-light"
+                        className="text-4xl sm:text-5xl md:text-7xl font-logo text-white mt-4 md:mt-6 leading-tight uppercase tracking-widest"
                     >
-                        Designing<br />
-                        <span className="font-light text-white/50">Enduring Architecture</span>
+                        About Us
                     </motion.h1>
 
                     <motion.div
                         initial={{ height: 0 }}
                         animate={{ height: 60 }}
                         transition={{ duration: 1.4, ease: "easeOut" }}
-                        className="w-px bg-white/30 mx-auto mt-8 md:mt-10"
+                        className="w-px bg-[#C5A059]/50 mx-auto mt-8 md:mt-10"
                     />
                 </motion.div>
             </section>
 
-            {/* FOUNDER */}
-            <section className="py-16 md:py-20 px-6 md:px-24 bg-stone-900">
-                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 md:gap-14 items-center">
+            {/* 1. INTRODUCTION */}
+            <section className="py-20 md:py-32 px-6 md:px-24 max-w-7xl mx-auto text-center">
+                <Reveal>
+                    <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">1. Introduction</span>
+                    <h2 className="text-3xl md:text-5xl font-logo text-white uppercase tracking-widest mb-10">Who We Are</h2>
+                    <p className="text-stone-400 text-base md:text-xl leading-relaxed max-w-4xl mx-auto font-light">
+                        <strong>Adroit Design India Private Limited</strong> is a premier architecture and design firm dedicated to creating enduring, innovative, and purposeful spaces. We merge aesthetic elegance with functional brilliance, setting new benchmarks in corporate, commercial, and residential architecture. Our commitment to excellence drives us to transform visions into tangible masterpieces.
+                    </p>
+                </Reveal>
+            </section>
 
+            {/* 2. ACCOMPLISHMENTS */}
+            <section className="py-20 px-6 md:px-24 bg-white/5 border-y border-white/5">
+                <div className="max-w-7xl mx-auto">
+                    <Reveal>
+                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold text-center">2. Accomplishments</span>
+                        <h2 className="text-3xl md:text-5xl font-logo text-white uppercase tracking-widest mb-16 text-center">Our Milestones</h2>
+                    </Reveal>
+
+                    <motion.div
+                        variants={stagger}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        className="grid grid-cols-2 md:grid-cols-4 gap-10 text-center"
+                    >
+                        {ACCOMPLISHMENTS.map((item, i) => (
+                            <motion.div key={i} variants={fadeUp} className="p-6 border border-white/10 hover:border-[#C5A059]/50 transition duration-500 bg-[#0a0a0a]">
+                                <h3 className="text-4xl md:text-5xl text-[#C5A059] font-logo mb-4">{item.number}</h3>
+                                <p className="text-white/60 text-sm uppercase tracking-widest font-bold">{item.label}</p>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* 3. CORE COMPETENCIES */}
+            <section className="py-20 md:py-32 px-6 md:px-24">
+                <div className="max-w-7xl mx-auto text-center">
+                    <Reveal>
+                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">3. Core Competencies</span>
+                        <h2 className="text-3xl md:text-5xl font-logo text-white uppercase tracking-widest mb-16">Our Expertise</h2>
+                    </Reveal>
+
+                    <motion.div
+                        variants={stagger}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        className="grid sm:grid-cols-2 md:grid-cols-3 gap-8"
+                    >
+                        {CORE_COMPETENCIES.map((item, i) => (
+                            <motion.div
+                                key={i}
+                                variants={fadeUp}
+                                whileHover={{ y: -5 }}
+                                className="p-10 border border-white/10 hover:bg-[#C5A059] hover:text-black hover:border-[#C5A059] transition-all duration-300 group"
+                            >
+                                <h3 className="text-lg md:text-xl font-logo uppercase tracking-wider group-hover:text-black text-white">
+                                    {item}
+                                </h3>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* 4. VISION & 5. MISSION */}
+            <section className="py-20 bg-stone-900 border-y border-stone-800">
+                <div className="max-w-7xl mx-auto px-6 md:px-24 grid md:grid-cols-2 gap-16 md:gap-24">
+                    <Reveal>
+                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">4. Vision</span>
+                        <h2 className="text-3xl font-logo text-white uppercase tracking-widest mb-6">Our Vision</h2>
+                        <p className="text-stone-400 text-lg leading-relaxed font-light">
+                            To be the vanguard of architectural innovation globally, creating spaces that seamlessly integrate sustainability, state-of-the-art technology, and timeless aesthetics. We envision a future where our designs elevate the human experience and harmonize with their environment.
+                        </p>
+                    </Reveal>
+                    <Reveal delay={0.2}>
+                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">5. Mission</span>
+                        <h2 className="text-3xl font-logo text-white uppercase tracking-widest mb-6">Our Mission</h2>
+                        <p className="text-stone-400 text-lg leading-relaxed font-light">
+                            To deliver unparalleled architectural and interior solutions through meticulous planning, impeccable execution, and unwavering dedication to quality. We strive to exceed client expectations by fostering collaborative relationships and maintaining rigorous standards of excellence in every project.
+                        </p>
+                    </Reveal>
+                </div>
+            </section>
+
+            {/* 6. KEY PROFILE */}
+            <section className="py-20 md:py-32 px-6 md:px-24">
+                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
                     <Reveal>
                         <motion.div
                             variants={imageReveal}
                             whileHover={{ scale: 1.02 }}
                             transition={{ duration: 1.2, ease: "easeOut" }}
-                            className="overflow-hidden"
+                            className="overflow-hidden border border-white/10 p-2"
                         >
                             <img
                                 src="/assets/Founder.jpg"
-                                className="w-full h-[350px] md:h-[520px] object-cover grayscale hover:grayscale-0 transition duration-1000"
+                                alt="Franklin Maxwell A"
+                                className="w-full h-[400px] md:h-[600px] object-cover grayscale hover:grayscale-0 transition duration-1000"
                             />
                         </motion.div>
                     </Reveal>
 
                     <Reveal delay={0.15}>
-                        <span className="text-[#C5A059] uppercase tracking-widest text-[10px] md:text-xs">
-                            Founder & Managing Director
+                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">
+                            6. Key Profile
                         </span>
 
-                        <h2 className="text-2xl md:text-5xl font-logo text-white mt-4 md:mt-6 uppercase tracking-wider">
+                        <h3 className="text-[#C5A059] tracking-widest text-sm uppercase mb-2">Founder & Managing Director</h3>
+                        <h2 className="text-3xl md:text-6xl font-logo text-white mb-8 uppercase tracking-wider">
                             Franklin Maxwell A
                         </h2>
 
-                        <p className="mt-6 text-stone-400 text-base md:text-lg leading-relaxed">
-                            Adroit Design India Pvt. Ltd was founded by Architect Franklin Maxwell A,
-                            holding an M.Arch in Building Management from Sathyabama University and
-                            a B.Arch from AMACE, University of Madras.
-                        </p>
+                        <div className="space-y-6 text-stone-400 text-base md:text-lg leading-relaxed font-light">
+                            <p>
+                                Adroit Design India Pvt. Ltd was founded by Architect Franklin Maxwell A, holding an M.Arch in Building Management from Sathyabama University and a B.Arch from AMACE, University of Madras.
+                            </p>
+                            <p>
+                                With over <strong>19 years</strong> of profound experience, he spearheads the firm's diverse portfolio encompassing Corporate, Industrial, Commercial, Institutional & Residential Architecture, including Turnkey Interiors and PEB Constructions.
+                            </p>
+                            <p>
+                                His visionary leadership and relentless pursuit of perfection have cemented Adroit Design as a trusted name for premium architectural and construction solutions across the region.
+                            </p>
+                        </div>
+                    </Reveal>
+                </div>
+            </section>
 
-                        <p className="mt-4 text-stone-400 text-base md:text-lg leading-relaxed">
-                            With over <strong>19 years</strong> of experience, he leads Corporate,
-                            Industrial, Commercial, Institutional & Residential Architecture,
-                            including Turnkey Interiors and PEB Constructions.
+            {/* 7. THE TEAM */}
+            <section className="py-20 bg-[#0a0a0a] border-t border-white/5 relative overflow-hidden px-6 md:px-24">
+                <div className="max-w-7xl mx-auto mb-16 text-center">
+                    <Reveal>
+                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">7. The Team</span>
+                        <h2 className="text-3xl md:text-5xl font-logo text-white uppercase tracking-widest mb-6 mt-2">
+                            The Minds Behind Excellence
+                        </h2>
+                        <p className="text-stone-400 text-base md:text-lg leading-relaxed font-light max-w-3xl mx-auto">
+                            Our team comprises over 20 skilled architects, engineers, and designers who share a singular vision: to craft spaces that inspire. With diverse expertise spanning corporate architecture, industrial design, turnkey interiors, and sustainable construction, we collaborate seamlessly to bring ambitious projects to life.
                         </p>
                     </Reveal>
-
                 </div>
-            </section>
 
-            {/* CORE STRENGTHS */}
-            <section className="py-20 px-6 md:px-24 bg-[#050505]">
-                <Reveal>
-                    <h2 className="text-4xl md:text-5xl font-logo text-white text-center mb-16 uppercase tracking-widest">
-                        Our Core Strengths
-                    </h2>
-                </Reveal>
-
-                <motion.div
-                    variants={stagger}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    className="max-w-6xl mx-auto grid sm:grid-cols-2 md:grid-cols-3 gap-10"
-                >
-                    {STRENGTHS.map((item, i) => (
-                        <motion.div
-                            key={i}
-                            variants={fadeUp}
-                            whileHover={{ y: -6 }}
-                            transition={{ duration: 0.4 }}
-                            className="p-10 border border-white/10 hover:border-[#C5A059]/60"
-                        >
-                            <h3 className="text-lg md:text-xl font-logo text-white uppercase tracking-tight">
-                                {item}
-                            </h3>
-                        </motion.div>
-                    ))}
-                </motion.div>
-            </section>
-
-            {/* TEAM - GROUP PHOTO */}
-            <TeamSection />
-
-        </div>
-    );
-}
-
-/* Team Section with Group Photo */
-function TeamSection() {
-    const sectionRef = useRef(null);
-    const imageRef = useRef(null);
-
-    const { scrollYProgress } = useScroll({
-        target: sectionRef,
-        offset: ["start end", "end start"]
-    });
-
-    const imageY = useTransform(scrollYProgress, [0, 1], [100, -100]);
-    const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.1, 1, 1.1]);
-
-    return (
-        <section ref={sectionRef} className="relative py-16 md:py-32 px-6 md:px-16 overflow-hidden">
-
-            {/* Title */}
-            <Reveal>
-                <div className="max-w-7xl mx-auto mb-10 md:mb-16">
-                    <motion.span
-                        className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-3 md:mb-4 block"
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                    >
-                        The People Behind Excellence
-                    </motion.span>
-                    <h2 className="text-3xl md:text-7xl font-logo text-white leading-tight uppercase tracking-widest">
-                        Our Team
-                    </h2>
-                </div>
-            </Reveal>
-
-            {/* Main Group Photo Container */}
-            <div className="w-full relative">
-
-                {/* Parallax Image Container */}
-                <motion.div
-                    ref={imageRef}
-                    className="relative h-[80vh] md:h-[200vh] overflow-hidden"
-                    initial={{ opacity: 0, scale: 1.1 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
-                >
-                    {/* Parallax Background Image */}
-                    <motion.div
-                        style={{ y: imageY, scale: imageScale }}
-                        className="absolute inset-0 w-full h-full"
-                    >
+                <Reveal delay={0.3}>
+                    <div className="max-w-6xl mx-auto h-[400px] md:h-[600px] overflow-hidden border border-white/10 group">
                         <img
                             src="/assets/Team.jpg"
-                            alt="Adroit Team"
-                            className="w-full h-full object-contain"
+                            alt="The Team"
+                            className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000"
                         />
-                    </motion.div>
-
-                    {/* Subtle Gradient Overlay - Lighter for better face visibility */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                </motion.div>
-
-                {/* Team Description Below Photo */}
-                <Reveal delay={0.4}>
-                    <div className="mt-12 md:mt-24 grid md:grid-cols-2 gap-10 md:gap-12 items-start">
-
-                        <div>
-                            <motion.div
-                                initial={{ width: 0 }}
-                                whileInView={{ width: "100px" }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 1, delay: 0.6 }}
-                                className="h-px bg-gradient-to-r from-[#C5A059] to-transparent mb-6 md:mb-8"
-                            />
-
-                            <h3 className="text-2xl md:text-4xl font-logo text-white mb-4 md:mb-6 leading-tight uppercase tracking-wider">
-                                United by <span className="font-light text-white/60">Excellence</span>
-                            </h3>
-                        </div>
-
-                        <div className="space-y-4 md:space-y-6">
-                            <motion.p
-                                className="text-stone-400 text-base md:text-lg leading-relaxed"
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.8, delay: 0.7 }}
-                            >
-                                Our team comprises over <strong className="text-white">20 skilled architects,
-                                    engineers, and designers</strong> who share a singular vision: to craft spaces
-                                that inspire, endure, and elevate.
-                            </motion.p>
-
-                            <motion.p
-                                className="text-stone-400 text-lg leading-relaxed"
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.8, delay: 0.85 }}
-                            >
-                                With diverse expertise spanning <strong className="text-white">corporate
-                                    architecture, industrial design, turnkey interiors, and sustainable
-                                    construction</strong>, we collaborate seamlessly to bring ambitious
-                                projects to life with precision and artistry.
-                            </motion.p>
-
-                            <motion.p
-                                className="text-stone-400 text-lg leading-relaxed"
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.8, delay: 1 }}
-                            >
-                                Every member brings a unique blend of creativity and technical mastery,
-                                united by our commitment to <strong className="text-white">innovation,
-                                    quality, and timely delivery</strong>.
-                            </motion.p>
-                        </div>
-
                     </div>
                 </Reveal>
+            </section>
 
-            </div>
-        </section>
+            {/* 8. REVIEWS & TESTIMONIALS */}
+            <section className="py-20 md:py-32 px-6 md:px-24 bg-[#050505]">
+                <div className="max-w-7xl mx-auto">
+                    <Reveal>
+                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold text-center">8. Reviews & Testimonials</span>
+                        <h2 className="text-3xl md:text-5xl font-logo text-white uppercase tracking-widest mb-16 text-center">Client Speak</h2>
+                    </Reveal>
+
+                    <motion.div
+                        variants={stagger}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        className="grid md:grid-cols-3 gap-8"
+                    >
+                        {REVIEWS.map((review, i) => (
+                            <motion.div
+                                key={i}
+                                variants={fadeUp}
+                                className="p-10 border border-white/10 bg-white/5 relative hover:-translate-y-2 transition-transform duration-500"
+                            >
+                                <Quote className="text-[#C5A059] w-10 h-10 mb-6 opacity-50" />
+                                <p className="text-stone-300 font-light leading-relaxed mb-8 italic">"{review.text}"</p>
+                                <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-6">
+                                    <div>
+                                        <h4 className="text-white font-bold tracking-wide uppercase text-sm mb-1">{review.name}</h4>
+                                        <p className="text-[#C5A059] text-xs uppercase tracking-widest">{review.role}</p>
+                                    </div>
+                                    <div className="flex gap-1 text-[#C5A059]">
+                                        <Star fill="currentColor" size={14} />
+                                        <Star fill="currentColor" size={14} />
+                                        <Star fill="currentColor" size={14} />
+                                        <Star fill="currentColor" size={14} />
+                                        <Star fill="currentColor" size={14} />
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                </div>
+            </section>
+
+        </div>
     );
 }
 
