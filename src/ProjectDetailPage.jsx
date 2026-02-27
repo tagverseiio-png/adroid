@@ -186,7 +186,7 @@ export default function ProjectDetailPage({ project, onBack }) {
                         <div className="space-y-8">
                             <div className="space-y-1">
                                 <span className="block text-x text-white/40 uppercase tracking-widest">Client</span>
-                                <p className="text-lg font-serif">{project.client || "Confidential"}</p>
+                                <p className="text-lg font-sans font-medium">{project.client || "Confidential"}</p>
                             </div>
                             <div className="space-y-1">
                                 <span className="block text-xs text-white/40 uppercase tracking-widest">Scope</span>
@@ -204,11 +204,11 @@ export default function ProjectDetailPage({ project, onBack }) {
                             </div>
                             <div className="space-y-1">
                                 <span className="block text-xs text-white/40 uppercase tracking-widest">Design Style</span>
-                                <p className="text-lg font-serif">{project.design_style || project.designStyle || "N/A"}</p>
+                                <p className="text-lg font-sans font-medium">{project.design_style || project.designStyle || "N/A"}</p>
                             </div>
                             <div className="space-y-1">
                                 <span className="block text-xs text-white/40 uppercase tracking-widest">Status</span>
-                                <p className="text-lg font-serif">{project.status}</p>
+                                <p className="text-lg font-sans font-medium">{project.status}</p>
                             </div>
                         </div>
                     </motion.div>

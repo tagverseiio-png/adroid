@@ -39,7 +39,7 @@ const BlogPage = ({ onReadMore }) => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="text-3xl md:text-6xl font-serif text-white mb-4 md:mb-6 font-light"
+                    className="text-3xl md:text-5xl font-logo uppercase tracking-widest text-white mb-4 md:mb-6"
                 >
                     Design Stories
                 </motion.h1>
@@ -61,45 +61,45 @@ const BlogPage = ({ onReadMore }) => {
             ) : (
                 <div className="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-10">
                     {posts.map((post, idx) => (
-                    <motion.div
-                        key={post.id}
-                        initial={{ opacity: 0, y: 40 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: idx * 0.1 }}
-                        className="group cursor-pointer"
-                        onClick={() => onReadMore(post)}
-                    >
-                        {/* Image */}
-                        <div className="aspect-[4/3] overflow-hidden mb-6 relative">
-                            <img
-                                src={normalizeAssetUrl(post.featured_image || post.image)}
-                                alt={post.title}
-                                className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-out"
-                            />
-                            <div className="absolute top-4 left-4 bg-black/80 backdrop-blur text-white px-3 py-1 text-[10px] uppercase tracking-widest font-bold">
-                                {post.category}
+                        <motion.div
+                            key={post.id}
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: idx * 0.1 }}
+                            className="group cursor-pointer"
+                            onClick={() => onReadMore(post)}
+                        >
+                            {/* Image */}
+                            <div className="aspect-[4/3] overflow-hidden mb-6 relative">
+                                <img
+                                    src={normalizeAssetUrl(post.featured_image || post.image)}
+                                    alt={post.title}
+                                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-out"
+                                />
+                                <div className="absolute top-4 left-4 bg-black/80 backdrop-blur text-white px-3 py-1 text-[10px] uppercase tracking-widest font-bold">
+                                    {post.category}
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Content */}
-                        <div>
-                            <div className="flex gap-4 text-[10px] uppercase tracking-wider text-white/40 mb-3 font-sans">
-                                <span className="flex items-center gap-1"><Calendar size={10} /> {new Date(post.created_at).toLocaleDateString()}</span>
-                                <span className="flex items-center gap-1"><User size={10} /> {post.author}</span>
+                            {/* Content */}
+                            <div>
+                                <div className="flex gap-4 text-[10px] uppercase tracking-wider text-white/40 mb-3 font-sans">
+                                    <span className="flex items-center gap-1"><Calendar size={10} /> {new Date(post.created_at).toLocaleDateString()}</span>
+                                    <span className="flex items-center gap-1"><User size={10} /> {post.author}</span>
+                                </div>
+                                <h3 className="text-xl font-logo uppercase tracking-wider text-white mb-3 group-hover:text-[#C5A059] transition-colors leading-tight">
+                                    {post.title}
+                                </h3>
+                                <p className="text-white/50 text-sm font-light leading-relaxed mb-6 line-clamp-3">
+                                    {post.excerpt}
+                                </p>
+                                <span className="text-[#C5A059] text-xs uppercase tracking-widest font-bold flex items-center gap-2 group-hover:gap-4 transition-all">
+                                    Read Article <ArrowRight size={12} />
+                                </span>
                             </div>
-                            <h3 className="text-2xl font-serif text-white mb-3 group-hover:text-[#C5A059] transition-colors leading-tight">
-                                {post.title}
-                            </h3>
-                            <p className="text-white/50 text-sm font-light leading-relaxed mb-6 line-clamp-3">
-                                {post.excerpt}
-                            </p>
-                            <span className="text-[#C5A059] text-xs uppercase tracking-widest font-bold flex items-center gap-2 group-hover:gap-4 transition-all">
-                                Read Article <ArrowRight size={12} />
-                            </span>
-                        </div>
-                    </motion.div>
-                ))}
+                        </motion.div>
+                    ))}
                 </div>
             )}
         </div>

@@ -119,13 +119,13 @@ const ServicesSection = () => {
     return (
         <section className="py-20 md:py-32 bg-[#0a0a0a] text-white relative z-10">
             <div className="px-6 md:px-24">
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16">
-                    <div className="md:col-span-4 sticky md:top-32 self-start">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
+                    <div className="sticky lg:top-32 self-start lg:pr-10">
                         <motion.span
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
-                            className="text-[10px] md:text-xs font-bold tracking-[0.2em] text-[#C5A059] uppercase"
+                            className="text-[10px] md:text-xs font-bold tracking-[0.3em] text-[#C5A059] uppercase"
                         >
                             What We Do
                         </motion.span>
@@ -134,17 +134,17 @@ const ServicesSection = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: 0.2 }}
-                            className="text-4xl md:text-6xl font-serif mt-6 md:mt-8 leading-[1.15] font-light text-white"
+                            className="text-2xl md:text-3xl lg:text-4xl font-logo uppercase tracking-wider mt-6 md:mt-8 text-white leading-tight"
                         >
-                            Comprehensive <br className="hidden md:block" />
+                            Comprehensive <br className="hidden lg:block" />
                             Design Solutions
                         </motion.h2>
-                        <p className="mt-6 md:mt-8 text-sm text-white/70 leading-relaxed font-light max-w-sm">
+                        <p className="mt-8 text-sm md:text-base text-stone-400 leading-relaxed font-light max-w-sm">
                             From concept to completion, we deliver integrated design services that transform spaces and create lasting impact.
                         </p>
                     </div>
 
-                    <div className="md:col-span-8 mt-12 md:mt-0">
+                    <div className="mt-12 lg:mt-0">
                         <div className="divide-y divide-white/10">
                             {services.map((service, idx) => (
                                 <motion.div
@@ -160,10 +160,10 @@ const ServicesSection = () => {
 
                                     <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between">
                                         <div className="flex-1 pr-8">
-                                            <h3 className="text-2xl font-serif font-light text-white group-hover:text-[#C5A059] transition-colors duration-300 mb-3">
+                                            <h3 className="text-xl md:text-2xl font-logo uppercase tracking-wider text-white group-hover:text-[#C5A059] transition-colors duration-300 mb-3">
                                                 {service.title}
                                             </h3>
-                                            <p className="text-sm text-white/60 group-hover:text-white/80 transition-colors duration-300 font-light leading-relaxed">
+                                            <p className="text-sm text-stone-400 group-hover:text-black/80 transition-colors duration-300 font-light leading-relaxed">
                                                 {service.desc}
                                             </p>
                                         </div>
@@ -247,13 +247,13 @@ const FeaturedProjectsSection = ({ setPage }) => {
                 <div>
                     <motion.span
                         initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-                        className="text-[10px] font-bold tracking-[0.2em] text-[#C5A059] uppercase"
+                        className="text-[10px] font-bold tracking-[0.3em] text-[#C5A059] uppercase"
                     >
                         Selected Works
                     </motion.span>
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}
-                        className="text-3xl md:text-6xl font-serif text-stone-900 mt-3 md:mt-4 font-light"
+                        className="text-3xl md:text-5xl font-logo text-stone-900 uppercase tracking-widest mt-3 md:mt-4"
                     >
                         Curated Excellence
                     </motion.h2>
@@ -298,7 +298,7 @@ const FeaturedProjectsSection = ({ setPage }) => {
                                 <span className="text-[10px] tracking-widest uppercase text-[#C5A059] block mb-1">
                                     {proj.category}
                                 </span>
-                                <h3 className="text-2xl font-serif text-stone-900 italic">{proj.title}</h3>
+                                <h3 className="text-xl font-logo uppercase tracking-wider text-stone-900">{proj.title}</h3>
                             </div>
                             <p className="text-xs text-stone-400 mt-1 font-light">{proj.location}</p>
                         </div>

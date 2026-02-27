@@ -47,7 +47,7 @@ export default function ProjectsPage() {
   };
 
   useEffect(() => {
-     
+
     fetchProjects();
 
     // Check if a project was selected from chatbot
@@ -200,7 +200,7 @@ export default function ProjectsPage() {
                     {project.category}
                   </span>
 
-                  <h3 className="text-2xl font-serif italic mt-2 translate-y-4 group-hover:translate-y-0 transition duration-500 delay-100">
+                  <h3 className="text-xl font-logo uppercase tracking-wider mt-2 translate-y-4 group-hover:translate-y-0 transition duration-500 delay-100 text-white">
                     {project.title}
                   </h3>
 

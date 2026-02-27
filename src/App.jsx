@@ -114,7 +114,6 @@ const App = () => {
     <div className="font-sans bg-[#f4f4f4] min-h-screen selection:bg-[#C5A059] selection:text-white text-stone-900 cursor-none">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&family=Michroma&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&display=swap');
-        .font-serif { font-family: 'Cormorant Garamond', serif; }
         .font-sans { font-family: 'Montserrat', sans-serif; }
         .font-logo { font-family: 'Michroma', sans-serif; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }

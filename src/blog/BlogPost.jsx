@@ -31,7 +31,7 @@ const BlogPost = ({ post, onBack }) => {
                     <span className="text-[#C5A059] text-[10px] md:text-xs uppercase tracking-[0.2em] font-bold block mb-3 md:mb-4">
                         {post.category}
                     </span>
-                    <h1 className="text-3xl md:text-6xl font-serif text-white mb-6 md:mb-8 leading-tight">
+                    <h1 className="text-3xl md:text-5xl font-logo uppercase tracking-widest text-white mb-6 md:mb-8 leading-tight">
                         {post.title}
                     </h1>
                     <div className="flex flex-wrap gap-8 text-xs uppercase tracking-wider text-white/40 font-sans border-b border-white/10 pb-8">
@@ -49,13 +49,13 @@ const BlogPost = ({ post, onBack }) => {
                 {/* Content */}
                 <article className="prose prose-invert prose-lg max-w-none text-white/70 font-light leading-relaxed">
                     {/* Mock Rich Content */}
-                    <p className="text-xl text-white font-serif italic mb-8 border-l-2 border-[#C5A059] pl-6">
+                    <p className="text-xl text-white font-sans font-medium mb-8 border-l-2 border-[#C5A059] pl-6 uppercase tracking-wider">
                         {post.excerpt}
                     </p>
                     <p className="mb-6">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
                     </p>
-                    <h3 className="text-2xl font-serif text-white mt-12 mb-6">Designing for the Future</h3>
+                    <h3 className="text-2xl font-logo uppercase tracking-wider text-white mt-12 mb-6">Designing for the Future</h3>
                     <p className="mb-6">
                         Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.
                     </p>
