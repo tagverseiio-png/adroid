@@ -17,12 +17,38 @@ const stagger = {
 };
 
 const CORE_COMPETENCIES = [
-    "Corporate & Commercial Architecture",
-    "Turnkey Interior Execution",
-    "High-End Residential Design",
-    "Institutional Planning",
-    "Industrial & PEB Constructions",
-    "Project Management Consulting",
+    {
+        title: "Turnkey Interior Solutions",
+        description: "Complete end-to-end execution for Corporate, IT/ITES, Commercial, Healthcare, Retail & Residential interiors."
+    },
+    {
+        title: "Design–Build Expertise",
+        description: "Integrated approach combining architectural design, interior design, engineering & execution under one roof."
+    },
+    {
+        title: "Corporate & Commercial Office Specialists",
+        description: "Strong capability in large-scale office fit-outs, workspace planning, and functional corporate environments."
+    },
+    {
+        title: "Civil Construction & Structural Works",
+        description: "Execution of commercial buildings and interior civil works with quality control and timeline discipline."
+    },
+    {
+        title: "MEP & Technical Integration",
+        description: "Efficient coordination of HVAC, Electrical, Plumbing, Fire & ELV systems for seamless project delivery."
+    },
+    {
+        title: "Project Management Excellence",
+        description: "Structured planning, cost control, vendor coordination, and milestone-driven execution."
+    },
+    {
+        title: "Quality & Detail-Oriented Execution",
+        description: "Focus on precision, finishing standards, and compliance with industry best practices."
+    },
+    {
+        title: "Sustainable & Efficient Design Solutions",
+        description: "Space optimization, energy efficiency, and long-term value engineering."
+    }
 ];
 
 const ACCOMPLISHMENTS = [
@@ -101,7 +127,7 @@ export default function AboutPage() {
             {/* 1. INTRODUCTION */}
             <section className="py-20 md:py-32 px-6 md:px-24 max-w-7xl mx-auto text-center">
                 <Reveal>
-                    <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">1. Introduction</span>
+                    <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">Introduction</span>
                     <h2 className="text-3xl md:text-5xl font-logo text-white uppercase tracking-widest mb-10">Who We Are</h2>
                     <p className="text-stone-400 text-base md:text-xl leading-relaxed max-w-4xl mx-auto font-light">
                         <strong>Adroit Design India Private Limited</strong> is a premier architecture and design firm dedicated to creating enduring, innovative, and purposeful spaces. We merge aesthetic elegance with functional brilliance, setting new benchmarks in corporate, commercial, and residential architecture. Our commitment to excellence drives us to transform visions into tangible masterpieces.
@@ -113,7 +139,7 @@ export default function AboutPage() {
             <section className="py-20 px-6 md:px-24 bg-white/5 border-y border-white/5">
                 <div className="max-w-7xl mx-auto">
                     <Reveal>
-                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold text-center">2. Accomplishments</span>
+                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold text-center">Accomplishments</span>
                         <h2 className="text-3xl md:text-5xl font-logo text-white uppercase tracking-widest mb-16 text-center">Our Milestones</h2>
                     </Reveal>
 
@@ -138,7 +164,7 @@ export default function AboutPage() {
             <section className="py-20 md:py-32 px-6 md:px-24">
                 <div className="max-w-7xl mx-auto text-center">
                     <Reveal>
-                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">3. Core Competencies</span>
+                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">Core Competencies</span>
                         <h2 className="text-3xl md:text-5xl font-logo text-white uppercase tracking-widest mb-16">Our Expertise</h2>
                     </Reveal>
 
@@ -147,18 +173,21 @@ export default function AboutPage() {
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true }}
-                        className="grid sm:grid-cols-2 md:grid-cols-3 gap-8"
+                        className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
                     >
                         {CORE_COMPETENCIES.map((item, i) => (
                             <motion.div
                                 key={i}
                                 variants={fadeUp}
                                 whileHover={{ y: -5 }}
-                                className="p-10 border border-white/10 hover:bg-[#C5A059] hover:text-black hover:border-[#C5A059] transition-all duration-300 group"
+                                className="p-8 border border-white/10 hover:bg-[#C5A059] hover:border-[#C5A059] transition-all duration-300 group flex flex-col justify-start text-left"
                             >
-                                <h3 className="text-lg md:text-xl font-logo uppercase tracking-wider group-hover:text-black text-white">
-                                    {item}
+                                <h3 className="text-lg md:text-xl font-logo uppercase tracking-wider group-hover:text-black text-white mb-4">
+                                    {item.title}
                                 </h3>
+                                <p className="text-sm text-stone-400 group-hover:text-black/80 font-light leading-relaxed">
+                                    {item.description}
+                                </p>
                             </motion.div>
                         ))}
                     </motion.div>
@@ -169,14 +198,14 @@ export default function AboutPage() {
             <section className="py-20 bg-stone-900 border-y border-stone-800">
                 <div className="max-w-7xl mx-auto px-6 md:px-24 grid md:grid-cols-2 gap-16 md:gap-24">
                     <Reveal>
-                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">4. Vision</span>
+                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">Vision</span>
                         <h2 className="text-3xl font-logo text-white uppercase tracking-widest mb-6">Our Vision</h2>
                         <p className="text-stone-400 text-lg leading-relaxed font-light">
                             To be the vanguard of architectural innovation globally, creating spaces that seamlessly integrate sustainability, state-of-the-art technology, and timeless aesthetics. We envision a future where our designs elevate the human experience and harmonize with their environment.
                         </p>
                     </Reveal>
                     <Reveal delay={0.2}>
-                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">5. Mission</span>
+                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">Mission</span>
                         <h2 className="text-3xl font-logo text-white uppercase tracking-widest mb-6">Our Mission</h2>
                         <p className="text-stone-400 text-lg leading-relaxed font-light">
                             To deliver unparalleled architectural and interior solutions through meticulous planning, impeccable execution, and unwavering dedication to quality. We strive to exceed client expectations by fostering collaborative relationships and maintaining rigorous standards of excellence in every project.
@@ -205,7 +234,7 @@ export default function AboutPage() {
 
                     <Reveal delay={0.15}>
                         <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">
-                            6. Key Profile
+                            Key Profile
                         </span>
 
                         <h3 className="text-[#C5A059] tracking-widest text-sm uppercase mb-2">Founder & Managing Director</h3>
@@ -232,7 +261,7 @@ export default function AboutPage() {
             <section className="py-20 bg-[#0a0a0a] border-t border-white/5 relative overflow-hidden px-6 md:px-24">
                 <div className="max-w-7xl mx-auto mb-16 text-center">
                     <Reveal>
-                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">7. The Team</span>
+                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">The Team</span>
                         <h2 className="text-3xl md:text-5xl font-logo text-white uppercase tracking-widest mb-6 mt-2">
                             The Minds Behind Excellence
                         </h2>
@@ -257,7 +286,7 @@ export default function AboutPage() {
             <section className="py-20 md:py-32 px-6 md:px-24 bg-[#050505]">
                 <div className="max-w-7xl mx-auto">
                     <Reveal>
-                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold text-center">8. Reviews & Testimonials</span>
+                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold text-center">Reviews & Testimonials</span>
                         <h2 className="text-3xl md:text-5xl font-logo text-white uppercase tracking-widest mb-16 text-center">Client Speak</h2>
                     </Reveal>
 
