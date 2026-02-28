@@ -184,11 +184,20 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12">
                                         <div className="space-y-6">
                                             <div>
-                                                <p className="text-[#C5A059] text-[10px] uppercase tracking-[0.3em] mb-4 font-bold">Studio Location</p>
+                                                <p className="text-[#C5A059] text-[10px] uppercase tracking-[0.3em] mb-4 font-bold">Studio Location - Chennai</p>
                                                 <p className="font-sans text-base md:text-lg text-white/80 leading-relaxed font-light">
                                                     No 8, MCN Nagar Extension,<br />
                                                     Thoraipakkam, Chennai - 97.<br />
                                                     Tamil Nadu, India
+                                                </p>
+                                            </div>
+                                             <div>
+                                                <p className="text-[#C5A059] text-[10px] uppercase tracking-[0.3em] mb-4 font-bold">Studio Location - Bengaluru</p>
+                                                <p className="font-sans text-base md:text-lg text-white/80 leading-relaxed font-light">
+                                                    SFD, 3rd Floor, P DOT G EMERALD, 16th B Cross Rd,<br />
+                                                    Karuna Nagar, Electronics City Phase 1,<br />
+                                                    Doddathoguru, Bengaluru - 560100, <br />
+                                                    Karnataka, India
                                                 </p>
                                             </div>
                                             <div className="space-y-3 pt-6 border-t border-white/10">
