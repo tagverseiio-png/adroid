@@ -62,6 +62,7 @@ const Login = ({ onLogin }) => {
                             placeholder="Password"
                             className="w-full bg-white/5 border border-white/10 p-4 text-white focus:outline-none focus:border-[#C5A059] transition-colors rounded"
                             disabled={isLoading}
+                            autoComplete="current-password"
                         />
                         {error && <p className="text-red-400 text-xs mt-2">{error}</p>}
                     </div>
