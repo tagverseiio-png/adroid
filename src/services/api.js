@@ -15,46 +15,48 @@ export const normalizeAssetUrl = (value) => {
 
     const apiOrigin = getApiOrigin() || window.location.origin;
 
-    if (value.startsWith('http://localhost:3333')) {
-        return value.replace('http://localhost:3333', apiOrigin);
-    }
-
+    // Relative /uploads/ path — prefix with current API origin
     if (value.startsWith('/uploads/')) {
         return `${apiOrigin}${value}`;
     }
 
-    if (value.startsWith('http://') || value.startsWith('https://')) {
-        return value;
+    // Any absolute URL that contains /uploads/ → extract the relative part
+    // and re-prefix with the CURRENT API origin. This fixes images that were
+    // stored with an old dev-tunnel hostname or localhost:3333.
+    const uploadsMatch = value.match(/(\/uploads\/.+)/);
+    if (uploadsMatch) {
+        return `${apiOrigin}${uploadsMatch[1]}`;
     }
 
+    // External URLs (Unsplash, S3, CDN, etc.) — return as-is
     return value;
 };
 
 // Helper function for API calls
 const apiCall = async (endpoint, options = {}) => {
     const token = localStorage.getItem('adroit_token');
-    
+
     const headers = {
         'Content-Type': 'application/json',
         ...options.headers,
     };
-    
+
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
     }
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             ...options,
             headers,
         });
-        
+
         const data = await response.json();
-        
+
         if (!response.ok) {
             throw new Error(data.message || 'API request failed');
         }
-        
+
         return data;
     } catch (error) {
         console.error('API Error:', error);
@@ -68,9 +70,9 @@ export const authAPI = {
         method: 'POST',
         body: JSON.stringify(credentials),
     }),
-    
+
     logout: () => apiCall('/auth/logout', { method: 'POST' }),
-    
+
     getCurrentUser: () => apiCall('/auth/me'),
 };
 
@@ -80,62 +82,62 @@ export const projectsAPI = {
         const params = new URLSearchParams(filters);
         return apiCall(`/projects?${params}`);
     },
-    
+
     getFeatured: (limit = 8) => apiCall(`/projects/featured/list?limit=${limit}`),
-    
+
     getBySlug: (slug) => apiCall(`/projects/${slug}`),
-    
+
     create: (projectData) => apiCall('/projects', {
         method: 'POST',
         body: JSON.stringify(projectData),
     }),
-    
+
     update: (id, projectData) => apiCall(`/projects/${id}`, {
         method: 'PUT',
         body: JSON.stringify(projectData),
     }),
-    
+
     toggleFeatured: (id, is_featured, featured_order = 0) => apiCall(`/projects/${id}/featured`, {
         method: 'PATCH',
         body: JSON.stringify({ is_featured, featured_order }),
     }),
-    
+
     delete: (id) => apiCall(`/projects/${id}`, { method: 'DELETE' }),
 };
 
 // Blog API
 export const blogAPI = {
     getAll: () => apiCall('/blog?published=true'),
-    
+
     getBySlug: (slug) => apiCall(`/blog/${slug}`),
-    
+
     create: (postData) => apiCall('/blog', {
         method: 'POST',
         body: JSON.stringify(postData),
     }),
-    
+
     update: (id, postData) => apiCall(`/blog/${id}`, {
         method: 'PUT',
         body: JSON.stringify(postData),
     }),
-    
+
     delete: (id) => apiCall(`/blog/${id}`, { method: 'DELETE' }),
 };
 
 // Inquiries API
 export const inquiriesAPI = {
     getAll: () => apiCall('/inquiries'),
-    
+
     create: (inquiryData) => apiCall('/inquiries', {
         method: 'POST',
         body: JSON.stringify(inquiryData),
     }),
-    
+
     updateStatus: (id, status) => apiCall(`/inquiries/${id}/status`, {
         method: 'PUT',
         body: JSON.stringify({ status }),
     }),
-    
+
     delete: (id) => apiCall(`/inquiries/${id}`, { method: 'DELETE' }),
 };
 
@@ -146,7 +148,7 @@ export const uploadAPI = {
         const formData = new FormData();
         formData.append('image', file);
         formData.append('folder', folder);
-        
+
         const response = await fetch(`${API_BASE_URL}/upload`, {
             method: 'POST',
             headers: {
@@ -154,25 +156,25 @@ export const uploadAPI = {
             },
             body: formData,
         });
-        
+
         const data = await response.json();
-        
+
         if (!response.ok) {
             throw new Error(data.message || 'Upload failed');
         }
-        
+
         return data;
     },
-    
+
     uploadMultiple: async (files, folder = 'general') => {
         const token = localStorage.getItem('adroit_token');
         const formData = new FormData();
-        
+
         files.forEach(file => {
             formData.append('images', file);
         });
         formData.append('folder', folder);
-        
+
         const response = await fetch(`${API_BASE_URL}/upload/multiple`, {
             method: 'POST',
             headers: {
@@ -180,17 +182,21 @@ export const uploadAPI = {
             },
             body: formData,
         });
-        
+
         const data = await response.json();
-        
+
         if (!response.ok) {
             throw new Error(data.message || 'Upload failed');
         }
-        
+
         return data;
     },
-    
-    deleteImage: (filename) => apiCall(`/upload/${filename}`, { method: 'DELETE' }),
+
+    // Accept a full /uploads/... path or just a filename — strip leading slash to avoid double-slash
+    deleteImage: (filePath) => {
+        const clean = String(filePath).replace(/^\/+/, '');
+        return apiCall(`/upload/${clean}`, { method: 'DELETE' });
+    },
 };
 
 export default {

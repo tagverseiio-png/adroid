@@ -77,29 +77,36 @@ const ImageGallery = ({ images = [], onChange }) => {
     return (
         <div>
             <div className="flex gap-2 mb-3 flex-wrap">
-                <ImageUploader label="Add Image" onUpload={urls => onChange([...list, ...urls])} />
-                <ImageUploader label="Add Multiple" multiple onUpload={urls => onChange([...list, ...urls])} />
+                {/* Single upload → prepend so it becomes the new cover */}
+                <ImageUploader label="Upload Cover" onUpload={urls => onChange([...urls, ...list])} />
+                <ImageUploader label="Add to Gallery" multiple onUpload={urls => onChange([...list, ...urls])} />
             </div>
             {list.length > 0 ? (
                 <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2">
                     {list.map((url, idx) => (
-                        <div key={idx} className="relative aspect-square rounded-lg overflow-hidden bg-white/5 group">
+                        <div key={url + idx} className="relative aspect-square rounded-lg overflow-hidden bg-white/5">
                             <img src={normalizeAssetUrl(url) || url} alt="" className="w-full h-full object-cover"
                                 onError={e => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=200'; }} />
-                            {/* Always-visible delete */}
+                            {/* Delete — always visible */}
                             <button type="button" onClick={() => remove(idx)}
                                 className="absolute top-1 right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors shadow-lg z-10"
                                 title="Delete image"
                             >
                                 <X size={10} />
                             </button>
-                            {idx > 0 && (
-                                <button type="button" onClick={() => moveUp(idx)}
-                                    className="absolute bottom-1 left-1 text-[9px] bg-black/70 text-white px-1.5 py-0.5 rounded hover:bg-black/90 transition-colors"
-                                >↑</button>
-                            )}
-                            {idx === 0 && (
-                                <div className="absolute bottom-1 left-1 text-[8px] bg-[#C5A059] text-black px-1.5 py-0.5 rounded font-bold">Cover</div>
+                            {idx === 0 ? (
+                                <div className="absolute bottom-1 left-1 text-[8px] bg-[#C5A059] text-black px-1.5 py-0.5 rounded font-bold">✓ Cover</div>
+                            ) : (
+                                /* Set as Cover button on every non-cover image */
+                                <button type="button"
+                                    onClick={() => {
+                                        const a = [...list];
+                                        a.splice(idx, 1);
+                                        onChange([url, ...a]);
+                                    }}
+                                    className="absolute bottom-1 left-1 text-[8px] bg-black/70 text-white/80 hover:bg-[#C5A059] hover:text-black px-1.5 py-0.5 rounded transition-colors font-bold"
+                                    title="Set as cover image"
+                                >Set Cover</button>
                             )}
                         </div>
                     ))}
@@ -276,6 +283,15 @@ const ProjectManager = () => {
             }
         } catch { alert('Failed to save project'); }
         finally { setSaving(false); }
+    };
+
+    // Strip absolute server URL down to a relative /uploads/... path.
+    // The DB should always store relative paths; normalizeAssetUrl on the
+    // frontend then converts them back to absolute for display.
+    const toRelativePath = (url) => {
+        if (!url || typeof url !== 'string') return url;
+        const m = url.match(/(\/uploads\/.*)/);
+        return m ? m[1] : url; // keep external URLs (unsplash, etc.) as-is
     };
 
     const handleDelete = async (id) => {

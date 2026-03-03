@@ -17,7 +17,7 @@ const Login = ({ onLogin }) => {
 
         try {
             const response = await authAPI.login({ username, password });
-            
+
             if (response.success) {
                 localStorage.setItem('adroit_token', response.data.token);
                 localStorage.setItem('adroit_user', JSON.stringify(response.data.user));
@@ -54,6 +54,7 @@ const Login = ({ onLogin }) => {
                             placeholder="Username"
                             className="w-full bg-white/5 border border-white/10 p-4 text-white focus:outline-none focus:border-[#C5A059] transition-colors rounded mb-4"
                             autoFocus
+                            autoComplete="username"
                         />
                         <input
                             type="password"
