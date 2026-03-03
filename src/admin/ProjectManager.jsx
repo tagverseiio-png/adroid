@@ -244,8 +244,11 @@ const ProjectManager = () => {
     const [saving, setSaving] = useState(false);
     const [search, setSearch] = useState('');
     const [filterCat, setFilterCat] = useState('ALL');
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 12; // 3 rows of 4 columns
 
     useEffect(() => { fetchProjects(); }, []);
+    useEffect(() => { setCurrentPage(1); }, [search, filterCat]);
 
     const fetchProjects = async () => {
         try {
@@ -323,6 +326,10 @@ const ProjectManager = () => {
         return matchCat && matchSearch;
     });
 
+    // Pagination
+    const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
+    const paginated = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
     return (
         <div>
             {/* Header */}
@@ -367,7 +374,7 @@ const ProjectManager = () => {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {filtered.map((project) => (
+                    {paginated.map((project) => (
                         <motion.div
                             key={project.id}
                             layout
@@ -439,6 +446,29 @@ const ProjectManager = () => {
                             </div>
                         </motion.div>
                     ))}
+                </div>
+            )}
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-2 mt-8 mb-6">
+                    <button
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
+                    >
+                        Previous
+                    </button>
+                    <span className="text-white/40 text-[10px] uppercase font-bold tracking-widest px-3">
+                        Page {currentPage} of {totalPages}
+                    </span>
+                    <button
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                        className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
+                    >
+                        Next
+                    </button>
                 </div>
             )}
 

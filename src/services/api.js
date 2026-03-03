@@ -79,7 +79,7 @@ export const authAPI = {
 // Projects API
 export const projectsAPI = {
     getAll: (filters = {}) => {
-        const params = new URLSearchParams(filters);
+        const params = new URLSearchParams({ limit: 1000, ...filters });
         return apiCall(`/projects?${params}`);
     },
 
