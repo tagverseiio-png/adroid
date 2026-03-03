@@ -25,6 +25,40 @@ const server = app.listen(PORT, () => {
   console.log(`   - GET    ${process.env.API_URL}/api/projects`);
   console.log(`   - GET    ${process.env.API_URL}/api/blog`);
   console.log(`   - POST   ${process.env.API_URL}/api/inquiries\n`);
+
+  // ── Keep-alive pinger ──────────────────────────────────────────────────────
+  // Pings the HuggingFace chatbot Space every 5 minutes so it never goes cold.
+  const CHATBOT_URL = process.env.CHATBOT_URL || 'https://dinely523-aidiot-proj.hf.space/chat/stream';
+
+  const pingChatbot = () => {
+    try {
+      const url = new URL(CHATBOT_URL);
+      const lib = url.protocol === 'https:' ? require('https') : require('http');
+      const body = JSON.stringify({ query: 'hi' });
+
+      const req = lib.request(
+        {
+          hostname: url.hostname, path: url.pathname + url.search, method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
+        },
+        (res) => {
+          res.resume(); // drain the response
+          console.log(`🤖 Chatbot ping → ${res.statusCode} (${new Date().toLocaleTimeString()})`);
+        }
+      );
+      req.on('error', (err) => console.warn('⚠️  Chatbot ping failed:', err.message));
+      req.write(body);
+      req.end();
+    } catch (err) {
+      console.warn('⚠️  Chatbot ping error:', err.message);
+    }
+  };
+
+  // First ping immediately, then every 5 minutes
+  pingChatbot();
+  setInterval(pingChatbot, 5 * 60 * 1000);
+  console.log(`🏓 Keep-alive pinger started → ${CHATBOT_URL} (every 5 min)\n`);
+  // ──────────────────────────────────────────────────────────────────────────
 });
 
 // Graceful shutdown
