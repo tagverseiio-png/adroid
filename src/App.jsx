@@ -102,7 +102,7 @@ const App = () => {
         onNavigate={setAdminPage}
         onLogout={() => { setIsAdminLoggedIn(false); }}
       >
-        {adminPage === 'dashboard' && <Dashboard />}
+        {adminPage === 'dashboard' && <Dashboard onNavigate={setAdminPage} />}
         {adminPage === 'projects' && <ProjectManager />}
         {adminPage === 'blog' && <BlogManager />}
         {adminPage === 'inquiries' && <Inquiries />}

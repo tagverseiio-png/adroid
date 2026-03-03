@@ -19,7 +19,7 @@ export default function ProjectsPage() {
       const response = await projectsAPI.getAll();
       if (response.success) {
         // Filter for featured/selected projects only
-        setProjects(response.data.filter(p => p.published && p.is_featured));
+        setProjects(response.data.filter(p => p.published));
       }
     } catch (error) {
       console.error('Failed to fetch projects:', error);

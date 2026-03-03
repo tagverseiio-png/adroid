@@ -1,64 +1,133 @@
-import React from 'react';
-import { LayoutDashboard, FolderOpen, PenTool, MessageSquare, LogOut } from 'lucide-react';
-// eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { LayoutDashboard, FolderOpen, PenTool, MessageSquare, LogOut, Menu, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const MENU_ITEMS = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'projects', label: 'Projects', icon: FolderOpen },
+    { id: 'blog', label: 'Blog', icon: PenTool },
+    { id: 'inquiries', label: 'Enquiries', icon: MessageSquare },
+];
 
 const AdminLayout = ({ children, currentPage, onNavigate, onLogout }) => {
-    const MENU_ITEMS = [
-        { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-        { id: 'projects', label: 'Projects', icon: FolderOpen },
-        { id: 'blog', label: 'Blog Posts', icon: PenTool },
-        { id: 'inquiries', label: 'Enquiries', icon: MessageSquare },
-    ];
+    const [mobileOpen, setMobileOpen] = useState(false);
+
+    const handleNav = (id) => {
+        onNavigate(id);
+        setMobileOpen(false);
+    };
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] flex text-stone-200 font-sans">
-            {/* Sidebar */}
-            <aside className="w-64 border-r border-white/10 fixed h-full bg-[#050505] z-20 hidden md:block">
-                <div className="p-8 border-b border-white/10">
-                    <h1 className="font-logo text-xl tracking-[0.2em] text-white">ADROIT <span className="text-[#C5A059]">ADMIN</span></h1>
-                </div>
-                <nav className="p-4 space-y-2 mt-4">
-                    {MENU_ITEMS.map((item) => (
-                        <div
-                            key={item.id}
-                            onClick={() => onNavigate(item.id)}
-                            className={`flex items-center gap-4 p-4 cursor-pointer rounded-lg transition-all ${currentPage === item.id
-                                ? 'bg-[#C5A059] text-black font-medium'
-                                : 'text-white/50 hover:bg-white/5 hover:text-white'
-                                }`}
-                        >
-                            <item.icon size={18} />
-                            <span className="text-sm tracking-wide uppercase">{item.label}</span>
+        <div className="min-h-screen bg-[#0c0c0c] text-stone-200 font-sans">
+
+            {/* ── Top Bar ── */}
+            <header className="fixed top-0 inset-x-0 z-50 bg-[#080808]/95 backdrop-blur-md border-b border-white/8">
+                <div className="max-w-screen-2xl mx-auto flex items-center justify-between px-6 h-16">
+
+                    {/* Logo */}
+                    <div className="flex items-center gap-3">
+                        <div className="w-7 h-7 bg-[#C5A059] rounded-sm flex items-center justify-center">
+                            <span className="text-black font-bold text-xs">A</span>
                         </div>
-                    ))}
-                </nav>
-                <div className="absolute bottom-0 w-full p-4 border-t border-white/10">
-                    <div
-                        onClick={onLogout}
-                        className="flex items-center gap-4 p-4 cursor-pointer text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                    >
-                        <LogOut size={18} />
-                        <span className="text-sm tracking-wide uppercase">Logout</span>
+                        <span className="font-logo tracking-[0.2em] text-white text-sm hidden sm:block">
+                            ADROIT <span className="text-[#C5A059]">STUDIO</span>
+                        </span>
+                    </div>
+
+                    {/* Desktop Nav */}
+                    <nav className="hidden md:flex items-center gap-1">
+                        {MENU_ITEMS.map((item) => {
+                            const active = currentPage === item.id;
+                            return (
+                                <button
+                                    key={item.id}
+                                    onClick={() => handleNav(item.id)}
+                                    className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all duration-200 ${active
+                                            ? 'text-black bg-[#C5A059]'
+                                            : 'text-white/50 hover:text-white hover:bg-white/5'
+                                        }`}
+                                >
+                                    <item.icon size={14} />
+                                    {item.label}
+                                </button>
+                            );
+                        })}
+                    </nav>
+
+                    {/* Right Side */}
+                    <div className="flex items-center gap-3">
+                        {/* Admin badge */}
+                        <div className="hidden sm:flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
+                            <div className="w-2 h-2 rounded-full bg-green-400" />
+                            <span className="text-white/60 text-xs">Admin</span>
+                        </div>
+
+                        {/* Logout */}
+                        <button
+                            onClick={onLogout}
+                            className="hidden md:flex items-center gap-2 text-white/40 hover:text-red-400 transition-colors text-xs uppercase tracking-wider font-bold px-3 py-2 rounded-lg hover:bg-red-500/10"
+                        >
+                            <LogOut size={14} /> Logout
+                        </button>
+
+                        {/* Mobile Hamburger */}
+                        <button
+                            onClick={() => setMobileOpen(!mobileOpen)}
+                            className="md:hidden p-2 text-white/60 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+                        >
+                            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+                        </button>
                     </div>
                 </div>
-            </aside>
 
-            {/* Mobile Header (visible only on small screens) */}
-            <div className="fixed top-0 w-full md:hidden bg-[#050505] border-b border-white/10 p-4 z-50 flex justify-between items-center">
-                <h1 className="font-logo text-sm text-white">ADMIN</h1>
-            </div>
+                {/* Mobile Dropdown */}
+                <AnimatePresence>
+                    {mobileOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -8 }}
+                            transition={{ duration: 0.2 }}
+                            className="md:hidden border-t border-white/8 bg-[#080808] px-4 pb-4 pt-3 space-y-1"
+                        >
+                            {MENU_ITEMS.map((item) => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => handleNav(item.id)}
+                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold uppercase tracking-wider transition-all ${currentPage === item.id
+                                            ? 'bg-[#C5A059] text-black'
+                                            : 'text-white/50 hover:text-white hover:bg-white/5'
+                                        }`}
+                                >
+                                    <item.icon size={16} />
+                                    {item.label}
+                                </button>
+                            ))}
+                            <div className="border-t border-white/8 pt-3 mt-1">
+                                <button
+                                    onClick={onLogout}
+                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold uppercase tracking-wider text-red-400 hover:bg-red-500/10 transition-colors"
+                                >
+                                    <LogOut size={16} /> Logout
+                                </button>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </header>
 
-            {/* Main Content */}
-            <main className="flex-1 md:ml-64 p-6 md:p-10 pt-20 md:pt-10 min-h-screen">
-                <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4 }}
-                    key={currentPage}
-                >
-                    {children}
-                </motion.div>
+            {/* ── Content ── */}
+            <main className="pt-20 min-h-screen">
+                <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-10 py-8">
+                    <motion.div
+                        key={currentPage}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.35, ease: 'easeOut' }}
+                    >
+                        {children}
+                    </motion.div>
+                </div>
             </main>
         </div>
     );

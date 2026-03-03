@@ -96,7 +96,7 @@ const Inquiries = () => {
                                     </span>
                                 </div>
 
-                                <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity flex gap-3">
+                                <div className="flex gap-3 mt-4 pt-3 border-t border-white/5">
                                     {inquiry.status === 'New' && (
                                         <button onClick={() => markAsRead(inquiry.id)} className="text-xs uppercase font-bold text-[#C5A059] hover:underline">Mark as Read</button>
                                     )}
