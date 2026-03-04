@@ -164,7 +164,7 @@ const Footer = ({ setPage }) => {
                                 <iframe
                                     title="footer-map"
                                     src={MAPS_EMBED_URL}
-                                    className="w-full h-full border-0 grayscale brightness-90"
+                                    className="w-full h-full border-0"
                                     loading="lazy"
                                 ></iframe>
                             ) : (

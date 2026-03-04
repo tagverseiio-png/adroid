@@ -20,7 +20,7 @@ const validate = (req, res, next) => {
 const validateProject = [
   body('title').trim().notEmpty().withMessage('Title is required'),
   body('category').trim().notEmpty().withMessage('Category is required'),
-  body('type').isIn(['ARCHITECTURE', 'INTERIOR']).withMessage('Invalid project type'),
+  body('type').isIn(['ARCHITECTURE', 'INTERIOR', 'ONGOING']).withMessage('Invalid project type'),
   body('location').optional().trim(),
   body('year').optional().trim(),
   body('area').optional().trim(),

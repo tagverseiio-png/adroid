@@ -2,15 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Plus, Edit2, Trash2, Save, X, Star, Upload, Image as ImageIcon, Camera, ChevronRight, Eye, EyeOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { projectsAPI, uploadAPI, getApiOrigin, normalizeAssetUrl } from '../services/api';
+import { ARCHITECTURE_CATEGORIES, INTERIOR_CATEGORIES } from '../data/projectCategories';
 
-const PROJECT_CATEGORIES = [
-    'VILLAS', 'APARTMENTS', 'IT & ITES OFFICES', 'COMMERCIAL OFFICES',
-    'COMMERCIAL BUILDINGS', 'FACTORY & WAREHOUSE BUILDINGS', 'INSTITUTIONAL BUILDINGS',
-    'BANQUET & MARRIAGE HALLS', 'LAND USE PLANNING & LAYOUTS', 'BUILDING LIFTING PROJECTS',
-    'HOSPITALS', 'BANKS & INSTITUTIONS', 'RESIDENTIAL INTERIORS', 'LAB & CLEAN ROOMS',
-    'INDUSTRIAL KITCHENS', 'RESTAURANTS', 'HOTELS & LODGES', 'SPA & GYMNASIUMS',
-    'FACTORY OFFICES', 'CLUBS & RESTOBARS', 'SHOWROOMS & RETAIL OUTLETS', 'SUPERMARKETS',
-];
+const PROJECT_CATEGORIES = Array.from(new Set([...ARCHITECTURE_CATEGORIES, ...INTERIOR_CATEGORIES]))
+    .filter(c => c !== 'ALL');
 
 // ─── Input helpers ────────────────────────────────────────────────────────────
 const Field = ({ label, children }) => (
@@ -146,6 +141,7 @@ const ProjectForm = ({ data, setData, onSave, onCancel, saving, isEdit = false }
                     <select className={inp} value={data.type || 'ARCHITECTURE'} onChange={e => setData(d => ({ ...d, type: e.target.value }))}>
                         <option value="ARCHITECTURE">Architecture</option>
                         <option value="INTERIOR">Interior Design</option>
+                        <option value="ONGOING">Ongoing</option>
                     </select>
                 </Field>
                 <Field label="Location">

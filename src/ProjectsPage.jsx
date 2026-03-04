@@ -84,7 +84,7 @@ export default function ProjectsPage() {
     }
 
     if (selectedDivision === "ONGOING") {
-      return project.status === "ONGOING";
+      return project.status === "ONGOING" || project.type === "ONGOING";
     }
 
     const matchesDivision = project.type === selectedDivision;
