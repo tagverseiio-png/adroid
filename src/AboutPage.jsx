@@ -228,6 +228,11 @@ export default function AboutPage() {
                                 src="/assets/Founder.jpg"
                                 alt="Franklin Maxwell A"
                                 className="w-full h-[400px] md:h-[600px] object-cover grayscale hover:grayscale-0 transition duration-1000"
+                                onClick={(e) => {
+                                    if (window.innerWidth < 1024 && e.currentTarget.classList.contains('grayscale')) {
+                                        e.currentTarget.classList.remove('grayscale');
+                                    }
+                                }}
                             />
                         </motion.div>
                     </Reveal>
@@ -277,6 +282,11 @@ export default function AboutPage() {
                             src="/assets/Team.jpg"
                             alt="The Team"
                             className="w-full h-auto object-contain grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000"
+                            onClick={(e) => {
+                                if (window.innerWidth < 1024 && e.currentTarget.classList.contains('grayscale')) {
+                                    e.currentTarget.classList.remove('grayscale', 'brightness-75');
+                                }
+                            }}
                         />
                     </div>
                 </Reveal>

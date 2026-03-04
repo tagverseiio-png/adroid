@@ -76,6 +76,13 @@ const BlogPage = ({ onReadMore }) => {
                                     src={normalizeAssetUrl(post.featured_image || post.image)}
                                     alt={post.title}
                                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-out"
+                                    onClick={(e) => {
+                                        if (window.innerWidth < 1024 && e.currentTarget.classList.contains('grayscale')) {
+                                            e.currentTarget.classList.remove('grayscale');
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                        }
+                                    }}
                                 />
                                 <div className="absolute top-4 left-4 bg-black/80 backdrop-blur text-white px-3 py-1 text-[10px] uppercase tracking-widest font-bold">
                                     {post.category}

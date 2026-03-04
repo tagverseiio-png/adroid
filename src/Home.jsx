@@ -284,6 +284,13 @@ const FeaturedProjectsSection = ({ setPage }) => {
                                 src={normalizeAssetUrl(proj.cover_image || proj.coverImage || IMAGES.hero)}
                                 alt={proj.title}
                                 className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 ease-out group-hover:scale-105"
+                                onClick={(e) => {
+                                    if (window.innerWidth < 1024 && e.currentTarget.classList.contains('grayscale')) {
+                                        e.currentTarget.classList.remove('grayscale');
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                    }
+                                }}
                                 loading="lazy"
                                 onError={(e) => {
                                     e.target.onerror = null;

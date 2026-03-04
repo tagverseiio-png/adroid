@@ -42,7 +42,14 @@ const BlogPost = ({ post, onBack }) => {
                 </header>
 
                 {/* Featured Image */}
-                <div className="aspect-video w-full overflow-hidden mb-16 grayscale hover:grayscale-0 transition-all duration-1000">
+                <div
+                    className="aspect-video w-full overflow-hidden mb-16 grayscale hover:grayscale-0 transition-all duration-1000"
+                    onClick={(e) => {
+                        if (window.innerWidth < 1024 && e.currentTarget.classList.contains('grayscale')) {
+                            e.currentTarget.classList.remove('grayscale');
+                        }
+                    }}
+                >
                     <img src={normalizeAssetUrl(post.featured_image || post.image)} alt={post.title} className="w-full h-full object-cover" />
                 </div>
 
@@ -60,8 +67,26 @@ const BlogPost = ({ post, onBack }) => {
                         Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.
                     </p>
                     <div className="grid md:grid-cols-2 gap-8 my-12 not-prose">
-                        <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=1200" className="w-full h-64 object-cover grayscale" alt="Detail 1" />
-                        <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=1200" className="w-full h-64 object-cover grayscale" alt="Detail 2" />
+                        <img
+                            src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=1200"
+                            className="w-full h-64 object-cover grayscale"
+                            alt="Detail 1"
+                            onClick={(e) => {
+                                if (window.innerWidth < 1024 && e.currentTarget.classList.contains('grayscale')) {
+                                    e.currentTarget.classList.remove('grayscale');
+                                }
+                            }}
+                        />
+                        <img
+                            src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=1200"
+                            className="w-full h-64 object-cover grayscale"
+                            alt="Detail 2"
+                            onClick={(e) => {
+                                if (window.innerWidth < 1024 && e.currentTarget.classList.contains('grayscale')) {
+                                    e.currentTarget.classList.remove('grayscale');
+                                }
+                            }}
+                        />
                     </div>
                     <p>
                         Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.

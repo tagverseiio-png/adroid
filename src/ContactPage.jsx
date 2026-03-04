@@ -191,7 +191,7 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                                     Tamil Nadu, India
                                                 </p>
                                             </div>
-                                             <div>
+                                            <div>
                                                 <p className="text-[#C5A059] text-[10px] uppercase tracking-[0.3em] mb-4 font-bold">Studio Location - Bengaluru</p>
                                                 <p className="font-sans text-base md:text-lg text-white/80 leading-relaxed font-light">
                                                     SFD, 3rd Floor, P DOT G EMERALD, 16th B Cross Rd,<br />
@@ -218,6 +218,11 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                                 className="w-full h-full border-0 grayscale invert brightness-75 group-hover:grayscale-0 group-hover:invert-0 transition-all duration-1000"
                                                 allowFullScreen=""
                                                 loading="lazy"
+                                                onClick={(e) => {
+                                                    if (window.innerWidth < 1024 && e.currentTarget.classList.contains('grayscale')) {
+                                                        e.currentTarget.classList.remove('grayscale', 'invert', 'brightness-75');
+                                                    }
+                                                }}
                                             ></iframe>
                                         </div>
                                     </div>

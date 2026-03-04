@@ -187,6 +187,13 @@ export default function ProjectsPage() {
                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
                   whileHover={{ scale: 1.1 }}
                   transition={{ duration: 0.7 }}
+                  onClick={(e) => {
+                    if (window.innerWidth < 1024 && e.currentTarget.classList.contains('grayscale')) {
+                      e.currentTarget.classList.remove('grayscale');
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }
+                  }}
                   loading="lazy"
                   onError={(e) => {
                     e.target.onerror = null;
