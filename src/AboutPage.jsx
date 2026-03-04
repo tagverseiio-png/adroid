@@ -272,11 +272,11 @@ export default function AboutPage() {
                 </div>
 
                 <Reveal delay={0.3}>
-                    <div className="max-w-6xl mx-auto h-[400px] md:h-[600px] overflow-hidden border border-white/10 group">
+                    <div className="max-w-6xl mx-auto overflow-hidden border border-white/10 group bg-black/50">
                         <img
                             src="/assets/Team.jpg"
                             alt="The Team"
-                            className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000"
+                            className="w-full h-auto object-contain grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000"
                         />
                     </div>
                 </Reveal>
