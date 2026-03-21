@@ -3,6 +3,7 @@ import { ArrowLeft, Calendar, User, Share2, Tag } from 'lucide-react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import { normalizeAssetUrl } from '../services/api';
+import BackButton from '../components/BackButton';
 
 const BlogPost = ({ post, onBack }) => {
 
@@ -14,6 +15,7 @@ const BlogPost = ({ post, onBack }) => {
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-stone-200 pt-24 md:pt-32 pb-16 md:pb-24 px-6 md:px-24">
+            <BackButton onBack={onBack} />
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

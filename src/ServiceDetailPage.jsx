@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { useScroll, useTransform, motion } from "framer-motion";
 import { ArrowLeft, CheckCircle2, Award, Users, TrendingUp } from "lucide-react";
+import BackButton from "./components/BackButton";
 
 // SERVICE-SPECIFIC UNIQUE CONTENT
 const SERVICE_CONTENT = {
@@ -276,7 +277,7 @@ const SERVICE_CONTENT = {
   },
 };
 
-const ServiceDetailPage = ({ service }) => {
+const ServiceDetailPage = ({ service, setPage }) => {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref });
 
@@ -290,8 +291,8 @@ const ServiceDetailPage = ({ service }) => {
   return (
     <div ref={ref} className="bg-[#f6f5f3] text-stone-800">
 
-      {/* BACK BUTTON */}
-      {/* BACK BUTTON REMOVED */}
+      {/* Mobile-only back button */}
+      <BackButton onBack={() => { if (setPage) setPage('Services'); }} />
 
       {/* HERO SECTION - Enhanced with parallax */}
       <section className="relative h-[75vh] md:h-[90vh] overflow-hidden">
@@ -496,11 +497,15 @@ const ServiceDetailPage = ({ service }) => {
           ].map((tag, i) => (
             <motion.span
               key={i}
+              onClick={() => {
+                if(setPage) setPage('Projects');
+                window.scrollTo(0,0);
+              }}
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.04 }}
-              className="px-5 py-2.5 border border-stone-300 text-stone-700 text-sm md:text-base hover:bg-stone-900 hover:text-white hover:border-stone-900 transition-all duration-300 cursor-default"
+              className="px-5 py-2.5 border border-stone-300 text-stone-700 text-sm md:text-base hover:bg-stone-900 hover:text-white hover:border-stone-900 transition-all duration-300 cursor-pointer"
             >
               {tag}
             </motion.span>

@@ -199,10 +199,85 @@ export const uploadAPI = {
     },
 };
 
+// Jobs API
+export const jobsAPI = {
+    apply: (applicationData) => apiCall('/jobs/apply', {
+        method: 'POST',
+        body: JSON.stringify(applicationData),
+    })
+};
+
+// Shop Products API
+export const shopAPI = {
+    getAll: (params = {}) => {
+        const query = new URLSearchParams({ ...params }).toString();
+        return apiCall(`/shop/products?${query}`);
+    },
+    getAdminAll: (params = {}) => {
+        const query = new URLSearchParams({ ...params }).toString();
+        return apiCall(`/shop/products/admin/all?${query}`);
+    },
+    getBySlug: (slug) => apiCall(`/shop/products/${slug}`),
+    create: (data) => apiCall('/shop/products', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id, data) => apiCall(`/shop/products/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    delete: (id) => apiCall(`/shop/products/${id}`, { method: 'DELETE' }),
+    updateImages: (id, images) => apiCall(`/shop/products/${id}/images`, { method: 'PUT', body: JSON.stringify({ images }) }),
+    togglePublish: (id) => apiCall(`/shop/products/${id}/publish`, { method: 'PATCH' }),
+    toggleFeatured: (id) => apiCall(`/shop/products/${id}/featured`, { method: 'PATCH' }),
+};
+
+// Shop Categories API
+export const categoriesAPI = {
+    getAll: () => apiCall('/shop/categories'),
+    create: (data) => apiCall('/shop/categories', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id, data) => apiCall(`/shop/categories/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    delete: (id) => apiCall(`/shop/categories/${id}`, { method: 'DELETE' }),
+};
+
+// Shop Orders API
+export const orderAPI = {
+    create: (data) => apiCall('/shop/orders', { method: 'POST', body: JSON.stringify(data) }),
+    getMyOrders: () => apiCall('/shop/orders/my-orders'),
+    getById: (id) => apiCall(`/shop/orders/${id}`),
+    getByNumber: (num) => apiCall(`/shop/orders/number/${num}`),
+    getAll: (params = {}) => {
+        const query = new URLSearchParams({ ...params }).toString();
+        return apiCall(`/shop/orders/admin/all?${query}`);
+    },
+    updateStatus: (id, status, notes) => apiCall(`/shop/orders/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status, notes }) }),
+};
+
+// Shop PayU API
+export const payuAPI = {
+    initiate: (orderId) => apiCall('/shop/payu/initiate', { method: 'POST', body: JSON.stringify({ order_id: orderId }) }),
+    getStatus: (txnid) => apiCall(`/shop/payu/status/${txnid}`),
+};
+
+
+// Shop Reviews API
+export const reviewAPI = {
+    getByProduct: (productId, params = {}) => {
+        const query = new URLSearchParams({ ...params }).toString();
+        return apiCall(`/shop/reviews/product/${productId}?${query}`);
+    },
+    create: (data) => apiCall('/shop/reviews', { method: 'POST', body: JSON.stringify(data) }),
+    getAll: (params = {}) => {
+        const query = new URLSearchParams({ ...params }).toString();
+        return apiCall(`/shop/reviews/admin/all?${query}`);
+    },
+    delete: (id) => apiCall(`/shop/reviews/${id}`, { method: 'DELETE' }),
+};
+
 export default {
     auth: authAPI,
     projects: projectsAPI,
     blog: blogAPI,
     inquiries: inquiriesAPI,
     upload: uploadAPI,
+    jobs: jobsAPI,
+    shop: shopAPI,
+    categories: categoriesAPI,
+    orders: orderAPI,
+    payu: payuAPI,
+    reviews: reviewAPI,
 };

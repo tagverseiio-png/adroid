@@ -211,14 +211,14 @@ const AIChatbot = ({ setPage = () => {} }) => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 20 }}
-                        className="fixed bottom-20 right-4 md:right-8 z-40 w-[92vw] sm:w-96 md:w-[28rem] max-w-[28rem] bg-white shadow-2xl border border-stone-100 rounded-xl overflow-hidden flex flex-col"
+                        className="fixed bottom-20 right-4 md:right-8 z-40 w-[92vw] sm:w-96 md:w-[28rem] max-w-[28rem] max-h-[75vh] bg-white shadow-2xl border border-stone-100 rounded-xl overflow-hidden flex flex-col"
                     >
                         <div className="px-5 py-4 border-b border-stone-100 bg-[#0a0a0a] text-white">
                             <span className="text-[10px] tracking-widest uppercase text-[#C5A059] font-sans font-bold">Concierge</span>
                             <p className="text-lg font-logo mt-1 uppercase tracking-tight">Adroit Assistant</p>
                             <p className="text-xs text-white/60 mt-1">Ask about our projects & designs</p>
                         </div>
-                        <div className="h-96 md:h-[32rem] bg-stone-50 p-4 overflow-y-auto space-y-4 flex flex-col" ref={messagesContainerRef}>
+                        <div className="flex-1 min-h-[300px] md:h-[32rem] overflow-y-auto bg-stone-50 p-4 space-y-4 flex flex-col" ref={messagesContainerRef}>
                             {messages.map((msg) => (
                                 <div key={msg.id} className="flex flex-col gap-2">
                                     {/* Text Message */}

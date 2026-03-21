@@ -207,7 +207,7 @@ export default function ProjectsPage() {
                     {project.category}
                   </span>
 
-                  <h3 className="text-xl font-logo uppercase tracking-wider mt-2 translate-y-4 group-hover:translate-y-0 transition duration-500 delay-100 text-white">
+                  <h3 className="text-xl font-logo uppercase tracking-wider mt-2 translate-y-4 group-hover:translate-y-0 transition duration-500 delay-100 text-white break-words whitespace-normal">
                     {project.title}
                   </h3>
 

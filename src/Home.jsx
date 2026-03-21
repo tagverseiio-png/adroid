@@ -167,9 +167,6 @@ const ServicesSection = () => {
                                                 {service.desc}
                                             </p>
                                         </div>
-                                        <div className="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center group-hover:border-[#C5A059] group-hover:bg-[#C5A059] group-hover:scale-110 transition-all duration-300 flex-shrink-0 mt-4 md:mt-0">
-                                            <ArrowRight className="w-3.5 h-3.5 text-white/50 group-hover:text-white" strokeWidth={2} />
-                                        </div>
                                     </div>
                                 </motion.div>
                             ))}
@@ -243,24 +240,24 @@ const FeaturedProjectsSection = ({ setPage }) => {
 
     return (
         <section ref={containerRef} className="py-20 md:py-40 bg-[#f4f4f4] overflow-hidden">
-            <div className="px-6 md:px-24 mb-12 md:mb-16 flex justify-between items-end gap-4">
-                <div>
+            <div className="px-6 md:px-24 mb-10 md:mb-16 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-6 sm:gap-4">
+                <div className="flex-1 min-w-0 pr-4">
                     <motion.span
                         initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-                        className="text-[10px] font-bold tracking-[0.3em] text-[#C5A059] uppercase"
+                        className="text-[10px] md:text-xs font-bold tracking-[0.3em] text-[#C5A059] uppercase"
                     >
                         Selected Works
                     </motion.span>
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}
-                        className="text-3xl md:text-5xl font-logo text-stone-900 uppercase tracking-widest mt-3 md:mt-4"
+                        className="text-3xl sm:text-4xl md:text-5xl font-logo text-stone-900 uppercase tracking-widest mt-3 md:mt-4 break-words"
                     >
                         Curated Excellence
                     </motion.h2>
                 </div>
                 <button
                     onClick={() => setPage('Projects')}
-                    className="flex items-center gap-2 text-[10px] md:text-xs tracking-widest uppercase hover:text-[#C5A059] transition-colors pb-1 md:pb-2 border-b border-transparent hover:border-[#C5A059] whitespace-nowrap"
+                    className="flex-shrink-0 flex items-center gap-2 text-[10px] md:text-xs font-bold tracking-widest uppercase hover:text-[#C5A059] transition-colors pb-1 md:pb-2 border-b border-transparent hover:border-[#C5A059] whitespace-nowrap self-start sm:self-auto"
                 >
                     View All <ArrowRight size={14} className="md:w-4 md:h-4 w-3 h-3" />
                 </button>
@@ -268,12 +265,18 @@ const FeaturedProjectsSection = ({ setPage }) => {
 
             {/* Horizontal Scroll - Native */}
             <div
-                className="flex gap-8 px-6 md:px-24 overflow-x-auto scrollbar-hide pb-10 snap-x"
+                className="flex items-start gap-6 md:gap-8 px-6 md:px-24 overflow-x-auto scrollbar-hide pb-10 snap-x snap-mandatory"
             >
                 {projects.map((proj, idx) => (
                     <motion.div
                         key={proj.id || idx}
-                        className="min-w-[85vw] md:min-w-[40vw] aspect-[16/10] relative group select-none snap-center"
+                        onClick={() => {
+                            if (proj.slug) {
+                                window.projectToLoad = proj.slug;
+                                setPage('Projects');
+                            }
+                        }}
+                        className="shrink-0 w-[85vw] md:w-[40vw] aspect-[16/10] relative group select-none snap-start cursor-pointer"
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true, margin: "-100px" }}

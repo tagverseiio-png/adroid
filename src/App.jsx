@@ -13,6 +13,14 @@ import AboutPage from './AboutPage';
 import ContactPage from './ContactPage';
 import CareersPage from './CareersPage';
 
+// --- Shop Imports ---
+import ShopPage from './shop/ShopPage';
+import ProductDetail from './shop/ProductDetail';
+import CheckoutPage from './shop/CheckoutPage';
+import CartDrawer from './shop/CartDrawer';
+import { useCart } from './context/CartContext';
+import { ShoppingBag } from 'lucide-react';
+
 // --- Blog Imports ---
 import BlogPage from './blog/BlogPage';
 import BlogPost from './blog/BlogPost';
@@ -24,6 +32,8 @@ import Dashboard from './admin/Dashboard';
 import ProjectManager from './admin/ProjectManager';
 import BlogManager from './admin/BlogManager';
 import Inquiries from './admin/Inquiries';
+import ProductManager from './admin/shop/ProductManager';
+import OrderManager from './admin/shop/OrderManager';
 
 // --- Component Imports ---
 import Preloader from './components/Preloader';
@@ -42,6 +52,11 @@ const App = () => {
 
   // Blog State
   const [selectedPost, setSelectedPost] = useState(null);
+
+  // Shop State
+  const [selectedShopProduct, setSelectedShopProduct] = useState(null);
+  const [isCheckout, setIsCheckout] = useState(false);
+  const { itemCount, setIsOpen: setCartOpen } = useCart();
 
   // Admin State
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
@@ -106,6 +121,8 @@ const App = () => {
         {adminPage === 'projects' && <ProjectManager />}
         {adminPage === 'blog' && <BlogManager />}
         {adminPage === 'inquiries' && <Inquiries />}
+        {adminPage === 'shop-products' && <ProductManager />}
+        {adminPage === 'shop-orders' && <OrderManager />}
       </AdminLayout>
     );
   }
@@ -202,6 +219,22 @@ const App = () => {
               Contact Us
             </button>
 
+            {/* Cart Button */}
+            {currentPage === 'Shop' && (
+              <button
+                onClick={() => setCartOpen(true)}
+                className="relative flex items-center justify-center w-10 h-10 text-white hover:text-[#C5A059] transition-colors duration-300 group mr-2 md:mr-4"
+                aria-label="Open cart"
+              >
+                <ShoppingBag className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" strokeWidth={1.5} />
+                {itemCount > 0 && (
+                  <span className="absolute top-1 right-0 bg-[#C5A059] text-black text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-[16px] text-center border-2 border-[#0a0a0a]">
+                    {itemCount}
+                  </span>
+                )}
+              </button>
+            )}
+
             {/* Menu Button - Icon Only */}
             <button
               onClick={() => setIsNavOpen(true)}
@@ -236,9 +269,18 @@ const App = () => {
         {currentPage === 'About Us' && <AboutPage />}
         {currentPage === 'Contact Us' && <ContactPage initialSection={contactSection} />}
         {currentPage === 'Careers' && <CareersPage />}
-        {currentPage === 'Shop' && <div className="min-h-screen pt-40 px-6 md:px-24 flex items-center justify-center text-center"><h1 className="text-3xl font-logo uppercase tracking-widest text-stone-400">Shop - Coming Soon</h1></div>}
+        {currentPage === 'Shop' && (
+          isCheckout ? (
+            <CheckoutPage onBack={() => setIsCheckout(false)} />
+          ) : selectedShopProduct ? (
+            <ProductDetail product={selectedShopProduct} onBack={() => setSelectedShopProduct(null)} />
+          ) : (
+            <ShopPage onViewProduct={setSelectedShopProduct} />
+          )
+        )}
       </main>
 
+      <CartDrawer onCheckout={() => { setIsCheckout(true); setCurrentPage('Shop'); }} />
       <AIChatbot setPage={setCurrentPage} />
       {currentPage !== 'Contact Us' && <Footer setPage={setCurrentPage} />}
     </div>

@@ -200,15 +200,19 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                                     Karnataka, India
                                                 </p>
                                             </div>
-                                            <div className="space-y-3 pt-6 border-t border-white/10">
-                                                <p className="flex items-center gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-[13px] md:text-sm tracking-wide break-all">
-                                                    <Mail size={14} className="text-[#C5A059] flex-shrink-0" />
-                                                    info@adroitdesigns.in, fm@adroitdesigns.in
-                                                </p>
-                                                <p className="flex items-center gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-[13px] md:text-sm tracking-wide">
-                                                    <Phone size={14} className="text-[#C5A059] flex-shrink-0" />
-                                                    (+91) 44-45561113, (+91) 9940064343
-                                                </p>
+                                            <div className="space-y-4 pt-6 border-t border-white/10">
+                                                <div className="flex items-start gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-[13px] md:text-sm tracking-wide break-all">
+                                                    <div className="w-5 flex justify-center mt-1">
+                                                        <Mail size={16} className="text-[#C5A059] flex-shrink-0" />
+                                                    </div>
+                                                    <span>info@adroitdesigns.in, fm@adroitdesigns.in</span>
+                                                </div>
+                                                <div className="flex items-start gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-[13px] md:text-sm tracking-wide">
+                                                    <div className="w-5 flex justify-center mt-1">
+                                                        <Phone size={16} className="text-[#C5A059] flex-shrink-0" />
+                                                    </div>
+                                                    <span>(+91) 44-45561113, (+91) 9940064343</span>
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="h-[300px] md:h-[500px] bg-white/5 border border-white/10 overflow-hidden relative group">

@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { useScroll, useTransform, motion } from "framer-motion";
 import { ArrowLeft, MapPin, Calendar, Maximize2, CheckCircle2 } from "lucide-react";
 import { normalizeAssetUrl } from "./services/api";
+import BackButton from "./components/BackButton";
 
 export default function ProjectDetailPage({ project, onBack }) {
     const containerRef = useRef(null);
@@ -34,18 +35,21 @@ export default function ProjectDetailPage({ project, onBack }) {
             transition={{ duration: 0.8 }}
             className="bg-[#0a0a0a] text-white min-h-screen relative z-50"
         >
-            {/* --- BACK BUTTON --- */}
+            {/* Mobile back button */}
+            <BackButton onBack={onBack} />
+
+            {/* --- DESKTOP BACK BUTTON --- */}
             <motion.button
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.8 }}
                 onClick={onBack}
-                className="fixed top-20 left-6 md:left-12 z-50 flex items-center gap-2 text-white/60 hover:text-[#C5A059] transition-colors group"
+                className="fixed top-20 left-6 md:left-12 z-50 hidden md:flex items-center gap-2 text-white/60 hover:text-[#C5A059] transition-colors group"
             >
                 <div className="p-2 border border-white/30 rounded-lg group-hover:border-[#C5A059] group-hover:bg-[#C5A059]/10 transition-all">
                     <ArrowLeft size={18} />
                 </div>
-                <span className="text-xs uppercase tracking-[0.15em] hidden md:block">Back</span>
+                <span className="text-xs uppercase tracking-[0.15em]">Back</span>
             </motion.button>
 
             {/* --- HERO SECTION --- */}
@@ -84,7 +88,7 @@ export default function ProjectDetailPage({ project, onBack }) {
                             initial={{ y: "100%" }}
                             animate={{ y: 0 }}
                             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
-                            className="text-3xl sm:text-5xl md:text-[6rem] font-logo uppercase max-w-5xl leading-[0.9] tracking-tighter"
+                            className="text-3xl sm:text-5xl md:text-[6rem] font-logo uppercase max-w-5xl leading-[1.1] tracking-tighter break-words whitespace-normal"
                         >
                             {project.title}
                         </motion.h1>

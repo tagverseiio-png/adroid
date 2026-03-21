@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { X, ArrowRight } from 'lucide-react';
-import { inquiriesAPI } from './services/api';
+import { jobsAPI } from './services/api';
+import BackButton from './components/BackButton';
 
 const Careers = () => {
-    const [selectedJob, setSelectedJob] = useState(null);
     const [formState, setFormState] = useState({ name: '', email: '', portfolio: '', message: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -17,19 +17,19 @@ const Careers = () => {
             const applicationData = {
                 name: formState.name,
                 email: formState.email,
-                subject: `Job Application: ${selectedJob.role}`,
+                subject: `Job Application: ${formState.role || formState.applicantType || 'General'}`,
                 message: `Portfolio: ${formState.portfolio}\n\nMessage: ${formState.message}`,
-                type: 'career',
+                type: formState.applicantType || 'career',
+                roles: formState.role || 'Unspecified',
                 portfolio_link: formState.portfolio,
             };
 
-            await inquiriesAPI.create(applicationData);
+            await jobsAPI.apply(applicationData);
 
             setIsSuccess(true);
             setFormState({ name: '', email: '', portfolio: '', message: '' });
             setTimeout(() => {
                 setIsSuccess(false);
-                setSelectedJob(null);
             }, 2000);
         } catch (error) {
             console.error('Submission error:', error);
@@ -41,6 +41,7 @@ const Careers = () => {
 
     return (
         <section className="py-40 px-6 md:px-24 bg-[#050505] text-white min-h-screen relative overflow-hidden">
+            <BackButton />
             {/* Background Ambience */}
             <div className="fixed inset-0 pointer-events-none z-0">
                 <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-[#C5A059]/5 rounded-full blur-[120px]" />

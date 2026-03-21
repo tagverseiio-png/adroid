@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutDashboard, FolderOpen, PenTool, MessageSquare, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FolderOpen, PenTool, MessageSquare, LogOut, Menu, X, ShoppingBag, Package, Tag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const MENU_ITEMS = [
@@ -7,6 +7,9 @@ const MENU_ITEMS = [
     { id: 'projects', label: 'Projects', icon: FolderOpen },
     { id: 'blog', label: 'Blog', icon: PenTool },
     { id: 'inquiries', label: 'Enquiries', icon: MessageSquare },
+    { id: 'divider-shop', label: null, icon: null }, // visual divider
+    { id: 'shop-products', label: 'Products', icon: ShoppingBag },
+    { id: 'shop-orders', label: 'Orders', icon: Package },
 ];
 
 const AdminLayout = ({ children, currentPage, onNavigate, onLogout }) => {
@@ -30,21 +33,22 @@ const AdminLayout = ({ children, currentPage, onNavigate, onLogout }) => {
                             <span className="text-black font-bold text-xs">A</span>
                         </div>
                         <span className="font-logo tracking-[0.2em] text-white text-sm hidden sm:block">
-                            ADROIT <span className="text-[#C5A059]">STUDIO</span>
+                            ADROIT
                         </span>
                     </div>
 
                     {/* Desktop Nav */}
                     <nav className="hidden md:flex items-center gap-1">
                         {MENU_ITEMS.map((item) => {
+                            if (!item.label) return <div key={item.id} className="w-px h-5 bg-white/10 mx-1" />;
                             const active = currentPage === item.id;
                             return (
                                 <button
                                     key={item.id}
                                     onClick={() => handleNav(item.id)}
                                     className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all duration-200 ${active
-                                            ? 'text-black bg-[#C5A059]'
-                                            : 'text-white/50 hover:text-white hover:bg-white/5'
+                                        ? 'text-black bg-[#C5A059]'
+                                        : 'text-white/50 hover:text-white hover:bg-white/5'
                                         }`}
                                 >
                                     <item.icon size={14} />
@@ -90,19 +94,22 @@ const AdminLayout = ({ children, currentPage, onNavigate, onLogout }) => {
                             transition={{ duration: 0.2 }}
                             className="md:hidden border-t border-white/8 bg-[#080808] px-4 pb-4 pt-3 space-y-1"
                         >
-                            {MENU_ITEMS.map((item) => (
-                                <button
-                                    key={item.id}
-                                    onClick={() => handleNav(item.id)}
-                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold uppercase tracking-wider transition-all ${currentPage === item.id
+                            {MENU_ITEMS.map((item) => {
+                                if (!item.label) return <div key={item.id} className="border-t border-white/8 my-1" />;
+                                return (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => handleNav(item.id)}
+                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold uppercase tracking-wider transition-all ${currentPage === item.id
                                             ? 'bg-[#C5A059] text-black'
                                             : 'text-white/50 hover:text-white hover:bg-white/5'
-                                        }`}
-                                >
-                                    <item.icon size={16} />
-                                    {item.label}
-                                </button>
-                            ))}
+                                            }`}
+                                    >
+                                        <item.icon size={16} />
+                                        {item.label}
+                                    </button>
+                                );
+                            })}
                             <div className="border-t border-white/8 pt-3 mt-1">
                                 <button
                                     onClick={onLogout}
