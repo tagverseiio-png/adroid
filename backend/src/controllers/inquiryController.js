@@ -1,6 +1,5 @@
 const OdooService = require('../services/odooService');
 const { successResponse, errorResponse } = require('../utils/response');
-const emailService = require('../services/emailService');
 const { getOdooClient } = require('../config/odoo');
 const { query } = require('../config/database');
 
@@ -101,31 +100,7 @@ exports.createInquiry = async (req, res) => {
         throw new Error('Could not save inquiry. Please try again.');
       }
     }
-
-    // Send confirmation emails (async - non-blocking, won't cause errors if email fails)
-    // These run in background and don't affect the response
-    Promise.all([
-      emailService.sendInquiryNotification?.({
-        id: inquiryId,
-        name,
-        email,
-        subject,
-        message
-      }).catch(err => {
-        console.error('Email notification error:', err);
-      }),
-      emailService.sendAutoReply?.({
-        name,
-        email,
-        subject,
-        message
-      }).catch(err => {
-        console.error('Auto-reply error:', err);
-      })
-    ]).catch(() => {
-      // Silently ignore email errors - they shouldn't fail the inquiry submission
-    });
-
+    
     successResponse(res, {
       id: inquiryId,
       name,
