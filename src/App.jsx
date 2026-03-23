@@ -1,46 +1,53 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'framer-motion';
-import { Menu, ChevronDown } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import Lenis from 'lenis';
 
-// --- Page Imports ---
-import Home from './Home';
-import ProjectsPage from './ProjectsPage';
-import ServicesPage from './ServicesPage';
-import ServiceDetailPage from './ServiceDetailPage';
-import AboutPage from './AboutPage';
-import ContactPage from './ContactPage';
-import CareersPage from './CareersPage';
+// --- Lazy Page Imports (Code Splitting) ---
+const Home = React.lazy(() => import('./Home'));
+const ProjectsPage = React.lazy(() => import('./ProjectsPage'));
+const ServicesPage = React.lazy(() => import('./ServicesPage'));
+const ServiceDetailPage = React.lazy(() => import('./ServiceDetailPage'));
+const AboutPage = React.lazy(() => import('./AboutPage'));
+const ContactPage = React.lazy(() => import('./ContactPage'));
+const CareersPage = React.lazy(() => import('./CareersPage'));
 
-// --- Shop Imports ---
-import ShopPage from './shop/ShopPage';
-import ProductDetail from './shop/ProductDetail';
-import CheckoutPage from './shop/CheckoutPage';
+// --- Lazy Shop Imports ---
+const ShopPage = React.lazy(() => import('./shop/ShopPage'));
+const ProductDetail = React.lazy(() => import('./shop/ProductDetail'));
+const CheckoutPage = React.lazy(() => import('./shop/CheckoutPage'));
 import CartDrawer from './shop/CartDrawer';
 import { useCart } from './context/CartContext';
 import { ShoppingBag } from 'lucide-react';
 
-// --- Blog Imports ---
-import BlogPage from './blog/BlogPage';
-import BlogPost from './blog/BlogPost';
+// --- Lazy Blog Imports ---
+const BlogPage = React.lazy(() => import('./blog/BlogPage'));
+const BlogPost = React.lazy(() => import('./blog/BlogPost'));
 
-// --- Admin Imports ---
-import Login from './admin/Login';
-import AdminLayout from './admin/AdminLayout';
-import Dashboard from './admin/Dashboard';
-import ProjectManager from './admin/ProjectManager';
-import BlogManager from './admin/BlogManager';
-import Inquiries from './admin/Inquiries';
-import ProductManager from './admin/shop/ProductManager';
-import OrderManager from './admin/shop/OrderManager';
+// --- Lazy Admin Imports ---
+const Login = React.lazy(() => import('./admin/Login'));
+const AdminLayout = React.lazy(() => import('./admin/AdminLayout'));
+const Dashboard = React.lazy(() => import('./admin/Dashboard'));
+const ProjectManager = React.lazy(() => import('./admin/ProjectManager'));
+const BlogManager = React.lazy(() => import('./admin/BlogManager'));
+const Inquiries = React.lazy(() => import('./admin/Inquiries'));
+const ProductManager = React.lazy(() => import('./admin/shop/ProductManager'));
+const OrderManager = React.lazy(() => import('./admin/shop/OrderManager'));
 
-// --- Component Imports ---
+// --- Always-loaded Component Imports ---
 import Preloader from './components/Preloader';
 import CustomCursor from './components/CustomCursor';
 import Navigation from './components/Navigation';
-import AIChatbot from './components/AIChatbot';
+const AIChatbot = React.lazy(() => import('./components/AIChatbot'));
 import Footer from './components/Footer';
+
+// --- Suspense Fallback ---
+const PageLoader = () => (
+  <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+    <div className="w-8 h-8 border-2 border-[#C5A059] border-t-transparent rounded-full animate-spin" />
+  </div>
+);
 
 // --- Main App Component ---
 const App = () => {
@@ -68,6 +75,10 @@ const App = () => {
   }, [currentPage, adminPage, selectedPost]);
 
   useEffect(() => {
+    // Skip smooth scroll on touch devices for better performance
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (isTouch) return;
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -79,14 +90,15 @@ const App = () => {
       touchMultiplier: 2,
     });
 
+    let rafId;
     function raf(time) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
-
-    requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
     return () => {
+      cancelAnimationFrame(rafId);
       lenis.destroy();
     };
   }, []);
@@ -109,21 +121,23 @@ const App = () => {
   // Handle Admin Routing
   if (currentPage === 'Admin') {
     if (!isAdminLoggedIn) {
-      return <Login onLogin={setIsAdminLoggedIn} />;
+      return <Suspense fallback={<PageLoader />}><Login onLogin={setIsAdminLoggedIn} /></Suspense>;
     }
     return (
-      <AdminLayout
-        currentPage={adminPage}
-        onNavigate={setAdminPage}
-        onLogout={() => { setIsAdminLoggedIn(false); }}
-      >
-        {adminPage === 'dashboard' && <Dashboard onNavigate={setAdminPage} />}
-        {adminPage === 'projects' && <ProjectManager />}
-        {adminPage === 'blog' && <BlogManager />}
-        {adminPage === 'inquiries' && <Inquiries />}
-        {adminPage === 'shop-products' && <ProductManager />}
-        {adminPage === 'shop-orders' && <OrderManager />}
-      </AdminLayout>
+      <Suspense fallback={<PageLoader />}>
+        <AdminLayout
+          currentPage={adminPage}
+          onNavigate={setAdminPage}
+          onLogout={() => { setIsAdminLoggedIn(false); }}
+        >
+          {adminPage === 'dashboard' && <Dashboard onNavigate={setAdminPage} />}
+          {adminPage === 'projects' && <ProjectManager />}
+          {adminPage === 'blog' && <BlogManager />}
+          {adminPage === 'inquiries' && <Inquiries />}
+          {adminPage === 'shop-products' && <ProductManager />}
+          {adminPage === 'shop-orders' && <OrderManager />}
+        </AdminLayout>
+      </Suspense>
     );
   }
 
@@ -247,39 +261,41 @@ const App = () => {
 
       <Navigation isOpen={isNavOpen} setIsOpen={setIsNavOpen} setPage={setCurrentPage} />
 
-      <main>
-        {currentPage === 'Home' && <Home setPage={setCurrentPage} />}
-        {currentPage === 'Projects' && <ProjectsPage />}
-        {currentPage === 'Services' && (
-          selectedService ? (
-            <ServiceDetailPage service={selectedService} onBack={() => setSelectedService(null)} />
-          ) : (
-            <ServicesPage onServiceClick={setSelectedService} />
-          )
-        )}
-        {currentPage === 'Insights' && (
-          selectedPost ? (
-            <BlogPost post={selectedPost} onBack={() => setSelectedPost(null)} />
-          ) : (
-            <BlogPage onReadMore={(post) => setSelectedPost(post)} />
-          )
-        )}
-        {currentPage === 'About Us' && <AboutPage />}
-        {currentPage === 'Contact Us' && <ContactPage initialSection={contactSection} />}
-        {currentPage === 'Careers' && <CareersPage />}
-        {currentPage === 'Shop' && (
-          isCheckout ? (
-            <CheckoutPage onBack={() => setIsCheckout(false)} />
-          ) : selectedShopProduct ? (
-            <ProductDetail product={selectedShopProduct} onBack={() => setSelectedShopProduct(null)} />
-          ) : (
-            <ShopPage onViewProduct={setSelectedShopProduct} />
-          )
-        )}
-      </main>
+      <Suspense fallback={<PageLoader />}>
+        <main>
+          {currentPage === 'Home' && <Home setPage={setCurrentPage} />}
+          {currentPage === 'Projects' && <ProjectsPage />}
+          {currentPage === 'Services' && (
+            selectedService ? (
+              <ServiceDetailPage service={selectedService} onBack={() => setSelectedService(null)} />
+            ) : (
+              <ServicesPage onServiceClick={setSelectedService} />
+            )
+          )}
+          {currentPage === 'Insights' && (
+            selectedPost ? (
+              <BlogPost post={selectedPost} onBack={() => setSelectedPost(null)} />
+            ) : (
+              <BlogPage onReadMore={(post) => setSelectedPost(post)} />
+            )
+          )}
+          {currentPage === 'About Us' && <AboutPage />}
+          {currentPage === 'Contact Us' && <ContactPage initialSection={contactSection} />}
+          {currentPage === 'Careers' && <CareersPage />}
+          {currentPage === 'Shop' && (
+            isCheckout ? (
+              <CheckoutPage onBack={() => setIsCheckout(false)} />
+            ) : selectedShopProduct ? (
+              <ProductDetail product={selectedShopProduct} onBack={() => setSelectedShopProduct(null)} />
+            ) : (
+              <ShopPage onViewProduct={setSelectedShopProduct} />
+            )
+          )}
+        </main>
+      </Suspense>
 
       <CartDrawer onCheckout={() => { setIsCheckout(true); setCurrentPage('Shop'); }} />
-      <AIChatbot setPage={setCurrentPage} />
+      <Suspense fallback={null}><AIChatbot setPage={setCurrentPage} /></Suspense>
       {currentPage !== 'Contact Us' && <Footer setPage={setCurrentPage} />}
     </div>
   );

@@ -29,8 +29,8 @@ const Hero = () => {
 
     // Parallax Effect for Text
     const { scrollY } = useScroll();
-    const y1 = useTransform(scrollY, [0, 500], [0, 200]);
-    const y2 = useTransform(scrollY, [0, 500], [0, -150]);
+    const y1 = useTransform(scrollY, [0, 500], [0, 80]);
+    const y2 = useTransform(scrollY, [0, 500], [0, -60]);
 
     return (
         <div className="relative h-screen w-full overflow-hidden bg-[#050505] pt-20">
@@ -49,7 +49,9 @@ const Hero = () => {
                     loop
                     muted
                     playsInline
+                    preload="metadata"
                     className="w-full h-full object-cover"
+                    style={{ willChange: 'transform' }}
                 >
                     <source src={heroVideo} type="video/mp4" />
                 </video>

@@ -26,8 +26,9 @@ const AIChatbot = ({ setPage = () => {} }) => {
         scrollToBottom();
     }, [messages, isLoading]);
 
-    // Fetch projects once when component mounts
+    // Fetch projects only when chatbot is opened (deferred)
     useEffect(() => {
+        if (!isOpen || projects.length > 0) return;
         const fetchProjects = async () => {
             try {
                 const response = await projectsAPI.getFeatured(4);
@@ -36,7 +37,6 @@ const AIChatbot = ({ setPage = () => {} }) => {
                 }
             } catch (error) {
                 console.error('Failed to fetch projects:', error);
-                // Fallback for UI testing
                 setProjects([
                     { id: 1, title: "Sample Villa", location: "Chennai", category: "Architecture", slug: "sample-villa" },
                     { id: 2, title: "Office Space", location: "Dubai", category: "Interior", slug: "office-space" }
@@ -44,7 +44,7 @@ const AIChatbot = ({ setPage = () => {} }) => {
             }
         };
         fetchProjects();
-    }, []);
+    }, [isOpen]);
 
     const canSend = useMemo(() => inputValue.trim().length > 0 && !isLoading, [inputValue, isLoading]);
 
