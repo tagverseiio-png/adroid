@@ -201,10 +201,16 @@ export const uploadAPI = {
 
 // Jobs API
 export const jobsAPI = {
-    apply: (applicationData) => apiCall('/jobs/apply', {
-        method: 'POST',
-        body: JSON.stringify(applicationData),
-    })
+    apply: async (formData) => {
+        const response = await fetch(`${API_BASE_URL}/jobs/apply`, {
+            method: 'POST',
+            body: formData, // Browser will set correct multipart headers
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Application failed');
+        return data;
+    },
+    deleteResume: (id) => apiCall(`/jobs/resume/${id}`, { method: 'DELETE' }),
 };
 
 // Shop Products API
@@ -245,6 +251,7 @@ export const orderAPI = {
         return apiCall(`/shop/orders/admin/all?${query}`);
     },
     updateStatus: (id, status, notes) => apiCall(`/shop/orders/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status, notes }) }),
+    createShipment: (id) => apiCall(`/shop/orders/${id}/create-shipment`, { method: 'POST' }),
 };
 
 // Shop PayU API

@@ -184,7 +184,7 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12">
                                         <div className="space-y-6">
                                             <div>
-                                                <p className="text-[#C5A059] text-[10px] uppercase tracking-[0.3em] mb-4 font-bold">Studio Location - Chennai</p>
+                                                <p className="text-[#C5A059] text-[10px] uppercase tracking-[0.3em] mb-4 font-bold">Studio Location - Corporate Office (Chennai)</p>
                                                 <p className="font-sans text-base md:text-lg text-white/80 leading-relaxed font-light">
                                                     No 8, MCN Nagar Extension,<br />
                                                     Thoraipakkam, Chennai - 97.<br />
@@ -192,7 +192,7 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                                 </p>
                                             </div>
                                             <div>
-                                                <p className="text-[#C5A059] text-[10px] uppercase tracking-[0.3em] mb-4 font-bold">Studio Location - Bengaluru</p>
+                                                <p className="text-[#C5A059] text-[10px] uppercase tracking-[0.3em] mb-4 font-bold">Studio Location - Branch Office (Bengaluru)</p>
                                                 <p className="font-sans text-base md:text-lg text-white/80 leading-relaxed font-light">
                                                     SFD, 3rd Floor, P DOT G EMERALD, 16th B Cross Rd,<br />
                                                     Karuna Nagar, Electronics City Phase 1,<br />
@@ -248,6 +248,16 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                             <input type="text" name="phone" placeholder="Business Phone" required value={formState.phone} className={inputClasses} onChange={handleChange} />
                                         </div>
                                         <input type="text" name="subject" placeholder="Category of Service / Products" value={formState.subject} className={inputClasses} onChange={handleChange} />
+                                        
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] uppercase tracking-widest text-white/40">Upload Profile / Portfolio (PDF/DOCX)</p>
+                                            <input 
+                                                type="file" 
+                                                name="vendor_document" 
+                                                className="w-full text-xs text-white/50 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-[10px] file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20" 
+                                                onChange={(e) => setFormState({ ...formState, vendor_document: e.target.files[0] })}
+                                            />
+                                        </div>
 
                                         <button type="submit" disabled={isSubmitting} className="group relative px-8 md:px-10 py-4 md:py-5 bg-white text-black text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase transition-all duration-300 hover:bg-[#C5A059] hover:text-white">
                                             <span className="flex items-center gap-3">

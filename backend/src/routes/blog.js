@@ -7,6 +7,8 @@ const { validateBlog } = require('../middleware/validator');
 // Public routes
 router.get('/', blogController.getAllPosts);
 router.get('/:slug', blogController.getPost);
+router.get('/:slug/comments', blogController.getComments);
+router.post('/:slug/comments', blogController.addComment);
 
 // Protected routes (admin only)
 router.post('/', auth, validateBlog, blogController.createPost);

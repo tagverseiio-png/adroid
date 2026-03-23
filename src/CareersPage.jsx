@@ -5,35 +5,48 @@ import { jobsAPI } from './services/api';
 import BackButton from './components/BackButton';
 
 const Careers = () => {
-    const [formState, setFormState] = useState({ name: '', email: '', portfolio: '', message: '' });
+    const [formState, setFormState] = useState({ 
+        name: '', 
+        email: '', 
+        phone: '', 
+        applicantType: '', 
+        role: '', 
+        portfolio: '', 
+        message: '',
+        resume: null
+    });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
+        
+        const formData = new FormData();
+        formData.append('name', formState.name);
+        formData.append('email', formState.email);
+        formData.append('phone', formState.phone);
+        formData.append('type', formState.applicantType);
+        formData.append('roles', formState.role);
+        formData.append('portfolio_link', formState.portfolio);
+        formData.append('message', formState.message);
+        if (formState.resume) {
+            formData.append('resume', formState.resume);
+        }
 
         try {
-            const applicationData = {
-                name: formState.name,
-                email: formState.email,
-                subject: `Job Application: ${formState.role || formState.applicantType || 'General'}`,
-                message: `Portfolio: ${formState.portfolio}\n\nMessage: ${formState.message}`,
-                type: formState.applicantType || 'career',
-                roles: formState.role || 'Unspecified',
-                portfolio_link: formState.portfolio,
-            };
-
-            await jobsAPI.apply(applicationData);
-
+            await jobsAPI.apply(formData);
             setIsSuccess(true);
-            setFormState({ name: '', email: '', portfolio: '', message: '' });
-            setTimeout(() => {
-                setIsSuccess(false);
-            }, 2000);
+            setFormState({ 
+                name: '', email: '', phone: '', 
+                applicantType: '', role: '', 
+                portfolio: '', message: '', 
+                resume: null 
+            });
+            setTimeout(() => setIsSuccess(false), 3000);
         } catch (error) {
             console.error('Submission error:', error);
-            alert('Failed to submit application. Please try again.');
+            alert(error.message || 'Failed to submit application. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
@@ -102,7 +115,7 @@ const Careers = () => {
                             <input
                                 placeholder="Full Name"
                                 required
-                                className="w-full bg-transparent border border-white/20 p-4 text-sm focus:outline-none focus:border-[#C5A059] text-white placeholder-white/40 tracking-wide"
+                                className="w-full bg-transparent border border-white/20 p-4 text-sm focus:outline-none focus:border-[#C5A059] text-white placeholder-white/40 tracking-wide font-sans"
                                 value={formState.name}
                                 onChange={(e) => setFormState({ ...formState, name: e.target.value })}
                             />
@@ -110,10 +123,30 @@ const Careers = () => {
                                 type="email"
                                 placeholder="Email Address"
                                 required
-                                className="w-full bg-transparent border border-white/20 p-4 text-sm focus:outline-none focus:border-[#C5A059] text-white placeholder-white/40 tracking-wide"
+                                className="w-full bg-transparent border border-white/20 p-4 text-sm focus:outline-none focus:border-[#C5A059] text-white placeholder-white/40 tracking-wide font-sans"
                                 value={formState.email}
                                 onChange={(e) => setFormState({ ...formState, email: e.target.value })}
                             />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <input
+                                placeholder="Phone Number"
+                                required
+                                className="w-full bg-transparent border border-white/20 p-4 text-sm focus:outline-none focus:border-[#C5A059] text-white placeholder-white/40 tracking-wide font-sans"
+                                value={formState.phone}
+                                onChange={(e) => setFormState({ ...formState, phone: e.target.value })}
+                            />
+                            <div className="space-y-1 relative">
+                                <span className="absolute -top-2 left-3 bg-[#050505] px-2 text-[10px] text-[#C5A059] uppercase tracking-widest z-10">Upload Resume</span>
+                                <input
+                                    type="file"
+                                    accept=".pdf,.doc,.docx"
+                                    required={!formState.portfolio}
+                                    className="w-full bg-transparent border border-white/20 p-[13px] text-xs focus:outline-none focus:border-[#C5A059] text-white/50 file:mr-4 file:py-1 file:px-2 file:border-0 file:text-[10px] file:bg-white/10 file:text-white"
+                                    onChange={(e) => setFormState({ ...formState, resume: e.target.files[0] })}
+                                />
+                            </div>
                         </div>
 
                         <input

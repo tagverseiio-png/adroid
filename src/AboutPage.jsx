@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { useScroll, useTransform, useInView, motion } from "framer-motion";
-import { Quote, Star } from "lucide-react";
+import { Quote, Star, Layout, Hammer, Building2, Construction, Zap, ClipboardCheck, ShieldCheck, Leaf } from "lucide-react";
 
 const fadeUp = {
     hidden: { opacity: 0, y: 40 },
@@ -19,43 +19,51 @@ const stagger = {
 const CORE_COMPETENCIES = [
     {
         title: "Turnkey Interior Solutions",
-        description: "Complete end-to-end execution for Corporate, IT/ITES, Commercial, Healthcare, Retail & Residential interiors."
+        description: "Complete end-to-end execution for Corporate, IT/ITES, Commercial, Healthcare, Retail & Residential interiors.",
+        icon: "Layout"
     },
     {
         title: "Design–Build Expertise",
-        description: "Integrated approach combining architectural design, interior design, engineering & execution under one roof."
+        description: "Integrated approach combining architectural design, interior design, engineering & execution under one roof.",
+        icon: "Hammer"
     },
     {
         title: "Corporate & Commercial Office Specialists",
-        description: "Strong capability in large-scale office fit-outs, workspace planning, and functional corporate environments."
+        description: "Strong capability in large-scale office fit-outs, workspace planning, and functional corporate environments.",
+        icon: "Building2"
     },
     {
         title: "Civil Construction & Structural Works",
-        description: "Execution of commercial buildings and interior civil works with quality control and timeline discipline."
+        description: "Execution of commercial buildings and interior civil works with quality control and timeline discipline.",
+        icon: "Construction"
     },
     {
         title: "MEP & Technical Integration",
-        description: "Efficient coordination of HVAC, Electrical, Plumbing, Fire & ELV systems for seamless project delivery."
+        description: "Efficient coordination of HVAC, Electrical, Plumbing, Fire & ELV systems for seamless project delivery.",
+        icon: "Zap"
     },
     {
         title: "Project Management Excellence",
-        description: "Structured planning, cost control, vendor coordination, and milestone-driven execution."
+        description: "Structured planning, cost control, vendor coordination, and milestone-driven execution.",
+        icon: "ClipboardCheck"
     },
     {
         title: "Quality & Detail-Oriented Execution",
-        description: "Focus on precision, finishing standards, and compliance with industry best practices."
+        description: "Focus on precision, finishing standards, and compliance with industry best practices.",
+        icon: "ShieldCheck"
     },
     {
         title: "Sustainable & Efficient Design Solutions",
-        description: "Space optimization, energy efficiency, and long-term value engineering."
+        description: "Space optimization, energy efficiency, and long-term value engineering.",
+        icon: "Leaf"
     }
 ];
 
 const ACCOMPLISHMENTS = [
-    { number: "19+", label: "Years of Excellence" },
+    { number: "20+", label: "Years of Excellence" },
     { number: "500+", label: "Projects Delivered" },
     { number: "3M+", label: "Sq.Ft Designed" },
-    { number: "100%", label: "Client Satisfaction" },
+    { number: "GLOBAL", label: "Clientele" },
 ];
 
 const REVIEWS = [
@@ -130,7 +138,7 @@ export default function AboutPage() {
                     <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">Introduction</span>
                     <h2 className="text-3xl md:text-5xl font-logo text-white uppercase tracking-widest mb-10">Who We Are</h2>
                     <p className="text-stone-400 text-base md:text-xl leading-relaxed max-w-4xl mx-auto font-light">
-                        <strong>Adroit Design India Private Limited</strong> is a premier architecture and design firm dedicated to creating enduring, innovative, and purposeful spaces. We merge aesthetic elegance with functional brilliance, setting new benchmarks in corporate, commercial, and residential architecture. Our commitment to excellence drives us to transform visions into tangible masterpieces.
+                        <strong>Adroit Design India Private Limited</strong> is a premier Architecture & Interior Design Firm dedicated to creating enduring, innovative, and purposeful spaces. We merge aesthetic elegance with functional brilliance, setting new benchmarks in corporate, commercial, and residential architecture. Our commitment to excellence drives us to transform visions into tangible masterpieces.
                     </p>
                 </Reveal>
             </section>
@@ -182,6 +190,16 @@ export default function AboutPage() {
                                 whileHover={{ y: -5 }}
                                 className="p-8 border border-white/10 hover:bg-[#C5A059] hover:border-[#C5A059] transition-all duration-300 group flex flex-col justify-start text-left"
                             >
+                                <div className="mb-6 text-[#C5A059] group-hover:text-black transition-colors">
+                                    {item.icon === "Layout" && <Layout size={32} strokeWidth={1.5} />}
+                                    {item.icon === "Hammer" && <Hammer size={32} strokeWidth={1.5} />}
+                                    {item.icon === "Building2" && <Building2 size={32} strokeWidth={1.5} />}
+                                    {item.icon === "Construction" && <Construction size={32} strokeWidth={1.5} />}
+                                    {item.icon === "Zap" && <Zap size={32} strokeWidth={1.5} />}
+                                    {item.icon === "ClipboardCheck" && <ClipboardCheck size={32} strokeWidth={1.5} />}
+                                    {item.icon === "ShieldCheck" && <ShieldCheck size={32} strokeWidth={1.5} />}
+                                    {item.icon === "Leaf" && <Leaf size={32} strokeWidth={1.5} />}
+                                </div>
                                 <h3 className="text-lg md:text-xl font-logo uppercase tracking-wider group-hover:text-black text-white mb-4">
                                     {item.title}
                                 </h3>

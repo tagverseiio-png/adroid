@@ -197,3 +197,43 @@ exports.togglePublish = async (req, res) => {
     errorResponse(res, 'Failed to update publish status', 500);
   }
 };
+/**
+ * Get comments for a post
+ */
+exports.getComments = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const result = await query(
+      "SELECT id, name, message, created_at FROM inquiries WHERE type = 'comment' AND subject = $1 AND status = 'Published' ORDER BY created_at DESC",
+      [slug]
+    );
+    successResponse(res, result.rows);
+  } catch (error) {
+    console.error('Get comments error:', error);
+    errorResponse(res, 'Failed to fetch comments', 500);
+  }
+};
+
+/**
+ * Add a comment to a post
+ */
+exports.addComment = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const { name, email, message } = req.body;
+
+    if (!name || !email || !message) {
+      return errorResponse(res, 'Missing required fields', 400);
+    }
+
+    await query(
+      "INSERT INTO inquiries (name, email, message, subject, type, status) VALUES ($1, $2, $3, $4, 'comment', 'New')",
+      [name, email, message, slug]
+    );
+
+    successResponse(res, null, 'Comment submitted for review', 201);
+  } catch (error) {
+    console.error('Add comment error:', error);
+    errorResponse(res, 'Failed to submit comment', 500);
+  }
+};

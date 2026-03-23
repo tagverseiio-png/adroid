@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Mail, Phone, Calendar, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { inquiriesAPI } from '../services/api';
+import { Mail, Phone, Calendar, Trash2, ChevronLeft, ChevronRight, Download, FileX } from 'lucide-react';
+import { inquiriesAPI, jobsAPI, normalizeAssetUrl } from '../services/api';
 
 const Inquiries = () => {
     const [inquiries, setInquiries] = useState([]);
@@ -38,17 +37,30 @@ const Inquiries = () => {
     };
 
     const deleteInquiry = async (id) => {
-        if (window.confirm('Are you sure you want to delete this inquiry?')) {
+        if (window.confirm('Are you sure you want to delete this inquiry record?')) {
             try {
                 await inquiriesAPI.delete(id);
                 setInquiries(inquiries.filter(item => item.id !== id));
-                // Reset to first page if current page becomes empty
                 const maxPages = Math.ceil((inquiries.length - 1) / itemsPerPage);
                 if (currentPage > maxPages && maxPages > 0) {
                     setCurrentPage(maxPages);
                 }
             } catch (error) {
                 console.error('Failed to delete inquiry:', error);
+            }
+        }
+    };
+
+    const deleteResumeFile = async (id) => {
+        if (window.confirm('Are you sure you want to delete the file from storage? This will only remove the file, not the application record.')) {
+            try {
+                await jobsAPI.deleteResume(id);
+                setInquiries(inquiries.map(item =>
+                    item.id === id ? { ...item, portfolio_link: '[File Deleted to Save Space]' } : item
+                ));
+            } catch (error) {
+                console.error('Failed to delete resume file:', error);
+                alert('Failed to delete file.');
             }
         }
     };
@@ -85,7 +97,48 @@ const Inquiries = () => {
                                         <Calendar size={12} /> {new Date(inquiry.created_at).toLocaleDateString()}
                                     </span>
                                 </div>
-                                <p className="text-white/70 text-sm bg-black/20 p-4 rounded mb-4 font-light">"{inquiry.message}"</p>
+                                <p className="text-white/70 text-sm bg-black/20 p-4 rounded mb-4 font-light whitespace-pre-line">"{inquiry.message}"</p>
+
+                                {inquiry.portfolio_link && (
+                                    <div className="mb-4 flex items-center gap-4 p-3 bg-white/5 border border-white/5 rounded-lg">
+                                        <div className="flex-1 overflow-hidden">
+                                            <p className="text-[10px] uppercase tracking-widest text-[#C5A059] mb-1">Attachment / Portfolio</p>
+                                            <p className="text-xs text-white/60 truncate">{inquiry.portfolio_link}</p>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            {inquiry.portfolio_link.startsWith('uploads/') ? (
+                                                <>
+                                                    <a 
+                                                        href={normalizeAssetUrl(inquiry.portfolio_link)} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center gap-2 px-3 py-1.5 bg-[#C5A059] text-black text-[10px] font-bold uppercase rounded hover:bg-white transition-colors"
+                                                    >
+                                                        <Download size={12} /> Download
+                                                    </a>
+                                                    <button 
+                                                        onClick={() => deleteResumeFile(inquiry.id)}
+                                                        className="p-1.5 text-red-400 hover:bg-red-400/10 rounded transition-colors"
+                                                        title="Delete File Only"
+                                                    >
+                                                        <FileX size={16} />
+                                                    </button>
+                                                </>
+                                            ) : (
+                                                inquiry.portfolio_link !== '[File Deleted to Save Space]' && (
+                                                    <a 
+                                                        href={inquiry.portfolio_link} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center gap-2 px-3 py-1.5 border border-[#C5A059]/30 text-[#C5A059] text-[10px] font-bold uppercase rounded hover:bg-[#C5A059] hover:text-black transition-colors"
+                                                    >
+                                                        View Link
+                                                    </a>
+                                                )
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div className="flex gap-6 border-t border-white/5 pt-4">
                                     <a href={`mailto:${inquiry.email}`} className="flex items-center gap-2 text-white/40 hover:text-white text-xs transition-colors">

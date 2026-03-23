@@ -8,7 +8,16 @@ const BlogManager = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isCreating, setIsCreating] = useState(false);
     const [editingId, setEditingId] = useState(null);
-    const [formData, setFormData] = useState({ title: '', category: '', author: '', excerpt: '', content: '', published: true });
+    const [formData, setFormData] = useState({ 
+        title: '', 
+        category: 'Blog', 
+        author: '', 
+        excerpt: '', 
+        content: '', 
+        published: true,
+        video_url: '',
+        event_date: ''
+    });
     const [isUploading, setIsUploading] = useState(false);
 
     const handleImageUpload = async (e) => {
@@ -82,12 +91,20 @@ const BlogManager = () => {
                     setFormData({ title: '', category: '', author: '', excerpt: '', content: '', published: true });
                 }
             } else {
-                // Create new post
-                const response = await blogAPI.create(formData);
+                const postData = {
+                    ...formData,
+                    // Store video_url and event_date in content using a structured format if needed,
+                    // or just send them if the backend supports it (risky if not migrated)
+                    // We'll store them in content as a JSON header if it's not a standard blog
+                    content: formData.category !== 'Blog' 
+                        ? JSON.stringify({ video_url: formData.video_url, event_date: formData.event_date, text: formData.content })
+                        : formData.content
+                };
+                const response = await blogAPI.create(postData);
                 if (response.success) {
                     setPosts([response.data, ...posts]);
                     setIsCreating(false);
-                    setFormData({ title: '', category: '', author: '', excerpt: '', content: '', published: true });
+                    setFormData({ title: '', category: 'Blog', author: '', excerpt: '', content: '', published: true, video_url: '', event_date: '' });
                 }
             }
         } catch (error) {
@@ -144,24 +161,40 @@ const BlogManager = () => {
                             value={formData.title}
                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         />
-                        <input
-                            placeholder="Category"
-                            className="bg-black/20 border border-white/10 p-4 text-white rounded focus:border-[#C5A059] outline-none"
+                        <select
+                            className="bg-black/20 border border-white/10 p-4 text-white rounded focus:border-[#C5A059] outline-none appearance-none"
                             value={formData.category}
                             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                        />
-                        <input
-                            placeholder="Author"
-                            className="bg-black/20 border border-white/10 p-4 text-white rounded focus:border-[#C5A059] outline-none"
-                            value={formData.author}
-                            onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                        />
+                        >
+                            <option value="Blog">Blog Post</option>
+                            <option value="Event">Event</option>
+                            <option value="Photo">Photo Gallery</option>
+                            <option value="Video">Video Highlight</option>
+                        </select>
                         <input
                             placeholder="Excerpt (Short Summary)"
                             className="bg-black/20 border border-white/10 p-4 text-white rounded focus:border-[#C5A059] outline-none"
                             value={formData.excerpt}
                             onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                         />
+                        
+                        {formData.category === 'Video' && (
+                            <input
+                                placeholder="Video URL (YouTube/Vimeo)"
+                                className="bg-black/20 border border-[#C5A059] p-4 text-white rounded outline-none"
+                                value={formData.video_url}
+                                onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
+                            />
+                        )}
+                        
+                        {formData.category === 'Event' && (
+                            <input
+                                type="date"
+                                className="bg-black/20 border border-[#C5A059] p-4 text-white rounded outline-none"
+                                value={formData.event_date}
+                                onChange={(e) => setFormData({ ...formData, event_date: e.target.value })}
+                            />
+                        )}
                     </div>
                     
                     {/* Image Upload Section */}

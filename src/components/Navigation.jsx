@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { X, Instagram, Linkedin, Facebook } from 'lucide-react';
 
-const SECTIONS = ['About Us', 'Services', 'Projects', 'Insights', 'Shop', 'Careers', 'Contact Us'];
+const SECTIONS = ['Profile', 'Services', 'Projects', 'Insights', 'Shop', 'Careers', 'Contact'];
 
 const SOCIAL_LINKS = {
     instagram: import.meta.env.VITE_SOCIAL_INSTAGRAM_URL,

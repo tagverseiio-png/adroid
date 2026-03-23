@@ -175,7 +175,7 @@ const App = () => {
               onClick={() => setCurrentPage('About Us')}
               className="text-xs font-medium tracking-[0.15em] uppercase cursor-pointer text-white/70 hover:text-white transition-colors duration-300"
             >
-              About Us
+              Profile
             </span>
             <span
               onClick={() => setCurrentPage('Services')}
@@ -207,17 +207,15 @@ const App = () => {
             >
               Careers
             </span>
+            <span
+              onClick={() => setCurrentPage('Contact Us')}
+              className="text-xs font-medium tracking-[0.15em] uppercase cursor-pointer text-white/70 hover:text-white transition-colors duration-300"
+            >
+              Contact
+            </span>
           </nav>
 
-          {/* Right CTA & Menu */}
           <div className="flex items-center gap-8 ml-auto">
-            {/* Contact Us Link */}
-            <button
-              onClick={() => setCurrentPage('Contact Us')}
-              className="hidden md:inline-flex text-xs font-medium tracking-[0.15em] uppercase text-white/70 hover:text-white transition-colors duration-300"
-            >
-              Contact Us
-            </button>
 
             {/* Cart Button */}
             {currentPage === 'Shop' && (

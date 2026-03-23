@@ -143,6 +143,7 @@ const Footer = ({ setPage }) => {
                     <h4 className="text-[#C5A059] text-xs font-bold uppercase tracking-[0.2em] mb-8 font-sans">Contact Us</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="space-y-4">
+                            <p className="text-[#C5A059] text-[10px] font-bold uppercase tracking-[0.2em] mb-1">Corporate Office</p>
                             {CONTACT_ADDRESS && (
                                 <p className="text-[11px] leading-relaxed text-white/80 font-sans tracking-wide">
                                     {CONTACT_ADDRESS}

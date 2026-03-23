@@ -7,6 +7,8 @@ const createUploadDirs = () => {
   const dirs = [
     path.join(__dirname, '../../uploads/projects'),
     path.join(__dirname, '../../uploads/blog'),
+    path.join(__dirname, '../../uploads/resumes'),
+    path.join(__dirname, '../../uploads/vendors'),
     path.join(__dirname, '../../uploads/temp')
   ];
 
@@ -43,12 +45,17 @@ const storage = multer.diskStorage({
 
 // File filter
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+  const allowedTypes = [
+    'image/jpeg', 'image/jpg', 'image/png', 'image/webp',
+    'application/pdf', 
+    'application/msword', 
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ];
   
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Invalid file type. Only JPEG, PNG, and WebP are allowed.'), false);
+    cb(new Error('Invalid file type. Only JPEG, PNG, WebP, PDF, and DOC/DOCX are allowed.'), false);
   }
 };
 
