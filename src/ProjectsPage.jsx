@@ -104,16 +104,41 @@ export default function ProjectsPage() {
   return (
     <div className="bg-[#0a0a0a] text-white min-h-screen px-6 md:px-12 pt-24 md:pt-40 pb-20 md:pb-32">
       {/* HEADER */}
-      <div className="max-w-7xl mx-auto mb-16 md:mb-24 overflow-hidden">
-        <motion.h1
-          initial={{ y: "100%" }}
-          animate={{ y: 0 }}
-          transition={{ duration: 1, ease: [0.33, 1, 0.68, 1] }}
-          className="text-4xl sm:text-5xl md:text-[6rem] font-logo leading-[0.9] uppercase tracking-tight"
+      <div className="max-w-7xl mx-auto mb-16 md:mb-24 flex flex-col md:flex-row justify-between items-end gap-10">
+        <div className="overflow-hidden">
+          <motion.h1
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            transition={{ duration: 1, ease: [0.33, 1, 0.68, 1] }}
+            className="text-4xl sm:text-5xl md:text-[6rem] font-logo leading-[0.9] uppercase tracking-tight"
+          >
+            Our <br />
+            <span className="font-light text-white/40 block origin-left" >Projects</span>
+          </motion.h1>
+        </div>
+        
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex items-center gap-12"
         >
-          Our <br />
-          <span className="font-light text-white/40 block origin-left" >Projects</span>
-        </motion.h1>
+          <div className="relative group">
+            <div className="absolute -inset-4 bg-[#C5A059]/10 rounded-full blur-2xl group-hover:bg-[#C5A059]/20 transition-all duration-700" />
+            <div className="relative flex flex-col items-center">
+              <span className="text-6xl md:text-8xl font-logo text-[#C5A059] leading-none mb-2">{projects.length || '200'}</span>
+              <span className="text-[10px] md:text-xs font-bold tracking-[0.4em] text-white/40 uppercase">Total Masterpieces</span>
+            </div>
+          </div>
+          
+          <div className="hidden lg:block w-60 h-40 overflow-hidden relative group rounded-2xl border border-white/10 shadow-2xl">
+            <img 
+              src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=2670&auto=format&fit=crop" 
+              alt="Shoot Cover" 
+              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          </div>
+        </motion.div>
       </div>
 
       {/* DIVISIONS FILTER */}

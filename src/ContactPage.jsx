@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, Mail, MapPin, Phone, Instagram, Linkedin, Facebook, Building2, UserPlus, MessageSquare } from 'lucide-react';
-import { inquiriesAPI } from './services/api';
+import { inquiriesAPI, uploadAPI } from './services/api';
 
 const CONTACT_SECTIONS = [
     { id: 'enquiry', label: 'Project Enquiry', icon: MessageSquare },
@@ -36,6 +36,7 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                 message: formState.message || (activeSection === 'vendor' ? `Company: ${formState.company}, Service: ${formState.subject}` : ''),
                 type: activeSection,
                 company: formState.company || null,
+                portfolio_link: formState.portfolio_link || null,
             };
 
             await inquiriesAPI.create(inquiryData);
@@ -180,54 +181,61 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
 
                             {activeSection === 'location' && (
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full flex flex-col justify-center">
-                                    <h2 className="text-2xl md:text-3xl font-logo uppercase tracking-widest mb-8">Contact Us</h2>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12">
-                                        <div className="space-y-6">
-                                            <div>
-                                                <p className="text-[#C5A059] text-[10px] uppercase tracking-[0.3em] mb-4 font-bold">Studio Location - Corporate Office (Chennai)</p>
-                                                <p className="font-sans text-base md:text-lg text-white/80 leading-relaxed font-light">
-                                                    No 8, MCN Nagar Extension,<br />
-                                                    Thoraipakkam, Chennai - 97.<br />
-                                                    Tamil Nadu, India
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <p className="text-[#C5A059] text-[10px] uppercase tracking-[0.3em] mb-4 font-bold">Studio Location - Branch Office (Bengaluru)</p>
-                                                <p className="font-sans text-base md:text-lg text-white/80 leading-relaxed font-light">
-                                                    SFD, 3rd Floor, P DOT G EMERALD, 16th B Cross Rd,<br />
-                                                    Karuna Nagar, Electronics City Phase 1,<br />
-                                                    Doddathoguru, Bengaluru - 560100, <br />
-                                                    Karnataka, India
-                                                </p>
-                                            </div>
+                                    <div className="mb-12">
+                                        <span className="text-[#C5A059] uppercase tracking-[0.4em] text-[10px] md:text-sm font-bold block mb-4">Locations</span>
+                                        <h2 className="text-3xl md:text-5xl font-logo text-white uppercase tracking-widest leading-none mb-4">Our Presence</h2>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+                                        <div className="p-8 bg-white/5 border border-white/10 rounded-xl">
+                                            <h3 className="text-[#C5A059] text-[10px] uppercase tracking-[0.3em] mb-6 font-bold flex items-center gap-2">
+                                                <Building2 size={14} /> Corporate Office (Chennai)
+                                            </h3>
+                                            <p className="font-sans text-base md:text-lg text-white/80 leading-relaxed font-light mb-8">
+                                                No 8, MCN Nagar Extension,<br />
+                                                Thoraipakkam, Chennai - 600097.<br />
+                                                Tamil Nadu, India
+                                            </p>
                                             <div className="space-y-4 pt-6 border-t border-white/10">
-                                                <div className="flex items-start gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-[13px] md:text-sm tracking-wide break-all">
-                                                    <div className="w-5 flex justify-center mt-1">
-                                                        <Mail size={16} className="text-[#C5A059] flex-shrink-0" />
-                                                    </div>
-                                                    <span>info@adroitdesigns.in, fm@adroitdesigns.in</span>
-                                                </div>
-                                                <div className="flex items-start gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-[13px] md:text-sm tracking-wide">
-                                                    <div className="w-5 flex justify-center mt-1">
-                                                        <Phone size={16} className="text-[#C5A059] flex-shrink-0" />
-                                                    </div>
-                                                    <span>(+91) 44-45561113, (+91) 9940064343</span>
-                                                </div>
+                                                <a href="mailto:info@adroitdesigns.in" className="flex items-center gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-sm font-light">
+                                                    <Mail size={16} /> info@adroitdesigns.in
+                                                </a>
+                                                <a href="tel:+914445561113" className="flex items-center gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-sm font-light">
+                                                    <Phone size={16} /> (+91) 44-45561113
+                                                </a>
                                             </div>
                                         </div>
-                                        <div className="h-[300px] md:h-[500px] bg-white/5 border border-white/10 overflow-hidden relative group">
-                                            <iframe
-                                                title="location-map"
-                                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.893247493361!2d80.231902!3d12.923838!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a525d064ca00001%3A0xc0d7197bba10dd06!2sADROIT%20DESIGN%20INDIA%20PVT%20LTD!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
-                                                className="w-full h-full border-0 grayscale invert brightness-75 group-hover:grayscale-0 group-hover:invert-0 transition-all duration-1000"
-                                                allowFullScreen=""
-                                                loading="lazy"
-                                                onClick={(e) => {
-                                                    if (window.innerWidth < 1024 && e.currentTarget.classList.contains('grayscale')) {
-                                                        e.currentTarget.classList.remove('grayscale', 'invert', 'brightness-75');
-                                                    }
-                                                }}
-                                            ></iframe>
+                                        
+                                        <div className="p-8 bg-white/5 border border-white/10 rounded-xl">
+                                            <h3 className="text-[#C5A059] text-[10px] uppercase tracking-[0.3em] mb-6 font-bold flex items-center gap-2">
+                                                <Building2 size={14} /> Branch Office (Bengaluru)
+                                            </h3>
+                                            <p className="font-sans text-base md:text-lg text-white/80 leading-relaxed font-light mb-8">
+                                                No. 40, 2nd Floor, 3rd Main Road,<br />
+                                                Vyalikaval, Bengaluru - 560003.<br />
+                                                Karnataka, India
+                                            </p>
+                                            <div className="space-y-4 pt-6 border-t border-white/10">
+                                                <a href="mailto:fm@adroitdesigns.in" className="flex items-center gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-sm font-light">
+                                                    <Mail size={16} /> fm@adroitdesigns.in
+                                                </a>
+                                                <a href="tel:+919940064343" className="flex items-center gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-sm font-light">
+                                                    <Phone size={16} /> (+91) 9940064343
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[400px] grayscale brightness-75 contrast-125 opacity-60 hover:opacity-100 transition-opacity duration-700">
+                                        <div className="relative group overflow-hidden rounded-xl border border-white/10">
+                                            <iframe 
+                                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.893247493361!2d80.231902!3d12.923838!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a525d064ca00001%3A0xc0d7197bba10dd06!2sADROIT%20DESIGN%20INDIA%20PVT%20LTD!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+                                                width="100%" height="100%" style={{ border: 0 }} allowFullScreen="" loading="lazy"></iframe>
+                                        </div>
+                                        <div className="relative group overflow-hidden rounded-xl border border-white/10">
+                                            <iframe 
+                                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.35649495!2d77.5752!3d12.9716!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae161b!2sBengaluru!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+                                                width="100%" height="100%" style={{ border: 0 }} allowFullScreen="" loading="lazy"></iframe>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -249,14 +257,46 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                         </div>
                                         <input type="text" name="subject" placeholder="Category of Service / Products" value={formState.subject} className={inputClasses} onChange={handleChange} />
                                         
-                                        <div className="space-y-2">
-                                            <p className="text-[10px] uppercase tracking-widest text-white/40">Upload Profile / Portfolio (PDF/DOCX)</p>
+                                        <div>
+                                            <label className="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-4">Portfolio Link / Attachment</label>
                                             <input 
-                                                type="file" 
-                                                name="vendor_document" 
-                                                className="w-full text-xs text-white/50 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-[10px] file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20" 
-                                                onChange={(e) => setFormState({ ...formState, vendor_document: e.target.files[0] })}
+                                                type="file"
+                                                accept=".pdf,.doc,.docx"
+                                                onChange={async (e) => {
+                                                    const file = e.target.files[0];
+                                                    if (file) {
+                                                        const formData = new FormData();
+                                                        formData.append('file', file);
+                                                        formData.append('folder', 'resumes');
+                                                        try {
+                                                            const res = await uploadAPI.uploadPublicFile(file, 'resumes');
+                                                            if (res.success) {
+                                                                setFormState(prev => ({...prev, portfolio_link: res.data.path}));
+                                                                alert('Portfolio uploaded successfully!');
+                                                            }
+                                                        } catch (err) {
+                                                            alert('Upload failed. Please try again or provide a link instead.');
+                                                        }
+                                                    }
+                                                }}
+                                                className="hidden"
+                                                id="portfolio-upload"
                                             />
+                                            <div className="flex gap-4 items-center">
+                                                <input 
+                                                    type="text" 
+                                                    placeholder="Or paste a link (Google Drive/Dropbox)" 
+                                                    className="flex-1 bg-white/5 border-b border-white/10 py-5 text-white outline-none focus:border-[#C5A059] transition-colors"
+                                                    value={formState.portfolio_link}
+                                                    onChange={(e) => setFormState(prev => ({...prev, portfolio_link: e.target.value}))}
+                                                />
+                                                <label 
+                                                    htmlFor="portfolio-upload"
+                                                    className="px-6 py-3 bg-white/5 border border-white/20 text-white text-xs uppercase font-bold tracking-widest cursor-pointer hover:bg-white hover:text-black transition-all"
+                                                >
+                                                    {formState.portfolio_link?.startsWith('uploads/') ? 'Attached ✓' : 'Attach File'}
+                                                </label>
+                                            </div>
                                         </div>
 
                                         <button type="submit" disabled={isSubmitting} className="group relative px-8 md:px-10 py-4 md:py-5 bg-white text-black text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase transition-all duration-300 hover:bg-[#C5A059] hover:text-white">

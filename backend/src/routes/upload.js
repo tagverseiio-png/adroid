@@ -4,7 +4,8 @@ const uploadController = require('../controllers/uploadController');
 const auth = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
-// All upload routes require authentication
+// All upload routes require authentication (except public)
+router.post('/public', upload.single('file'), uploadController.uploadPublicFile);
 router.post('/', auth, upload.single('image'), uploadController.uploadImage);
 router.post('/multiple', auth, upload.array('images', 10), uploadController.uploadMultiple);
 router.delete('/', auth, uploadController.deleteFile);

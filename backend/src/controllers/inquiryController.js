@@ -88,10 +88,10 @@ exports.createInquiry = async (req, res) => {
       
       try {
         const result = await query(
-          `INSERT INTO inquiries (name, email, phone, subject, message, type, company, status) 
-           VALUES ($1, $2, $3, $4, $5, $6, $7, 'new')
+          `INSERT INTO inquiries (name, email, phone, subject, message, type, company, portfolio_link, status) 
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'New')
            RETURNING id`,
-          [name, email, phone || null, subject || null, message, type || 'general', company || null]
+          [name, email, phone || null, subject || null, message, type || 'general', company || null, portfolio_link || null]
         );
         inquiryId = result.rows[0].id;
         console.log(`✅ Inquiry saved locally with ID: ${inquiryId}`);

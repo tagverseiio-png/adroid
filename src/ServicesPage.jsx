@@ -67,7 +67,7 @@ const SERVICES_DATA = [
             "https://images.unsplash.com/photo-1565008447742-97f6f38c985c",
         ],
         sections: [
-            "Green rated homes, villas & apartment complexes.",
+            "Green Rated Buildings, LEED Certified homes & apartment complexes.",
             "Commercial buildings, IT parks & educational institutions.",
             "Industrial buildings, warehouses & community structures.",
         ],

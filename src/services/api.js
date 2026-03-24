@@ -166,6 +166,25 @@ export const uploadAPI = {
         return data;
     },
 
+    uploadPublicFile: async (file, folder = 'resumes') => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('uploadType', folder); 
+
+        const response = await fetch(`${API_BASE_URL}/upload/public`, {
+            method: 'POST',
+            body: formData,
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Upload failed');
+        }
+
+        return data;
+    },
+
     uploadMultiple: async (files, folder = 'general') => {
         const token = localStorage.getItem('adroit_token');
         const formData = new FormData();

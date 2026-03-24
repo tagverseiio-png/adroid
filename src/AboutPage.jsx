@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { useScroll, useTransform, useInView, motion } from "framer-motion";
-import { Quote, Star, Layout, Hammer, Building2, Construction, Zap, ClipboardCheck, ShieldCheck, Leaf } from "lucide-react";
+import { Quote, Star, Layout, Hammer, Building2, Construction, Zap, ClipboardCheck, ShieldCheck, Leaf, PenTool, Target, Compass } from "lucide-react";
 
 const fadeUp = {
     hidden: { opacity: 0, y: 40 },
@@ -18,52 +18,32 @@ const stagger = {
 
 const CORE_COMPETENCIES = [
     {
-        title: "Turnkey Interior Solutions",
-        description: "Complete end-to-end execution for Corporate, IT/ITES, Commercial, Healthcare, Retail & Residential interiors.",
-        icon: "Layout"
-    },
-    {
         title: "Design–Build Expertise",
-        description: "Integrated approach combining architectural design, interior design, engineering & execution under one roof.",
-        icon: "Hammer"
+        desc: "Seamlessly bridging the gap between innovative architectural concepts and turnkey execution, ensuring design integrity at every stage.",
+        icon: PenTool,
     },
     {
-        title: "Corporate & Commercial Office Specialists",
-        description: "Strong capability in large-scale office fit-outs, workspace planning, and functional corporate environments.",
-        icon: "Building2"
+        title: "Interior Design & Fit-Outs",
+        desc: "Crafting bespoke interior environments that balance aesthetic luxury with optimal spatial functionality and user experience.",
+        icon: Layout,
     },
     {
         title: "Civil Construction & Structural Works",
-        description: "Execution of commercial buildings and interior civil works with quality control and timeline discipline.",
-        icon: "Construction"
+        desc: "Delivering robust structural solutions with precision engineering, utilizing both traditional RCC and advanced PEB systems.",
+        icon: Building2,
     },
     {
-        title: "MEP & Technical Integration",
-        description: "Efficient coordination of HVAC, Electrical, Plumbing, Fire & ELV systems for seamless project delivery.",
-        icon: "Zap"
+        title: "Project Management & Consultancy",
+        desc: "Strategic orchestration of complex projects, prioritizing transparent communication, risk mitigation, and on-time delivery.",
+        icon: ShieldCheck,
     },
-    {
-        title: "Project Management Excellence",
-        description: "Structured planning, cost control, vendor coordination, and milestone-driven execution.",
-        icon: "ClipboardCheck"
-    },
-    {
-        title: "Quality & Detail-Oriented Execution",
-        description: "Focus on precision, finishing standards, and compliance with industry best practices.",
-        icon: "ShieldCheck"
-    },
-    {
-        title: "Sustainable & Efficient Design Solutions",
-        description: "Space optimization, energy efficiency, and long-term value engineering.",
-        icon: "Leaf"
-    }
 ];
 
 const ACCOMPLISHMENTS = [
-    { number: "20+", label: "Years of Excellence" },
+    { number: "20", label: "Years of Excellence" },
+    { number: "100%", label: "Completion Rate" },
     { number: "500+", label: "Projects Delivered" },
     { number: "3M+", label: "Sq.Ft Designed" },
-    { number: "GLOBAL", label: "Clientele" },
 ];
 
 const REVIEWS = [
@@ -80,7 +60,7 @@ const REVIEWS = [
     {
         name: "David Chen",
         role: "Retail Director",
-        text: "A truly professional team that consistently delivers premium quality within strict timelines. Their commercial architecture expertise elevated our brand presence."
+        text: "A truly professional team that consistently delivers premium quality within strict timelines. Their commercial Architecture expertise elevated our brand presence."
     }
 ];
 
@@ -95,51 +75,38 @@ export default function AboutPage() {
         <div ref={containerRef} className="bg-[#050505] text-stone-200 overflow-hidden pt-24 md:pt-32 pb-24 font-sans">
 
             {/* HERO */}
-            <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center -mt-24 md:-mt-32">
-                <motion.img
-                    style={{ y: heroY, opacity: heroOpacity }}
-                    src="https://images.unsplash.com/photo-1497366216548-37526070297c"
-                    className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/75" />
-
-                <motion.div
-                    variants={stagger}
-                    initial="hidden"
-                    animate="visible"
-                    className="relative text-center px-6"
-                >
-                    <motion.span
-                        variants={fadeUp}
-                        className="text-[#C5A059] text-[10px] md:text-xs tracking-[0.3em] uppercase font-bold"
-                    >
-                        Adroit Design India
-                    </motion.span>
-
-                    <motion.h1
-                        variants={fadeUp}
-                        className="text-4xl sm:text-5xl md:text-7xl font-logo text-white mt-4 md:mt-6 leading-tight uppercase tracking-widest"
-                    >
-                        About Us
-                    </motion.h1>
-
-                    <motion.div
-                        initial={{ height: 0 }}
-                        animate={{ height: 60 }}
-                        transition={{ duration: 1.4, ease: "easeOut" }}
-                        className="w-px bg-[#C5A059]/50 mx-auto mt-8 md:mt-10"
+            <section className="relative h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden pt-20">
+                <div className="absolute inset-0 bg-[#0a0a0a]">
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-[#0a0a0a] z-10" />
+                    <img 
+                        src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2301&auto=format&fit=crop" 
+                        alt="Hero" 
+                        className="w-full h-full object-cover opacity-40 grayscale"
                     />
-                </motion.div>
+                </div>
+                
+                <div className="relative z-20 text-center px-6">
+                    <motion.h1 
+                        initial={{ y: 30, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="text-white font-logo text-4xl md:text-7xl uppercase tracking-[0.2em] mb-6"
+                    >
+                        Building Excellence Through Design
+                    </motion.h1>
+                </div>
             </section>
 
             {/* 1. INTRODUCTION */}
             <section className="py-20 md:py-32 px-6 md:px-24 max-w-7xl mx-auto text-center">
                 <Reveal>
                     <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">Introduction</span>
-                    <h2 className="text-3xl md:text-5xl font-logo text-white uppercase tracking-widest mb-10">Who We Are</h2>
-                    <p className="text-stone-400 text-base md:text-xl leading-relaxed max-w-4xl mx-auto font-light">
-                        <strong>Adroit Design India Private Limited</strong> is a premier Architecture & Interior Design Firm dedicated to creating enduring, innovative, and purposeful spaces. We merge aesthetic elegance with functional brilliance, setting new benchmarks in corporate, commercial, and residential architecture. Our commitment to excellence drives us to transform visions into tangible masterpieces.
-                    </p>
+                            <h2 className="text-3xl md:text-5xl font-logo uppercase tracking-widest text-white mb-8">Who We Are</h2>
+                            <p className="text-stone-300 text-lg leading-relaxed font-light mb-8">
+                                Adroit Design India Private Limited is a premier Architecture & Interior firm, committed to shaping spaces that resonate with functionality, aesthetic excellence, and enduring value.
+                            </p>
+                            <p className="text-stone-400 text-sm leading-relaxed mb-10">
+                                As a lead solution provider in the built environment, we integrate architectural innovation with rigorous technical execution. Our multidisciplinary approach ensures that every project—from luxury residences to complex industrial facilities—is delivered with precision, transparency, and a focus on long-term sustainability.
+                            </p>
                 </Reveal>
             </section>
 
@@ -151,20 +118,19 @@ export default function AboutPage() {
                         <h2 className="text-3xl md:text-5xl font-logo text-white uppercase tracking-widest mb-16 text-center">Our Milestones</h2>
                     </Reveal>
 
-                    <motion.div
-                        variants={stagger}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                        className="grid grid-cols-2 md:grid-cols-4 gap-10 text-center"
-                    >
-                        {ACCOMPLISHMENTS.map((item, i) => (
-                            <motion.div key={i} variants={fadeUp} className="p-6 border border-white/10 hover:border-[#C5A059]/50 transition duration-500 bg-[#0a0a0a]">
-                                <h3 className="text-4xl md:text-5xl text-[#C5A059] font-logo mb-4">{item.number}</h3>
-                                <p className="text-white/60 text-sm uppercase tracking-widest font-bold">{item.label}</p>
-                            </motion.div>
+                    <div className="bg-[#111] py-24 md:py-32">
+                <div className="max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
+                    <h2 className="text-white font-logo text-4xl md:text-6xl uppercase tracking-widest mb-16">20 Years of Craft</h2>
+                    <div className="flex flex-wrap justify-center gap-10 md:gap-20">
+                        {ACCOMPLISHMENTS.map((item, idx) => (
+                            <div key={idx} className="flex flex-col items-center">
+                                <span className={item.number === "100%" ? "text-[#C5A059] text-3xl md:text-5xl font-logo mb-2" : "text-[#C5A059] text-5xl md:text-8xl font-logo mb-2"}>{item.number}</span>
+                                <span className="text-white/30 text-[10px] md:text-xs font-bold uppercase tracking-[0.3em]">{item.label}</span>
+                            </div>
                         ))}
-                    </motion.div>
+                    </div>
+                </div>
+            </div>
                 </div>
             </section>
 
@@ -191,20 +157,13 @@ export default function AboutPage() {
                                 className="p-8 border border-white/10 hover:bg-[#C5A059] hover:border-[#C5A059] transition-all duration-300 group flex flex-col justify-start text-left"
                             >
                                 <div className="mb-6 text-[#C5A059] group-hover:text-black transition-colors">
-                                    {item.icon === "Layout" && <Layout size={32} strokeWidth={1.5} />}
-                                    {item.icon === "Hammer" && <Hammer size={32} strokeWidth={1.5} />}
-                                    {item.icon === "Building2" && <Building2 size={32} strokeWidth={1.5} />}
-                                    {item.icon === "Construction" && <Construction size={32} strokeWidth={1.5} />}
-                                    {item.icon === "Zap" && <Zap size={32} strokeWidth={1.5} />}
-                                    {item.icon === "ClipboardCheck" && <ClipboardCheck size={32} strokeWidth={1.5} />}
-                                    {item.icon === "ShieldCheck" && <ShieldCheck size={32} strokeWidth={1.5} />}
-                                    {item.icon === "Leaf" && <Leaf size={32} strokeWidth={1.5} />}
+                                    {item.icon && <item.icon size={32} strokeWidth={1.5} />}
                                 </div>
                                 <h3 className="text-lg md:text-xl font-logo uppercase tracking-wider group-hover:text-black text-white mb-4">
                                     {item.title}
                                 </h3>
                                 <p className="text-sm text-stone-400 group-hover:text-black/80 font-light leading-relaxed">
-                                    {item.description}
+                                    {item.desc}
                                 </p>
                             </motion.div>
                         ))}
@@ -214,21 +173,28 @@ export default function AboutPage() {
 
             {/* 4. VISION & 5. MISSION */}
             <section className="py-20 bg-stone-900 border-y border-stone-800">
-                <div className="max-w-7xl mx-auto px-6 md:px-24 grid md:grid-cols-2 gap-16 md:gap-24">
-                    <Reveal>
-                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">Vision</span>
-                        <h2 className="text-3xl font-logo text-white uppercase tracking-widest mb-6">Our Vision</h2>
-                        <p className="text-stone-400 text-lg leading-relaxed font-light">
-                            To be the vanguard of architectural innovation globally, creating spaces that seamlessly integrate sustainability, state-of-the-art technology, and timeless aesthetics. We envision a future where our designs elevate the human experience and harmonize with their environment.
-                        </p>
-                    </Reveal>
-                    <Reveal delay={0.2}>
-                        <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold">Mission</span>
-                        <h2 className="text-3xl font-logo text-white uppercase tracking-widest mb-6">Our Mission</h2>
-                        <p className="text-stone-400 text-lg leading-relaxed font-light">
-                            To deliver unparalleled architectural and interior solutions through meticulous planning, impeccable execution, and unwavering dedication to quality. We strive to exceed client expectations by fostering collaborative relationships and maintaining rigorous standards of excellence in every project.
-                        </p>
-                    </Reveal>
+                <div className="max-w-7xl mx-auto px-6 md:px-24">
+                    <motion.div 
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="grid grid-cols-1 md:grid-cols-2 gap-16"
+                    >
+                        <div className="bg-white p-12 md:p-16 shadow-xl border-t-4 border-[#C5A059]">
+                            <Target className="text-[#C5A059] mb-8" size={32} />
+                            <h3 className="text-2xl font-logo uppercase tracking-widest text-stone-900 mb-6">Our Vision</h3>
+                            <p className="text-stone-600 leading-relaxed font-light">
+                                To be the global vanguard of design-build excellence, pioneering sustainable architectural innovations and high-performance spatial environments that set new benchmarks for the built industry.
+                            </p>
+                        </div>
+                        <div className="bg-white p-12 md:p-16 shadow-xl border-t-4 border-stone-800">
+                            <Compass className="text-stone-800 mb-8" size={32} />
+                            <h3 className="text-2xl font-logo uppercase tracking-widest text-stone-900 mb-6">Our Mission</h3>
+                            <p className="text-stone-600 leading-relaxed font-light">
+                                To deliver integrated, transparent, and superior design solutions through collaborative engineering and craftsmanship, ensuring project integrity from concept to collection, while creating lasting value for our clients and the environment.
+                            </p>
+                        </div>
+                    </motion.div>
                 </div>
             </section>
 
@@ -270,7 +236,7 @@ export default function AboutPage() {
                                 Adroit Design India Pvt. Ltd was founded by Architect Franklin Maxwell A, holding an M.Arch in Building Management from Sathyabama University and a B.Arch from AMACE, University of Madras.
                             </p>
                             <p>
-                                With over <strong>19 years</strong> of profound experience, he spearheads the firm's diverse portfolio encompassing Corporate, Industrial, Commercial, Institutional & Residential Architecture, including Turnkey Interiors and PEB Constructions.
+                                With over <strong>20 years</strong> of profound experience, he spearheads the firm's diverse portfolio encompassing Corporate, Industrial, Commercial, Institutional & Residential Architecture, including Turnkey Interiors and PEB Constructions.
                             </p>
                             <p>
                                 His visionary leadership and relentless pursuit of perfection have cemented Adroit Design as a trusted name for premium architectural and construction solutions across the region.

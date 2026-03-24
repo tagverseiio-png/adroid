@@ -67,7 +67,47 @@ exports.uploadImage = async (req, res) => {
     if (req.file) {
       await fileService.deleteFile(req.file.path).catch(() => {});
     }
-    errorResponse(res, 'Failed to upload image', 500);
+  }
+};
+
+/**
+ * Upload public generic file (like PDF/DOC)
+ */
+exports.uploadPublicFile = async (req, res) => {
+  try {
+    if (!req.file) {
+      return errorResponse(res, 'No file uploaded', 400);
+    }
+
+    const tempFilePath = req.file.path;
+    const targetFolder = req.body.folder || req.body.uploadType || 'resumes';
+
+    const uploadsRoot = path.join(__dirname, '../../uploads');
+    const destinationDir = path.join(uploadsRoot, targetFolder);
+
+    await fs.mkdir(destinationDir, { recursive: true });
+
+    const fileName = path.basename(tempFilePath);
+    const finalPath = path.join(destinationDir, fileName);
+
+    // If it's already in the destination folder by multer, we just use it, otherwise move it.
+    if (tempFilePath !== finalPath) {
+      await fs.rename(tempFilePath, finalPath);
+    }
+
+    const fileUrl = fileService.pathToUrl(finalPath, req);
+
+    successResponse(res, {
+      url: fileUrl,
+      path: finalPath.replace(/^.*[\\/]uploads[\\/]/, 'uploads/'),
+      size: req.file.size
+    }, 'File uploaded successfully', 201);
+  } catch (error) {
+    console.error('Public upload error:', error);
+    if (req.file) {
+      await fileService.deleteFile(req.file.path).catch(() => {});
+    }
+    errorResponse(res, 'Failed to upload file', 500);
   }
 };
 
