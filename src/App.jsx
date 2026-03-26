@@ -4,6 +4,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Menu } from 'lucide-react';
 import Lenis from 'lenis';
 
+// Import local images for services
+import TURNKEYINTERIORFITOUT from '/assets/TURNKEYINTERIORFIT-OUT.jpg';
+import PROJECTMANAGEMENT from '/assets/PROJECTMANAGEMENT.jpg';
+
 // --- Lazy Page Imports (Code Splitting) ---
 const Home = React.lazy(() => import('./Home'));
 const ProjectsPage = React.lazy(() => import('./ProjectsPage'));
@@ -53,7 +57,7 @@ const SERVICES_QUICK_ACCESS = [
     id: 3,
     title: 'Turnkey Interior Fit-Out',
     subtitle: 'Design to Delivery',
-    image: 'https://images.unsplash.com/photo-1503389152951-9f343605f61c',
+    image: TURNKEYINTERIORFITOUT,
     sections: [
       'Corporate Offices, IT and ITES Offices, Commercial Offices, Factory Offices.',
       'Data Centres, Food Courts, Hospitals, Hotels, Restaurants, Banquet Halls.',
@@ -87,7 +91,7 @@ const SERVICES_QUICK_ACCESS = [
     id: 6,
     title: 'Project Management',
     subtitle: 'End-to-End Control',
-    image: 'https://images.unsplash.com/photo-1503389152951-9f343605f61c',
+    image: PROJECTMANAGEMENT,
     sections: [
       'Complete ownership from concept to completion covering both civil and interior works.',
       'Design and Planning, Tendering and Vendor Selection, Project Monitoring and Execution Oversight.',

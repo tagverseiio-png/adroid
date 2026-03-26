@@ -3,6 +3,10 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { X, Instagram, Linkedin, Facebook, ChevronDown } from 'lucide-react';
 
+// Import local images for services
+import TURNKEYINTERIORFITOUT from '/assets/TURNKEYINTERIORFIT-OUT.jpg';
+import PROJECTMANAGEMENT from '/assets/PROJECTMANAGEMENT.jpg';
+
 const SECTIONS = ['Profile', 'Services', 'Projects', 'Insights', 'Shop', 'Careers', 'Contact'];
 const SERVICES_QUICK_ACCESS = [
     {
@@ -33,7 +37,7 @@ const SERVICES_QUICK_ACCESS = [
         id: 3,
         title: 'Turnkey Interior Fit-Out',
         subtitle: 'Design to Delivery',
-        image: 'https://images.unsplash.com/photo-1503389152951-9f343605f61c',
+        image: TURNKEYINTERIORFITOUT,
         sections: [
             'Full Project Ownership',
             'Vendor & Resource Management',
@@ -69,7 +73,7 @@ const SERVICES_QUICK_ACCESS = [
         id: 6,
         title: 'Project Management',
         subtitle: 'End-to-End Control',
-        image: 'https://images.unsplash.com/photo-1503389152951-9f343605f61c',
+        image: PROJECTMANAGEMENT,
         sections: [
             'Strategic Planning & Scope Establishment',
             'Interdisciplinary Team Dialogue',
