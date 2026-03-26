@@ -6,6 +6,7 @@ import { blogAPI, normalizeAssetUrl } from '../services/api';
 const BlogPage = ({ onReadMore }) => {
     const [posts, setPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedSubCategory, setSelectedSubCategory] = useState('All');
 
     useEffect(() => {
         fetchPosts();
@@ -13,7 +14,7 @@ const BlogPage = ({ onReadMore }) => {
 
     const fetchPosts = async () => {
         try {
-            const response = await blogAPI.getAll();
+            const response = await blogAPI.getAll({ published: true, category: 'Insights', page: 1, limit: 200 });
             if (response.success) {
                 setPosts(response.data);
             }
@@ -23,6 +24,23 @@ const BlogPage = ({ onReadMore }) => {
             setIsLoading(false);
         }
     };
+
+    const subCategories = [
+        'All',
+        ...Array.from(
+            new Set(
+                posts
+                    .map((post) => post.sub_category)
+                    .filter(Boolean)
+            )
+        )
+    ];
+
+    const filteredPosts = posts.filter((post) => {
+        const subCategoryMatch = selectedSubCategory === 'All' || post.sub_category === selectedSubCategory;
+        return subCategoryMatch;
+    });
+
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-stone-200 pt-32 md:pt-48 pb-16 md:pb-24 px-6 md:px-24">
 
@@ -53,14 +71,33 @@ const BlogPage = ({ onReadMore }) => {
                 </motion.p>
             </div>
 
+            {/* Filters */}
+            {!isLoading && posts.length > 0 && (
+                <div className="max-w-7xl mx-auto mb-10 md:mb-14 space-y-4">
+                    {subCategories.length > 1 && (
+                        <div className="flex flex-wrap items-center justify-center gap-2.5">
+                            {subCategories.map((subCategory) => (
+                                <button
+                                    key={subCategory}
+                                    onClick={() => setSelectedSubCategory(subCategory)}
+                                    className={`px-4 py-1.5 rounded-full text-[10px] uppercase tracking-wider transition-all ${selectedSubCategory === subCategory ? 'bg-white text-black font-bold' : 'bg-white/5 text-white/60 hover:bg-white/15'}`}
+                                >
+                                    {subCategory}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
+
             {/* Featured / Grid */}
             {isLoading ? (
                 <div className="text-center text-white/40 py-20">Loading blog posts...</div>
-            ) : posts.length === 0 ? (
+            ) : filteredPosts.length === 0 ? (
                 <div className="text-center text-white/40 py-20">No blog posts yet.</div>
             ) : (
                 <div className="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-                    {posts.map((post, idx) => (
+                    {filteredPosts.map((post, idx) => (
                         <motion.div
                             key={post.id}
                             initial={{ opacity: 0, y: 40 }}
@@ -85,7 +122,7 @@ const BlogPage = ({ onReadMore }) => {
                                     }}
                                 />
                                 <div className="absolute top-4 left-4 bg-black/80 backdrop-blur text-white px-3 py-1 text-[10px] uppercase tracking-widest font-bold">
-                                    {post.category}
+                                    {post.sub_category ? `Insights • ${post.sub_category}` : 'Insights'}
                                 </div>
                             </div>
 

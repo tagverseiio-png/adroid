@@ -33,6 +33,7 @@ const validateBlog = [
   body('content').trim().notEmpty().withMessage('Content is required'),
   body('excerpt').optional().trim(),
   body('category').optional().trim(),
+  body('sub_category').optional().trim(),
   body('author').optional().trim(),
   validate
 ];

@@ -73,10 +73,13 @@ const Footer = ({ setPage }) => {
     const phoneList = CONTACT_PHONES
         ? CONTACT_PHONES.split(',').map((item) => item.trim()).filter(Boolean)
         : [];
+    const addressList = CONTACT_ADDRESS
+        ? CONTACT_ADDRESS.split('||').map((item) => item.trim()).filter(Boolean)
+        : [];
 
     return (
         <footer className="bg-[#050505] text-white pt-16 md:pt-24 pb-10 md:pb-12 px-6 md:px-12 border-t border-white/5 cursor-default relative">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12 mb-12 md:mb-16">
+            <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 mb-12 md:mb-16 place-items-center md:place-items-start">
 
                 {/* QUICK LINKS */}
                 <div>
@@ -90,7 +93,7 @@ const Footer = ({ setPage }) => {
                 </div>
 
                 {/* QUICK ENQUIRY */}
-                <div className="lg:col-span-1 bg-[#0f0f0f] p-6 rounded-lg border border-[#C5A059]/20">
+                <div className="w-full max-w-sm bg-[#0f0f0f] p-6 rounded-lg border border-[#C5A059]/20">
                     <h4 className="text-[#C5A059] text-sm font-bold uppercase tracking-[0.2em] mb-4 font-sans">Get in Touch</h4>
                     <p className="text-sm leading-relaxed text-white/75 mb-6 font-sans font-medium">
                         Let us know your project needs. We'll respond within 24 hours.
@@ -139,50 +142,38 @@ const Footer = ({ setPage }) => {
                 </div>
 
                 {/* CONTACT US */}
-                <div className="lg:col-span-2">
+                <div className="w-full max-w-md md:max-w-none">
                     <h4 className="text-[#C5A059] text-xs font-bold uppercase tracking-[0.2em] mb-8 font-sans">Contact Us</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div className="space-y-4">
-                            <p className="text-[#C5A059] text-[10px] font-bold uppercase tracking-[0.2em] mb-1">Corporate Office</p>
-                            {CONTACT_ADDRESS && (
+                    <div className="space-y-4">
+                        {addressList.length > 0 && addressList.map((address, idx) => (
+                            <div key={idx} className="space-y-1">
+                                <p className="text-[10px] text-[#C5A059]/90 font-bold uppercase tracking-[0.18em]">
+                                    {idx === 0 ? 'Corporate Office (Chennai)' : `Branch Office ${idx} (Bengaluru)`}
+                                </p>
                                 <p className="text-[11px] leading-relaxed text-white/80 font-sans tracking-wide">
-                                    {CONTACT_ADDRESS}
+                                    {address}
                                 </p>
-                            )}
-                            {emailList.length > 0 && (
-                                <p className="text-[11px] text-white/60 font-sans tracking-wide break-words">
-                                    {emailList.join(', ')}
-                                </p>
-                            )}
-                            {phoneList.length > 0 && (
-                                <p className="text-[11px] text-white/60 font-sans tracking-wide">
-                                    {phoneList.join(', ')}
-                                </p>
-                            )}
-                        </div>
-                        <div className="aspect-video bg-white/5 border border-white/5 overflow-hidden">
-                            {MAPS_EMBED_URL ? (
-                                <iframe
-                                    title="footer-map"
-                                    src={MAPS_EMBED_URL}
-                                    className="w-full h-full border-0"
-                                    loading="lazy"
-                                ></iframe>
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center text-xs text-white/50">
-                                    Map unavailable
-                                </div>
-                            )}
-                        </div>
+                            </div>
+                        ))}
+                        {emailList.length > 0 && (
+                            <p className="text-[11px] text-white/60 font-sans tracking-wide break-words">
+                                {emailList.join(', ')}
+                            </p>
+                        )}
+                        {phoneList.length > 0 && (
+                            <p className="text-[11px] text-white/60 font-sans tracking-wide">
+                                {phoneList.join(', ')}
+                            </p>
+                        )}
                     </div>
                 </div>
             </div>
 
             {/* BOTTOM BAR */}
-            <div className="max-w-7xl mx-auto pt-10 md:pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-10 md:gap-8 relative">
+            <div className="max-w-6xl mx-auto pt-10 md:pt-12 border-t border-white/10 flex flex-col items-center gap-8 md:gap-6 relative text-center">
 
                 {/* Copyright */}
-                <div className="flex items-center gap-4 text-center md:text-left flex-col md:flex-row">
+                <div className="flex items-center gap-4 text-center flex-col md:flex-row">
                     <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-[#C5A059] flex items-center justify-center text-[#C5A059] font-bold text-lg md:text-xl">
                         C
                     </div>

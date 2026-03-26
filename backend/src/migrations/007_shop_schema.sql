@@ -143,12 +143,16 @@ CREATE INDEX IF NOT EXISTS idx_shop_coupons_code ON shop_coupons(code);
 -- ── Seed initial categories ───────────────────────────────────────────────────
 
 INSERT INTO shop_categories (name, slug, description, display_order) VALUES
-    ('Furniture', 'furniture', 'Premium handcrafted and designer furniture pieces', 1),
-    ('Decor', 'decor', 'Curated home and office décor accessories', 2),
-    ('Lighting', 'lighting', 'Architectural and ambient lighting solutions', 3),
-    ('Textiles', 'textiles', 'Luxury cushions, rugs and upholstery', 4),
-    ('Art & Prints', 'art-prints', 'Original art, architectural prints and wall décor', 5),
-    ('Materials', 'materials', 'Premium materials, tiles and surfaces samples', 6)
+    ('Office Furniture', 'office-furniture', 'Workspace furniture solutions for modern offices', 1),
+    ('Home Furniture', 'home-furniture', 'Functional and stylish furniture for homes', 2),
+    ('Chairs', 'chairs', 'Task, lounge, dining and accent chairs', 3),
+    ('Sofa', 'sofa', 'Contemporary and classic sofa collections', 4),
+    ('Lighting', 'lighting', 'Decorative and architectural lighting products', 5),
+    ('Fit Out Services', 'fit-out-services', 'End-to-end interior fit out services', 6),
+    ('Office Gadgets', 'office-gadgets', 'Smart gadgets and tools for office productivity', 7),
+    ('Home Gadgets', 'home-gadgets', 'Everyday gadgets and devices for homes', 8),
+    ('Interior Products', 'interior-products', 'Accessories and products for interior styling', 9),
+    ('Others', 'others', 'Other products and miscellaneous categories', 10)
 ON CONFLICT (slug) DO NOTHING;
 
 -- ── Function: auto-update updated_at ─────────────────────────────────────────

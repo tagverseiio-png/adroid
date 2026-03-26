@@ -149,6 +149,7 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                                 <option value="" disabled className="bg-[#050505] text-white/50">Select Category</option>
                                                 <option value="Residential" className="bg-[#050505] text-white">Residential</option>
                                                 <option value="Commercial" className="bg-[#050505] text-white">Commercial</option>
+                                                <option value="Industrial" className="bg-[#050505] text-white">Industrial</option>
                                             </select>
                                         </div>
                                         {formState.category && (
@@ -161,8 +162,12 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                                     required
                                                 >
                                                     <option value="" disabled className="bg-[#050505] text-white/50">Select Sub-Category</option>
-                                                    <option value="Interior" className="bg-[#050505] text-white">Interior</option>
-                                                    <option value="Construction" className="bg-[#050505] text-white">Construction</option>
+                                                    <option value="Architectural Design" className="bg-[#050505] text-white">Architectural Design</option>
+                                                    <option value="Interior Design" className="bg-[#050505] text-white">Interior Design</option>
+                                                    <option value="Turnkey Interior Fit-Out" className="bg-[#050505] text-white">Turnkey Interior Fit-Out</option>
+                                                    <option value="Civil & PEB Construction" className="bg-[#050505] text-white">Civil & PEB Construction</option>
+                                                    <option value="Building Management Services" className="bg-[#050505] text-white">Building Management Services</option>
+                                                    <option value="Project Management" className="bg-[#050505] text-white">Project Management</option>
                                                 </select>
                                                 <div className="hidden md:block"></div>
                                             </div>
@@ -188,8 +193,8 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                     
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
                                         <div className="p-8 bg-white/5 border border-white/10 rounded-xl">
-                                            <h3 className="text-[#C5A059] text-[10px] uppercase tracking-[0.3em] mb-6 font-bold flex items-center gap-2">
-                                                <Building2 size={14} /> Corporate Office (Chennai)
+                                            <h3 className="text-[#C5A059] text-base md:text-lg uppercase tracking-[0.22em] mb-6 font-bold flex items-center gap-2">
+                                                 Corporate Office (Chennai)
                                             </h3>
                                             <p className="font-sans text-base md:text-lg text-white/80 leading-relaxed font-light mb-8">
                                                 No 8, MCN Nagar Extension,<br />
@@ -197,36 +202,43 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                                 Tamil Nadu, India
                                             </p>
                                             <div className="space-y-4 pt-6 border-t border-white/10">
-                                                <a href="mailto:info@adroitdesigns.in" className="flex items-center gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-sm font-light">
-                                                    <Mail size={16} /> info@adroitdesigns.in
+                                                <a href="mailto:fm@adroitdesigns.in" className="flex items-center gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-sm font-light">
+                                                    <Mail size={16} />  fm@adroitdesigns.in
                                                 </a>
                                                 <a href="tel:+914445561113" className="flex items-center gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-sm font-light">
                                                     <Phone size={16} /> (+91) 44-45561113
+                                                </a>
+                                                <a href="tel:9940064343" className="flex items-center gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-sm font-light">
+                                                    <Phone size={16} /> 9940064343
                                                 </a>
                                             </div>
                                         </div>
                                         
                                         <div className="p-8 bg-white/5 border border-white/10 rounded-xl">
-                                            <h3 className="text-[#C5A059] text-[10px] uppercase tracking-[0.3em] mb-6 font-bold flex items-center gap-2">
-                                                <Building2 size={14} /> Branch Office (Bengaluru)
+                                            <h3 className="text-[#C5A059] text-base md:text-lg uppercase tracking-[0.22em] mb-6 font-bold flex items-center gap-2">
+                                                 Branch Office (Bengaluru)
                                             </h3>
                                             <p className="font-sans text-base md:text-lg text-white/80 leading-relaxed font-light mb-8">
-                                                No. 40, 2nd Floor, 3rd Main Road,<br />
-                                                Vyalikaval, Bengaluru - 560003.<br />
+                                                SFD, P DOT G EMERALD, 16th A Cross Rd<br />
+                                                Karuna Nagar, Electronic City Phase I<br />
+                                                Doddathoguru, Bengaluru, 560100<br />
                                                 Karnataka, India
                                             </p>
                                             <div className="space-y-4 pt-6 border-t border-white/10">
                                                 <a href="mailto:fm@adroitdesigns.in" className="flex items-center gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-sm font-light">
                                                     <Mail size={16} /> fm@adroitdesigns.in
                                                 </a>
-                                                <a href="tel:+919940064343" className="flex items-center gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-sm font-light">
-                                                    <Phone size={16} /> (+91) 9940064343
+                                                <a href="tel:08041649813" className="flex items-center gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-sm font-light">
+                                                    <Phone size={16} /> 08041649813
+                                                </a>
+                                                <a href="tel:9940064343" className="flex items-center gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-sm font-light">
+                                                    <Phone size={16} /> 9940064343
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[400px] grayscale brightness-75 contrast-125 opacity-60 hover:opacity-100 transition-opacity duration-700">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[400px] brightness-75 contrast-125 opacity-60 hover:opacity-100 transition-opacity duration-700">
                                         <div className="relative group overflow-hidden rounded-xl border border-white/10">
                                             <iframe 
                                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.893247493361!2d80.231902!3d12.923838!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a525d064ca00001%3A0xc0d7197bba10dd06!2sADROIT%20DESIGN%20INDIA%20PVT%20LTD!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
@@ -234,7 +246,7 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                         </div>
                                         <div className="relative group overflow-hidden rounded-xl border border-white/10">
                                             <iframe 
-                                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.35649495!2d77.5752!3d12.9716!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae161b!2sBengaluru!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+                                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d128162.35554145882!2d77.56079682146618!3d12.932280641368603!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae6b004c2a56db%3A0xb307c4d5b1e7dc76!2sADROIT%20DESIGN%20INDIA%20PVT%20LTD!5e1!3m2!1sen!2sin!4v1774422109662!5m2!1sen!2sin" 
                                                 width="100%" height="100%" style={{ border: 0 }} allowFullScreen="" loading="lazy"></iframe>
                                         </div>
                                     </div>

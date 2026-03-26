@@ -108,6 +108,7 @@ const Careers = () => {
                                 <option value="Purchase Executive">Purchase Executive</option>
                                 <option value="Business Development">Business Development</option>
                                 <option value="Quantity Surveyor">Quantity Surveyor</option>
+                                <option value="MEP Engineer">MEP Engineer</option>
                             </select>
                         </div>
 

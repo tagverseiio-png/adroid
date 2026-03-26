@@ -21,6 +21,81 @@ import CartDrawer from './shop/CartDrawer';
 import { useCart } from './context/CartContext';
 import { ShoppingBag } from 'lucide-react';
 
+const SERVICES_QUICK_ACCESS = [
+  {
+    id: 1,
+    title: 'Architectural Design',
+    subtitle: 'Built Environments',
+    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c',
+    sections: [
+      'Comprehensive Site & Context Analysis',
+      'Sustainable Concept Development',
+      'Technical Documentation',
+      'Engineering Coordination',
+    ],
+  },
+  {
+    id: 2,
+    title: 'Interior Design',
+    subtitle: 'Spatial Experience',
+    image: 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4',
+    sections: [
+      'Space Planning & Concept',
+      'Material & Finish Selection',
+      'Integrated Systems Design',
+      'Customization & Visualization',
+    ],
+  },
+  {
+    id: 3,
+    title: 'Turnkey Interior Fit-Out',
+    subtitle: 'Design to Delivery',
+    image: 'https://images.unsplash.com/photo-1503389152951-9f343605f61c',
+    sections: [
+      'Full Project Ownership',
+      'Vendor & Resource Management',
+      'Quality Control & Inspections',
+      'Time & Budget Adherence',
+    ],
+  },
+  {
+    id: 4,
+    title: 'Civil & PEB Construction',
+    subtitle: 'Structural Excellence',
+    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab',
+    sections: [
+      'Structural & PEB Synergy',
+      'Building Envelope Optimization',
+      'Construction Administration',
+      'Waste Management & Resource Conservation',
+    ],
+  },
+  {
+    id: 5,
+    title: 'Building Management Services',
+    subtitle: 'Integrated Engineering',
+    image: 'https://images.unsplash.com/photo-1581093458791-9f3c3900df4b',
+    sections: [
+      'Intelligent Building Design',
+      'Safety & Security Systems',
+      'Performance Monitoring',
+      'Interoperability Optimization',
+    ],
+  },
+  {
+    id: 6,
+    title: 'Project Management',
+    subtitle: 'End-to-End Control',
+    image: 'https://images.unsplash.com/photo-1503389152951-9f343605f61c',
+    sections: [
+      'Strategic Planning & Scope Establishment',
+      'Interdisciplinary Team Dialogue',
+      'Risk & Progress Monitoring',
+      'Post-Occupancy Evaluation',
+    ],
+  },
+];
+
 // --- Lazy Blog Imports ---
 const BlogPage = React.lazy(() => import('./blog/BlogPage'));
 const BlogPost = React.lazy(() => import('./blog/BlogPost'));
@@ -55,6 +130,8 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState('Home');
   const [selectedService, setSelectedService] = useState(null);
+  const [isDesktopServicesOpen, setIsDesktopServicesOpen] = useState(false);
+  const servicesMenuCloseTimeoutRef = useRef(null);
   const [contactSection] = useState('enquiry');
 
   // Blog State
@@ -103,6 +180,21 @@ const App = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const applyHashRoute = () => {
+      const hash = (window.location.hash || '').toLowerCase();
+      if (hash === '#contact-enquiry') {
+        setSelectedService(null);
+        setCurrentPage('Contact Us');
+        window.setTimeout(() => window.scrollTo(0, 0), 0);
+      }
+    };
+
+    applyHashRoute();
+    window.addEventListener('hashchange', applyHashRoute);
+    return () => window.removeEventListener('hashchange', applyHashRoute);
+  }, []);
+
   // Check URL for Admin Access on initial mount
   const adminCheckRef = useRef(true);
   useEffect(() => {
@@ -116,6 +208,56 @@ const App = () => {
       }
       adminCheckRef.current = false;
     }
+  }, []);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    if (page === 'Services') {
+      setSelectedService(null);
+    }
+  };
+
+  const handleServiceSelectFromMenu = (service) => {
+    setCurrentPage('Services');
+    setSelectedService(service);
+  };
+
+  const handleStartProjectFromService = () => {
+    setSelectedService(null);
+    setCurrentPage('Contact Us');
+    window.location.hash = 'contact-enquiry';
+  };
+
+  const handleScheduleCallFromService = () => {
+    setSelectedService(null);
+    setCurrentPage('Contact Us');
+    window.location.hash = 'contact-enquiry';
+  };
+
+  const openDesktopServicesMenu = () => {
+    if (servicesMenuCloseTimeoutRef.current) {
+      clearTimeout(servicesMenuCloseTimeoutRef.current);
+      servicesMenuCloseTimeoutRef.current = null;
+    }
+    setIsDesktopServicesOpen(true);
+  };
+
+  const closeDesktopServicesMenuWithDelay = () => {
+    if (servicesMenuCloseTimeoutRef.current) {
+      clearTimeout(servicesMenuCloseTimeoutRef.current);
+    }
+    servicesMenuCloseTimeoutRef.current = setTimeout(() => {
+      setIsDesktopServicesOpen(false);
+      servicesMenuCloseTimeoutRef.current = null;
+    }, 180);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (servicesMenuCloseTimeoutRef.current) {
+        clearTimeout(servicesMenuCloseTimeoutRef.current);
+      }
+    };
   }, []);
 
   // Handle Admin Routing
@@ -191,12 +333,53 @@ const App = () => {
             >
               Profile
             </span>
-            <span
-              onClick={() => setCurrentPage('Services')}
-              className="text-xs font-medium tracking-[0.15em] uppercase cursor-pointer text-white/70 hover:text-white transition-colors duration-300"
+            <div
+              className="relative"
+              onMouseEnter={openDesktopServicesMenu}
+              onMouseLeave={closeDesktopServicesMenuWithDelay}
             >
-              Services
-            </span>
+              <span
+                onClick={() => handlePageChange('Services')}
+                className="text-xs font-medium tracking-[0.15em] uppercase cursor-pointer text-white/70 hover:text-white transition-colors duration-300"
+              >
+                Services
+              </span>
+
+              {isDesktopServicesOpen && (
+                <div
+                  className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-80"
+                  onMouseEnter={openDesktopServicesMenu}
+                  onMouseLeave={closeDesktopServicesMenuWithDelay}
+                >
+                <div className="bg-black/95 border border-white/10 backdrop-blur-md p-3 shadow-2xl">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handlePageChange('Services');
+                      setIsDesktopServicesOpen(false);
+                    }}
+                    className="w-full text-left px-3 py-2 text-[10px] tracking-[0.2em] uppercase text-white/70 hover:text-[#C5A059] hover:bg-white/5 transition-colors"
+                  >
+                    View All Services
+                  </button>
+                  <div className="h-px bg-white/10 my-2" />
+                  {SERVICES_QUICK_ACCESS.map((service) => (
+                    <button
+                      key={service.id}
+                      type="button"
+                      onClick={() => {
+                        handleServiceSelectFromMenu(service);
+                        setIsDesktopServicesOpen(false);
+                      }}
+                      className="w-full text-left px-3 py-2 text-[11px] tracking-[0.12em] uppercase text-white/60 hover:text-[#C5A059] hover:bg-white/5 transition-colors"
+                    >
+                      {service.title}
+                    </button>
+                  ))}
+                </div>
+                </div>
+              )}
+            </div>
             <span
               onClick={() => setCurrentPage('Projects')}
               className="text-xs font-medium tracking-[0.15em] uppercase cursor-pointer text-white/70 hover:text-white transition-colors duration-300"
@@ -259,7 +442,12 @@ const App = () => {
         </div>
       </motion.header>
 
-      <Navigation isOpen={isNavOpen} setIsOpen={setIsNavOpen} setPage={setCurrentPage} />
+      <Navigation
+        isOpen={isNavOpen}
+        setIsOpen={setIsNavOpen}
+        setPage={handlePageChange}
+        onServiceSelect={handleServiceSelectFromMenu}
+      />
 
       <Suspense fallback={<PageLoader />}>
         <main>
@@ -267,7 +455,12 @@ const App = () => {
           {currentPage === 'Projects' && <ProjectsPage />}
           {currentPage === 'Services' && (
             selectedService ? (
-              <ServiceDetailPage service={selectedService} onBack={() => setSelectedService(null)} />
+              <ServiceDetailPage
+                service={selectedService}
+                onBack={() => setSelectedService(null)}
+                onStartProject={handleStartProjectFromService}
+                onScheduleCall={handleScheduleCallFromService}
+              />
             ) : (
               <ServicesPage onServiceClick={setSelectedService} />
             )
@@ -296,7 +489,7 @@ const App = () => {
 
       <CartDrawer onCheckout={() => { setIsCheckout(true); setCurrentPage('Shop'); }} />
       <Suspense fallback={null}><AIChatbot setPage={setCurrentPage} /></Suspense>
-      {currentPage !== 'Contact Us' && <Footer setPage={setCurrentPage} />}
+      <Footer setPage={setCurrentPage} />
     </div>
   );
 };

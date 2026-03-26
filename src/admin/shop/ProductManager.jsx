@@ -3,11 +3,23 @@ import { motion } from 'framer-motion';
 import { Plus, Edit2, Trash2, Star, Eye, EyeOff, Search, Loader2, X, Upload, Package } from 'lucide-react';
 import { shopAPI, categoriesAPI, uploadAPI, normalizeAssetUrl } from '../../services/api';
 
+const ARRANGE_OPTIONS = [
+    { value: 'newest', label: 'Newest First' },
+    { value: 'oldest', label: 'Oldest First' },
+    { value: 'name-asc', label: 'Name A-Z' },
+    { value: 'name-desc', label: 'Name Z-A' },
+    { value: 'price-asc', label: 'Price Low-High' },
+    { value: 'price-desc', label: 'Price High-Low' },
+    { value: 'stock-desc', label: 'Stock High-Low' },
+    { value: 'featured-first', label: 'Featured First' },
+];
+
 const ProductManager = () => {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+    const [arrangeBy, setArrangeBy] = useState('newest');
     const [editProduct, setEditProduct] = useState(null);
     const [showForm, setShowForm] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -134,6 +146,36 @@ const ProductManager = () => {
         (p.sku || '').toLowerCase().includes(search.toLowerCase())
     );
 
+    const arranged = [...filtered].sort((a, b) => {
+        const priceA = parseFloat(a.sale_price || a.price || 0);
+        const priceB = parseFloat(b.sale_price || b.price || 0);
+        const stockA = Number.parseInt(a.stock_qty || 0, 10) || 0;
+        const stockB = Number.parseInt(b.stock_qty || 0, 10) || 0;
+
+        switch (arrangeBy) {
+            case 'oldest':
+                return (a.id || 0) - (b.id || 0);
+            case 'name-asc':
+                return (a.name || '').localeCompare(b.name || '');
+            case 'name-desc':
+                return (b.name || '').localeCompare(a.name || '');
+            case 'price-asc':
+                return priceA - priceB;
+            case 'price-desc':
+                return priceB - priceA;
+            case 'stock-desc':
+                return stockB - stockA;
+            case 'featured-first':
+                if ((a.featured ? 1 : 0) !== (b.featured ? 1 : 0)) {
+                    return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+                }
+                return (b.id || 0) - (a.id || 0);
+            case 'newest':
+            default:
+                return (b.id || 0) - (a.id || 0);
+        }
+    });
+
     return (
         <div>
             {/* Header */}
@@ -148,10 +190,19 @@ const ProductManager = () => {
             </div>
 
             {/* Search */}
-            <div className="relative mb-5 max-w-sm">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
-                <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search products..."
-                    className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#C5A059]/50" />
+            <div className="flex flex-col sm:flex-row gap-3 mb-5 max-w-3xl">
+                <div className="relative flex-1 min-w-[280px]">
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                    <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search products..."
+                        className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#C5A059]/50" />
+                </div>
+                <select
+                    value={arrangeBy}
+                    onChange={e => setArrangeBy(e.target.value)}
+                    className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:border-[#C5A059]/50"
+                >
+                    {ARRANGE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                </select>
             </div>
 
             {/* Product Table */}
@@ -172,9 +223,9 @@ const ProductManager = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filtered.length === 0 ? (
+                            {arranged.length === 0 ? (
                                 <tr><td colSpan={6} className="text-center text-white/30 py-12">No products found</td></tr>
-                            ) : filtered.map(p => (
+                            ) : arranged.map(p => (
                                 <tr key={p.id} className="border-b border-white/5 hover:bg-white/3 transition-colors">
                                     <td className="px-4 py-3">
                                         <div className="flex items-center gap-3">

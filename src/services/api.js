@@ -107,7 +107,10 @@ export const projectsAPI = {
 
 // Blog API
 export const blogAPI = {
-    getAll: () => apiCall('/blog?published=true'),
+    getAll: (params = { published: true }) => {
+        const query = new URLSearchParams({ ...params }).toString();
+        return apiCall(`/blog${query ? `?${query}` : ''}`);
+    },
 
     getBySlug: (slug) => apiCall(`/blog/${slug}`),
 

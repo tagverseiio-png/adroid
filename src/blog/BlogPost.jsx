@@ -71,6 +71,11 @@ const BlogPost = ({ post, onBack }) => {
                     <span className="text-[#C5A059] text-[10px] md:text-xs uppercase tracking-[0.2em] font-bold block mb-3 md:mb-4">
                         {post.category}
                     </span>
+                    {post.sub_category && (
+                        <span className="text-white/60 text-[10px] md:text-xs uppercase tracking-[0.2em] font-bold block mb-3 md:mb-4">
+                            {post.sub_category}
+                        </span>
+                    )}
                     <h1 className="text-3xl md:text-5xl font-logo uppercase tracking-widest text-white mb-6 md:mb-8 leading-tight">
                         {post.title}
                     </h1>

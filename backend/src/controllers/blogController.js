@@ -3,51 +3,61 @@ const { successResponse, errorResponse, paginatedResponse } = require('../utils/
 const { generateUniqueSlug } = require('../utils/slugify');
 const fileService = require('../services/fileService');
 
+const MAIN_INSIGHTS_CATEGORY = 'Insights';
+
+const normalizeSubCategory = (value) => {
+  const normalized = String(value || '').trim().toLowerCase();
+  if (normalized === 'trends') return 'Trends';
+  return 'Insights';
+};
+
 /**
  * Get all blog posts
  */
 exports.getAllPosts = async (req, res) => {
   try {
-    const { category, published, page = 1, limit = 10 } = req.query;
-    const offset = (page - 1) * limit;
+    const { category, sub_category, published, page = 1, limit = 10 } = req.query;
+    const safePage = Number.parseInt(page, 10) || 1;
+    const safeLimit = Number.parseInt(limit, 10) || 10;
+    const offset = (safePage - 1) * safeLimit;
 
-    let queryText = 'SELECT * FROM blog_posts WHERE 1=1';
+    const where = ['1=1'];
     const params = [];
-    let paramIndex = 1;
 
     if (category) {
-      queryText += ` AND category = $${paramIndex}`;
       params.push(category);
-      paramIndex++;
+      where.push(`category = $${params.length}`);
+    }
+
+    if (sub_category) {
+      params.push(sub_category);
+      where.push(`sub_category = $${params.length}`);
     }
 
     if (published !== undefined) {
-      queryText += ` AND published = $${paramIndex}`;
       params.push(published === 'true');
-      paramIndex++;
+      where.push(`published = $${params.length}`);
     }
 
-    queryText += ' ORDER BY created_at DESC';
-    queryText += ` LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
-    params.push(limit, offset);
+    const queryText = `
+      SELECT * FROM blog_posts
+      WHERE ${where.join(' AND ')}
+      ORDER BY created_at DESC
+      LIMIT $${params.length + 1} OFFSET $${params.length + 2}
+    `;
 
-    const result = await query(queryText, params);
+    const result = await query(queryText, [...params, safeLimit, offset]);
 
     const normalizedRows = result.rows.map((post) => ({
       ...post,
       featured_image: fileService.normalizePublicUrl(post.featured_image, req)
     }));
 
-    // Get total count
-    let countQuery = 'SELECT COUNT(*) FROM blog_posts WHERE 1=1';
-    const countParams = params.slice(0, -2);
-    if (category) countQuery += ' AND category = $1';
-    if (published !== undefined) countQuery += ` AND published = $${countParams.length}`;
-    
-    const countResult = await query(countQuery, countParams);
+    const countQuery = `SELECT COUNT(*) FROM blog_posts WHERE ${where.join(' AND ')}`;
+    const countResult = await query(countQuery, params);
     const total = parseInt(countResult.rows[0].count);
 
-    paginatedResponse(res, normalizedRows, page, limit, total);
+    paginatedResponse(res, normalizedRows, safePage, safeLimit, total);
   } catch (error) {
     console.error('Get blog posts error:', error);
     errorResponse(res, 'Failed to fetch blog posts', 500);
@@ -92,9 +102,12 @@ exports.getPost = async (req, res) => {
 exports.createPost = async (req, res) => {
   try {
     const {
-      title, category, author, excerpt, content,
+      title, sub_category, author, excerpt, content,
       featured_image, tags, published = true
     } = req.body;
+
+    const finalCategory = MAIN_INSIGHTS_CATEGORY;
+    const finalSubCategory = normalizeSubCategory(sub_category);
 
     // Generate unique slug
     const checkSlugExists = async (slug) => {
@@ -106,10 +119,10 @@ exports.createPost = async (req, res) => {
 
     const result = await query(
       `INSERT INTO blog_posts 
-       (title, slug, category, author, excerpt, content, featured_image, tags, published) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+       (title, slug, category, sub_category, author, excerpt, content, featured_image, tags, published) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
        RETURNING *`,
-      [title, slug, category, author, excerpt, content, featured_image, tags, published]
+      [title, slug, finalCategory, finalSubCategory, author, excerpt, content, featured_image, tags, published]
     );
 
     successResponse(res, result.rows[0], 'Blog post created successfully', 201);
@@ -125,9 +138,24 @@ exports.createPost = async (req, res) => {
 exports.updatePost = async (req, res) => {
   try {
     const { id } = req.params;
-    const updates = req.body;
+    const updates = { ...req.body };
 
-    const fields = Object.keys(updates).filter(key => key !== 'id');
+    if (Object.prototype.hasOwnProperty.call(updates, 'category')) {
+      updates.category = MAIN_INSIGHTS_CATEGORY;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(updates, 'sub_category')) {
+      updates.sub_category = normalizeSubCategory(updates.sub_category);
+    }
+
+    if (Object.prototype.hasOwnProperty.call(updates, 'category') && !Object.prototype.hasOwnProperty.call(updates, 'sub_category')) {
+      updates.sub_category = 'Insights';
+    }
+
+    const fields = Object.keys(updates).filter((key) => key !== 'id');
+    if (fields.length === 0) {
+      return errorResponse(res, 'No fields provided for update', 400);
+    }
     const setClause = fields.map((field, index) => `${field} = $${index + 1}`).join(', ');
     const values = fields.map(field => updates[field]);
     values.push(id);

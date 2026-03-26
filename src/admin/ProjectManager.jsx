@@ -7,6 +7,17 @@ import { ARCHITECTURE_CATEGORIES, INTERIOR_CATEGORIES } from '../data/projectCat
 const PROJECT_CATEGORIES = Array.from(new Set([...ARCHITECTURE_CATEGORIES, ...INTERIOR_CATEGORIES]))
     .filter(c => c !== 'ALL');
 
+const ARRANGE_OPTIONS = [
+    { value: 'newest', label: 'Newest First' },
+    { value: 'oldest', label: 'Oldest First' },
+    { value: 'custom-order', label: 'Custom Order (Low-High)' },
+    { value: 'title-asc', label: 'Title A-Z' },
+    { value: 'title-desc', label: 'Title Z-A' },
+    { value: 'year-desc', label: 'Year (High-Low)' },
+    { value: 'year-asc', label: 'Year (Low-High)' },
+    { value: 'featured-first', label: 'Featured First' },
+];
+
 // ─── Input helpers ────────────────────────────────────────────────────────────
 const Field = ({ label, children }) => (
     <div>
@@ -150,6 +161,16 @@ const ProjectForm = ({ data, setData, onSave, onCancel, saving, isEdit = false }
                 <Field label="Year">
                     <input className={inp} placeholder="2024" value={data.year || ''} onChange={e => setData(d => ({ ...d, year: e.target.value }))} />
                 </Field>
+                <Field label="Display Order">
+                    <input
+                        className={inp}
+                        type="number"
+                        min="0"
+                        placeholder="0"
+                        value={data.featured_order ?? 0}
+                        onChange={e => setData(d => ({ ...d, featured_order: Number.parseInt(e.target.value || '0', 10) || 0 }))}
+                    />
+                </Field>
                 <Field label="Area">
                     <input className={inp} placeholder="3500 sqft" value={data.area || ''} onChange={e => setData(d => ({ ...d, area: e.target.value }))} />
                 </Field>
@@ -229,6 +250,7 @@ const emptyProject = {
     title: '', category: '', type: 'ARCHITECTURE', location: '',
     year: new Date().getFullYear().toString(), area: '', client: '',
     design_style: '', description: '', cover_image: '', images: [],
+    featured_order: 0,
     published: true, is_featured: false,
 };
 
@@ -240,11 +262,12 @@ const ProjectManager = () => {
     const [saving, setSaving] = useState(false);
     const [search, setSearch] = useState('');
     const [filterCat, setFilterCat] = useState('ALL');
+    const [arrangeBy, setArrangeBy] = useState('newest');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 12; // 3 rows of 4 columns
 
     useEffect(() => { fetchProjects(); }, []);
-    useEffect(() => { setCurrentPage(1); }, [search, filterCat]);
+    useEffect(() => { setCurrentPage(1); }, [search, filterCat, arrangeBy]);
 
     const fetchProjects = async () => {
         try {
@@ -270,6 +293,7 @@ const ProjectManager = () => {
         try {
             const payload = {
                 ...formData,
+                featured_order: Number.parseInt(formData.featured_order || 0, 10) || 0,
                 cover_image: formData.images?.[0] || formData.cover_image || '',
             };
             if (panel === 'add') {
@@ -322,9 +346,43 @@ const ProjectManager = () => {
         return matchCat && matchSearch;
     });
 
+    const arranged = [...filtered].sort((a, b) => {
+        const yearA = Number.parseInt(a.year, 10);
+        const yearB = Number.parseInt(b.year, 10);
+        const safeYearA = Number.isNaN(yearA) ? 0 : yearA;
+        const safeYearB = Number.isNaN(yearB) ? 0 : yearB;
+
+        switch (arrangeBy) {
+            case 'oldest':
+                return (a.id || 0) - (b.id || 0);
+            case 'custom-order': {
+                const orderA = Number.parseInt(a.featured_order || 0, 10) || 0;
+                const orderB = Number.parseInt(b.featured_order || 0, 10) || 0;
+                if (orderA !== orderB) return orderA - orderB;
+                return (b.id || 0) - (a.id || 0);
+            }
+            case 'title-asc':
+                return (a.title || '').localeCompare(b.title || '');
+            case 'title-desc':
+                return (b.title || '').localeCompare(a.title || '');
+            case 'year-desc':
+                return safeYearB - safeYearA;
+            case 'year-asc':
+                return safeYearA - safeYearB;
+            case 'featured-first':
+                if ((a.is_featured ? 1 : 0) !== (b.is_featured ? 1 : 0)) {
+                    return (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0);
+                }
+                return (b.id || 0) - (a.id || 0);
+            case 'newest':
+            default:
+                return (b.id || 0) - (a.id || 0);
+        }
+    });
+
     // Pagination
-    const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
-    const paginated = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    const totalPages = Math.max(1, Math.ceil(arranged.length / itemsPerPage));
+    const paginated = arranged.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     return (
         <div>
@@ -356,14 +414,25 @@ const ProjectManager = () => {
                 >
                     {cats.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
+                <select
+                    className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:border-[#C5A059] transition-colors"
+                    value={arrangeBy}
+                    onChange={e => setArrangeBy(e.target.value)}
+                >
+                    {ARRANGE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                </select>
             </div>
+
+            <p className="text-white/30 text-[10px] uppercase tracking-widest mb-4">
+                Arrange by: {ARRANGE_OPTIONS.find(o => o.value === arrangeBy)?.label || 'Newest First'}
+            </p>
 
             {/* Project Card Grid */}
             {isLoading ? (
                 <div className="flex items-center justify-center py-24">
                     <div className="w-8 h-8 border-2 border-[#C5A059] border-t-transparent rounded-full animate-spin" />
                 </div>
-            ) : filtered.length === 0 ? (
+            ) : arranged.length === 0 ? (
                 <div className="text-center py-24 text-white/30">
                     <ImageIcon size={40} className="mx-auto mb-3 opacity-30" />
                     <p className="text-sm">No projects found</p>
