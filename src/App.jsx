@@ -5,8 +5,11 @@ import { Menu } from 'lucide-react';
 import Lenis from 'lenis';
 
 // Import local images for services
+import ARCHITECTURALDESIGN from '/assets/ARCHITECTURALDESIGN.jpg';
 import TURNKEYINTERIORFITOUT from '/assets/TURNKEYINTERIORFIT-OUT.jpg';
 import PROJECTMANAGEMENT from '/assets/PROJECTMANAGEMENT.jpg';
+import BUILDINGMANAGEMENTSERVICES from '/assets/BUILDINGMANAGEMENTSERVICES.jpg';
+import CIVILPEBCONSTRUCTION from '/assets/CIVIL&PEBCONSTRUCTION.jpg';
 
 // --- Lazy Page Imports (Code Splitting) ---
 const Home = React.lazy(() => import('./Home'));
@@ -30,7 +33,7 @@ const SERVICES_QUICK_ACCESS = [
     id: 1,
     title: 'Architectural Design',
     subtitle: 'Built Environments',
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c',
+    image: ARCHITECTURALDESIGN,
     sections: [
       'Residential Buildings - Individual Homes, Villas, Apartments, Beach Houses, Group Housing, Land Layouts.',
       'Commercial Buildings - IT Parks, Office Buildings, Shopping Complex, Community Halls, Showrooms, Retail Outlets and Commercial Buildings.',
@@ -45,7 +48,7 @@ const SERVICES_QUICK_ACCESS = [
     id: 2,
     title: 'Interior Design',
     subtitle: 'Spatial Experience',
-    image: 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4',
+    image: 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4', // Keeping this as it's the interior design placeholder
     sections: [
       'Corporate Offices, IT and ITES Offices, Commercial Offices, Factory Offices.',
       'Data Centres, Food Courts, Hospitals, Hotels, Restaurants, Banquet Halls.',
@@ -69,7 +72,7 @@ const SERVICES_QUICK_ACCESS = [
     id: 4,
     title: 'Civil & PEB Construction',
     subtitle: 'Structural Excellence',
-    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab',
+    image: CIVILPEBCONSTRUCTION,
     sections: [
       'Green Rated Homes, Individual Villas, Apartments.',
       'Commercial Buildings, IT Parks, Schools and Colleges, Office Buildings.',
@@ -80,7 +83,7 @@ const SERVICES_QUICK_ACCESS = [
     id: 5,
     title: 'Building Management Services',
     subtitle: 'Integrated Engineering',
-    image: 'https://images.unsplash.com/photo-1581093458791-9f3c3900df4b',
+    image: BUILDINGMANAGEMENTSERVICES,
     sections: [
       'MEP Design, Fire Fighting Design, Structural and Seismic Design, PEB Design.',
       'Heating, Ventilation and Air Conditioning Design.',

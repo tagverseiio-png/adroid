@@ -4,8 +4,11 @@ import { motion } from 'framer-motion';
 import { X, Instagram, Linkedin, Facebook, ChevronDown } from 'lucide-react';
 
 // Import local images for services
+import ARCHITECTURALDESIGN from '/assets/ARCHITECTURALDESIGN.jpg';
 import TURNKEYINTERIORFITOUT from '/assets/TURNKEYINTERIORFIT-OUT.jpg';
 import PROJECTMANAGEMENT from '/assets/PROJECTMANAGEMENT.jpg';
+import BUILDINGMANAGEMENTSERVICES from '/assets/BUILDINGMANAGEMENTSERVICES.jpg';
+import CIVILPEBCONSTRUCTION from '/assets/CIVIL&PEBCONSTRUCTION.jpg';
 
 const SECTIONS = ['Profile', 'Services', 'Projects', 'Insights', 'Shop', 'Careers', 'Contact'];
 const SERVICES_QUICK_ACCESS = [
@@ -13,7 +16,7 @@ const SERVICES_QUICK_ACCESS = [
         id: 1,
         title: 'Architectural Design',
         subtitle: 'Built Environments',
-        image: 'https://images.unsplash.com/photo-1497366216548-37526070297c',
+        image: ARCHITECTURALDESIGN,
         sections: [
             'Comprehensive Site & Context Analysis',
             'Sustainable Concept Development',
@@ -25,7 +28,7 @@ const SERVICES_QUICK_ACCESS = [
         id: 2,
         title: 'Interior Design',
         subtitle: 'Spatial Experience',
-        image: 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4',
+        image: 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4', // Keeping this as it's the interior design placeholder
         sections: [
             'Space Planning & Concept',
             'Material & Finish Selection',
@@ -49,7 +52,7 @@ const SERVICES_QUICK_ACCESS = [
         id: 4,
         title: 'Civil & PEB Construction',
         subtitle: 'Structural Excellence',
-        image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab',
+        image: CIVILPEBCONSTRUCTION,
         sections: [
             'Structural & PEB Synergy',
             'Building Envelope Optimization',
@@ -61,7 +64,7 @@ const SERVICES_QUICK_ACCESS = [
         id: 5,
         title: 'Building Management Services',
         subtitle: 'Integrated Engineering',
-        image: 'https://images.unsplash.com/photo-1581093458791-9f3c3900df4b',
+        image: BUILDINGMANAGEMENTSERVICES,
         sections: [
             'Intelligent Building Design',
             'Safety & Security Systems',
