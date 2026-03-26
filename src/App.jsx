@@ -154,7 +154,8 @@ const App = () => {
   useEffect(() => {
     // Skip smooth scroll on touch devices for better performance
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    if (isTouch) return;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (isTouch || prefersReducedMotion) return;
 
     const lenis = new Lenis({
       duration: 1.2,
@@ -169,6 +170,10 @@ const App = () => {
 
     let rafId;
     function raf(time) {
+      if (document.hidden) {
+        rafId = requestAnimationFrame(raf);
+        return;
+      }
       lenis.raf(time);
       rafId = requestAnimationFrame(raf);
     }
@@ -286,7 +291,6 @@ const App = () => {
   return (
     <div className="font-sans bg-[#f4f4f4] min-h-screen selection:bg-[#C5A059] selection:text-white text-stone-900 cursor-none">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&family=Michroma&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&display=swap');
         .font-sans { font-family: 'Montserrat', sans-serif; }
         .font-logo { font-family: 'Michroma', sans-serif; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }

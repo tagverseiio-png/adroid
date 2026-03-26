@@ -119,38 +119,6 @@ const BlogPost = ({ post, onBack }) => {
                     <div className="whitespace-pre-line">
                         {richContent.text || post.content}
                     </div>
-                    <p className="mb-6">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                    </p>
-                    <h3 className="text-2xl font-logo uppercase tracking-wider text-white mt-12 mb-6">Designing for the Future</h3>
-                    <p className="mb-6">
-                        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.
-                    </p>
-                    <div className="grid md:grid-cols-2 gap-8 my-12 not-prose">
-                        <img
-                            src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=1200"
-                            className="w-full h-64 object-cover grayscale"
-                            alt="Detail 1"
-                            onClick={(e) => {
-                                if (window.innerWidth < 1024 && e.currentTarget.classList.contains('grayscale')) {
-                                    e.currentTarget.classList.remove('grayscale');
-                                }
-                            }}
-                        />
-                        <img
-                            src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=1200"
-                            className="w-full h-64 object-cover grayscale"
-                            alt="Detail 2"
-                            onClick={(e) => {
-                                if (window.innerWidth < 1024 && e.currentTarget.classList.contains('grayscale')) {
-                                    e.currentTarget.classList.remove('grayscale');
-                                }
-                            }}
-                        />
-                    </div>
-                    <p>
-                        Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.
-                    </p>
                 </article>
 
                 {/* Footer Tags */}

@@ -105,6 +105,8 @@ export default function AboutPage() {
     const containerRef = useRef(null);
     const [isReviewsPaused, setIsReviewsPaused] = useState(false);
     const reviewsTrackRef = useRef(null);
+    const reviewsSectionRef = useRef(null);
+    const isReviewsSectionInView = useInView(reviewsSectionRef, { margin: "-120px" });
     const { scrollYProgress } = useScroll({ target: containerRef });
 
     const heroY = useTransform(scrollYProgress, [0, 0.35], [0, 180]);
@@ -114,6 +116,13 @@ export default function AboutPage() {
         const container = reviewsTrackRef.current;
         if (!container) return;
 
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+        if (prefersReducedMotion || isMobile || !isReviewsSectionInView || document.hidden) {
+            return;
+        }
+
         let rafId;
         let lastTs = 0;
 
@@ -122,8 +131,7 @@ export default function AboutPage() {
             const dt = ts - lastTs;
             lastTs = ts;
 
-            const isMobile = window.matchMedia('(max-width: 768px)').matches;
-            const speed = isMobile ? 0.018 : 0.045; // px per ms
+            const speed = 0.045; // px per ms
 
             if (!isReviewsPaused) {
                 const half = container.scrollWidth / 2;
@@ -138,7 +146,7 @@ export default function AboutPage() {
 
         rafId = requestAnimationFrame(step);
         return () => cancelAnimationFrame(rafId);
-    }, [isReviewsPaused]);
+    }, [isReviewsPaused, isReviewsSectionInView]);
 
     const nudgeReviews = (direction = 1) => {
         const container = reviewsTrackRef.current;
@@ -381,7 +389,7 @@ export default function AboutPage() {
             </section>
 
             {/* 8. REVIEWS & TESTIMONIALS */}
-            <section className="py-20 md:py-32 px-6 md:px-24 bg-[#050505]">
+            <section ref={reviewsSectionRef} className="py-20 md:py-32 px-6 md:px-24 bg-[#050505]">
                 <div className="max-w-7xl mx-auto">
                     <Reveal>
                         <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold text-center">Reviews & Testimonials</span>
