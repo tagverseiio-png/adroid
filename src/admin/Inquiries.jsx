@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { Mail, Phone, Calendar, Trash2, ChevronLeft, ChevronRight, Download, FileX } from 'lucide-react';
 import { inquiriesAPI, jobsAPI, normalizeAssetUrl } from '../services/api';
 

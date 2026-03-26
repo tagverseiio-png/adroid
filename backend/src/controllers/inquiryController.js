@@ -45,6 +45,17 @@ exports.getAllInquiries = async (req, res) => {
       source: source
     });
   } catch (error) {
+    if (error && error.code === '42P01') {
+      console.warn('⚠️ inquiries table missing. Returning empty inquiry list.');
+      return successResponse(res, {
+        inquiries: [],
+        page: 1,
+        limit: 20,
+        total: 0,
+        source: 'Odoo CRM'
+      });
+    }
+
     console.error('Get inquiries error:', error);
     errorResponse(res, error.message || 'Failed to fetch inquiries', 500);
   }

@@ -9,13 +9,23 @@ exports.getDashboard = async (req, res) => {
     // Get counts
     const projectsCount = await query('SELECT COUNT(*) as count FROM projects');
     const blogCount = await query('SELECT COUNT(*) as count FROM blog_posts');
-    const inquiriesCount = await query('SELECT COUNT(*) as count FROM inquiries WHERE status = \'New\'');
     const totalViews = await query('SELECT SUM(views) as total FROM blog_posts');
 
-    // Get recent inquiries
-    const recentInquiries = await query(
-      'SELECT * FROM inquiries ORDER BY created_at DESC LIMIT 5'
-    );
+    let inquiriesCount = { rows: [{ count: '0' }] };
+    let recentInquiries = { rows: [] };
+
+    try {
+      inquiriesCount = await query('SELECT COUNT(*) as count FROM inquiries WHERE status = \'New\'');
+      recentInquiries = await query(
+        'SELECT * FROM inquiries ORDER BY created_at DESC LIMIT 5'
+      );
+    } catch (inquiryError) {
+      if (inquiryError && inquiryError.code === '42P01') {
+        console.warn('⚠️ inquiries table missing. Dashboard will use empty inquiry stats.');
+      } else {
+        throw inquiryError;
+      }
+    }
 
     // Get recent projects
     const recentProjects = await query(

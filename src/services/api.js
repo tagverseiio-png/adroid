@@ -129,7 +129,27 @@ export const blogAPI = {
 
 // Inquiries API
 export const inquiriesAPI = {
-    getAll: () => apiCall('/inquiries'),
+    getAll: async () => {
+        try {
+            return await apiCall('/inquiries');
+        } catch (error) {
+            const message = String(error?.message || '').toLowerCase();
+            if (message.includes('relation "inquiries" does not exist')) {
+                return {
+                    success: true,
+                    message: 'Inquiries table unavailable; returning empty list',
+                    data: {
+                        inquiries: [],
+                        page: 1,
+                        limit: 20,
+                        total: 0,
+                        source: 'Odoo CRM'
+                    }
+                };
+            }
+            throw error;
+        }
+    },
 
     create: (inquiryData) => apiCall('/inquiries', {
         method: 'POST',

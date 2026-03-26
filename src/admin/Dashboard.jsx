@@ -36,15 +36,24 @@ const Dashboard = ({ onNavigate }) => {
 
     const fetchDashboardData = async () => {
         try {
-            const [projectsRes, blogRes, inquiriesRes] = await Promise.all([
+            const [projectsResult, blogResult, inquiriesResult] = await Promise.allSettled([
                 projectsAPI.getAll(),
                 blogAPI.getAll(),
                 inquiriesAPI.getAll(),
             ]);
+
+            const projectsRes = projectsResult.status === 'fulfilled' ? projectsResult.value : { data: [] };
+            const blogRes = blogResult.status === 'fulfilled' ? blogResult.value : { data: [] };
+            const inquiriesRes = inquiriesResult.status === 'fulfilled' ? inquiriesResult.value : { data: { inquiries: [] } };
+
+            const inquiryList = Array.isArray(inquiriesRes.data)
+                ? inquiriesRes.data
+                : (inquiriesRes.data?.inquiries || []);
+
             setStats({
                 projects: projectsRes.data?.length || 0,
                 blogPosts: blogRes.data?.length || 0,
-                inquiries: inquiriesRes.data?.length || 0,
+                inquiries: inquiryList.length,
             });
             setRecentProjects(projectsRes.data?.slice(0, 6) || []);
         } catch (error) {
