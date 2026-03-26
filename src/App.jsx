@@ -28,10 +28,13 @@ const SERVICES_QUICK_ACCESS = [
     subtitle: 'Built Environments',
     image: 'https://images.unsplash.com/photo-1497366216548-37526070297c',
     sections: [
-      'Comprehensive Site & Context Analysis',
-      'Sustainable Concept Development',
-      'Technical Documentation',
-      'Engineering Coordination',
+      'Residential Buildings - Individual Homes, Villas, Apartments, Beach Houses, Group Housing, Land Layouts.',
+      'Commercial Buildings - IT Parks, Office Buildings, Shopping Complex, Community Halls, Showrooms, Retail Outlets and Commercial Buildings.',
+      'Factory Buildings - Plant Offices, Manufacturing Units, Warehouses, Processing Units and Cold Storages.',
+      'Hospitality Buildings - Star Rated Hotels, Motels, Restaurants, Clubs, Resorts and Service Apartments.',
+      'Institutional Buildings - Schools, Colleges, Hostels, University Campus, Public Buildings, Trade Centres, Churches and Pilgrimage Centres.',
+      'Healthcare Buildings - Multi Specialty Hospitals, Nursing Home and Specialty Clinics, Rehabilitation Centres, Spa.',
+      'Land Layouts Design - Agricultural Farm Layouts, Plot Layouts and Land Zoning.',
     ],
   },
   {
@@ -40,10 +43,10 @@ const SERVICES_QUICK_ACCESS = [
     subtitle: 'Spatial Experience',
     image: 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4',
     sections: [
-      'Space Planning & Concept',
-      'Material & Finish Selection',
-      'Integrated Systems Design',
-      'Customization & Visualization',
+      'Corporate Offices, IT and ITES Offices, Commercial Offices, Factory Offices.',
+      'Data Centres, Food Courts, Hospitals, Hotels, Restaurants, Banquet Halls.',
+      'Showrooms, Retail Outlets, Boutiques, Bars, Clubs.',
+      'Home and Villas, Service Apartments.',
     ],
   },
   {
@@ -52,10 +55,10 @@ const SERVICES_QUICK_ACCESS = [
     subtitle: 'Design to Delivery',
     image: 'https://images.unsplash.com/photo-1503389152951-9f343605f61c',
     sections: [
-      'Full Project Ownership',
-      'Vendor & Resource Management',
-      'Quality Control & Inspections',
-      'Time & Budget Adherence',
+      'Corporate Offices, IT and ITES Offices, Commercial Offices, Factory Offices.',
+      'Data Centres, Food Courts, Hospitals, Hotels, Restaurants, Banquet Halls.',
+      'Showrooms and Retail Outlets, Boutiques, Bars, Clubs.',
+      'Home and Villas, Service Apartments.',
     ],
   },
   {
@@ -64,10 +67,9 @@ const SERVICES_QUICK_ACCESS = [
     subtitle: 'Structural Excellence',
     image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab',
     sections: [
-      'Structural & PEB Synergy',
-      'Building Envelope Optimization',
-      'Construction Administration',
-      'Waste Management & Resource Conservation',
+      'Green Rated Homes, Individual Villas, Apartments.',
+      'Commercial Buildings, IT Parks, Schools and Colleges, Office Buildings.',
+      'Industrial Buildings, Community Buildings, Public Buildings.',
     ],
   },
   {
@@ -76,10 +78,9 @@ const SERVICES_QUICK_ACCESS = [
     subtitle: 'Integrated Engineering',
     image: 'https://images.unsplash.com/photo-1581093458791-9f3c3900df4b',
     sections: [
-      'Intelligent Building Design',
-      'Safety & Security Systems',
-      'Performance Monitoring',
-      'Interoperability Optimization',
+      'MEP Design, Fire Fighting Design, Structural and Seismic Design, PEB Design.',
+      'Heating, Ventilation and Air Conditioning Design.',
+      'Networking Design, Security Systems, PA and AV Systems, Intelligent Buildings Design.',
     ],
   },
   {
@@ -88,10 +89,9 @@ const SERVICES_QUICK_ACCESS = [
     subtitle: 'End-to-End Control',
     image: 'https://images.unsplash.com/photo-1503389152951-9f343605f61c',
     sections: [
-      'Strategic Planning & Scope Establishment',
-      'Interdisciplinary Team Dialogue',
-      'Risk & Progress Monitoring',
-      'Post-Occupancy Evaluation',
+      'Complete ownership from concept to completion covering both civil and interior works.',
+      'Design and Planning, Tendering and Vendor Selection, Project Monitoring and Execution Oversight.',
+      'Quality assurance and on-time final handover.',
     ],
   },
 ];

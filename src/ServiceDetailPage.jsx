@@ -415,7 +415,7 @@ const ServiceDetailPage = ({ service, setPage, onBack, onStartProject, onSchedul
 
       {/* PHILOSOPHY - Split Layout */}
       <section className="px-6 md:px-20 py-16 md:py-32 max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-10 md:gap-20 items-start">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-start">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -465,57 +465,27 @@ const ServiceDetailPage = ({ service, setPage, onBack, onStartProject, onSchedul
         </div>
       </section>
 
-      {/* AREA OF SPECIALIZATION / SCOPE OF SERVICES */}
-      <CompactSection title={service.id === 1 ? "Area of Specialization" : "Scope of Services"}>
-        {service.id === 1 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {[
-              "Residential",
-              "Commercial Offices",
-              "IT & ITES",
-              "Hospitality",
-              "Retail & F&B",
-              "Healthcare",
-              "Educational Institutions",
-              "Industrial & Logistics",
-              "Mixed-Use Developments",
-              "Government & PSU",
-            ].map((tag, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className="group relative bg-white border border-stone-200 p-8 md:p-10 rounded-2xl flex items-center justify-center text-center hover:border-[#C5A059] transition-all duration-300 hover:shadow-lg"
-              >
-                <p className="relative w-full text-base md:text-lg text-stone-700 font-medium tracking-wide uppercase text-center">
-                  {tag}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {scopeItems.map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="group relative bg-white border border-stone-200 p-8 md:p-10 min-h-[200px] rounded-2xl flex items-center justify-center text-center hover:border-[#C5A059] transition-all duration-300 hover:shadow-lg"
-              >
-                <span className="absolute top-6 right-6 text-5xl font-logo text-stone-100 group-hover:text-[#C5A059]/10 transition-colors uppercase">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <p className="relative text-base md:text-lg text-stone-700 leading-relaxed text-center">
-                  {item}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        )}
+      {/* SCOPE OF SERVICES */}
+      <CompactSection title="Scope of Services">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {scopeItems.map((item, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08 }}
+              className="group relative bg-white border border-stone-200 p-8 md:p-10 min-h-[200px] rounded-2xl flex items-center justify-center text-center hover:border-[#C5A059] transition-all duration-300 hover:shadow-lg overflow-hidden"
+            >
+              <span className="absolute top-6 right-6 text-5xl md:text-6xl font-logo text-stone-200 group-hover:text-[#C5A059]/20 transition-colors uppercase pointer-events-none">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <p className="relative z-10 text-base md:text-lg text-stone-700 leading-relaxed text-center">
+                {item}
+              </p>
+            </motion.div>
+          ))}
+        </div>
       </CompactSection>
 
       {/* KEY DELIVERABLES */}
