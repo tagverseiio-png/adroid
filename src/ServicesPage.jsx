@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
+import SafeImage from "./components/SafeImage";
 
 // Import images directly for production reliability
 import ARCHITECTURALDESIGN from "/assets/ARCHITECTURALDESIGN.jpg";
@@ -128,7 +129,11 @@ const ServicesPage = ({ onServiceClick }) => {
                     className={`absolute inset-0 transition-opacity duration-700 ${hovered === s.id ? "opacity-40" : "opacity-0"
                         }`}
                 >
-                    <img src={s.image} className="w-full h-full object-cover" />
+                    <SafeImage 
+                        src={s.image} 
+                        className="w-full h-full object-cover"
+                        alt={`${s.title} background`}
+                    />
                     <div className="absolute inset-0 bg-black/50" />
                 </div>
             ))}

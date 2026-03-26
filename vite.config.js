@@ -11,6 +11,8 @@ export default defineConfig({
     },
   },
   build: {
+    // Ensure assets are in a consistent location
+    assetsDir: 'assets',
     // Code splitting: separate vendor chunks
     rollupOptions: {
       output: {
