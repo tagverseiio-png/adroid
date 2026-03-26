@@ -3,17 +3,24 @@ import { ArrowUpRight } from "lucide-react";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
+// Import images directly for production reliability
+import ARCHITECTURALDESIGN from "/assets/ARCHITECTURALDESIGN.jpg";
+import BUILDINGMANAGEMENTSERVICES from "/assets/BUILDINGMANAGEMENTSERVICES.jpg";
+import CIVILPEBCONSTRUCTION from "/assets/CIVIL&PEBCONSTRUCTION.jpg";
+import PROJECTMANAGEMENT from "/assets/PROJECTMANAGEMENT.jpg";
+import TURNKEYINTERIORFITOUT from "/assets/TURNKEYINTERIORFIT-OUT.jpg";
+
 const SERVICES_DATA = [
     {
         id: 1,
         title: "ARCHITECTURAL DESIGN",
         subtitle: "Built Environments",
-        image: "/assets/ARCHITECTURALDESIGN.jpg",
+        image: ARCHITECTURALDESIGN,
         images: [
-            "/assets/ARCHITECTURALDESIGN.jpg",
-            "/assets/CIVIL&PEBCONSTRUCTION.jpg",
-            "/assets/BUILDINGMANAGEMENTSERVICES.jpg",
-            "/assets/PROJECTMANAGEMENT.jpg",
+            ARCHITECTURALDESIGN,
+            CIVILPEBCONSTRUCTION,
+            BUILDINGMANAGEMENTSERVICES,
+            PROJECTMANAGEMENT,
         ],
         sections: [
             "Comprehensive Site & Context Analysis",
@@ -28,10 +35,10 @@ const SERVICES_DATA = [
         subtitle: "Spatial Experience",
         image: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4",
         images: [
-            "/assets/TURNKEYINTERIORFIT-OUT.jpg",
-            "/assets/PROJECTMANAGEMENT.jpg",
-            "/assets/BUILDINGMANAGEMENTSERVICES.jpg",
-            "/assets/ARCHITECTURALDESIGN.jpg",
+            TURNKEYINTERIORFITOUT,
+            PROJECTMANAGEMENT,
+            BUILDINGMANAGEMENTSERVICES,
+            ARCHITECTURALDESIGN,
         ],
         sections: [
             "Space Planning & Concept",
@@ -44,11 +51,11 @@ const SERVICES_DATA = [
         id: 3,
         title: "TURNKEY INTERIOR FIT-OUT",
         subtitle: "Design to Delivery",
-        image: "/assets/TURNKEYINTERIORFIT-OUT.jpg",
+        image: TURNKEYINTERIORFITOUT,
         images: [
-            "/assets/TURNKEYINTERIORFIT-OUT.jpg",
-            "/assets/PROJECTMANAGEMENT.jpg",
-            "/assets/ARCHITECTURALDESIGN.jpg",
+            TURNKEYINTERIORFITOUT,
+            PROJECTMANAGEMENT,
+            ARCHITECTURALDESIGN,
         ],
         sections: [
             "Full Project Ownership",
@@ -61,11 +68,11 @@ const SERVICES_DATA = [
         id: 4,
         title: "CIVIL & PEB CONSTRUCTION",
         subtitle: "Structural Excellence",
-        image: "/assets/CIVIL&PEBCONSTRUCTION.jpg",
+        image: CIVILPEBCONSTRUCTION,
         images: [
-            "/assets/CIVIL&PEBCONSTRUCTION.jpg",
-            "/assets/ARCHITECTURALDESIGN.jpg",
-            "/assets/BUILDINGMANAGEMENTSERVICES.jpg",
+            CIVILPEBCONSTRUCTION,
+            ARCHITECTURALDESIGN,
+            BUILDINGMANAGEMENTSERVICES,
         ],
         sections: [
             "Structural & PEB Synergy",
@@ -78,11 +85,11 @@ const SERVICES_DATA = [
         id: 5,
         title: "BUILDING MANAGEMENT SERVICES",
         subtitle: "Integrated Engineering",
-        image: "/assets/BUILDINGMANAGEMENTSERVICES.jpg",
+        image: BUILDINGMANAGEMENTSERVICES,
         images: [
-            "/assets/BUILDINGMANAGEMENTSERVICES.jpg",
-            "/assets/CIVIL&PEBCONSTRUCTION.jpg",
-            "/assets/PROJECTMANAGEMENT.jpg",
+            BUILDINGMANAGEMENTSERVICES,
+            CIVILPEBCONSTRUCTION,
+            PROJECTMANAGEMENT,
         ],
         sections: [
             "Intelligent Building Design",
@@ -95,11 +102,11 @@ const SERVICES_DATA = [
         id: 6,
         title: "PROJECT MANAGEMENT",
         subtitle: "End-to-End Control",
-        image: "/assets/PROJECTMANAGEMENT.jpg",
+        image: PROJECTMANAGEMENT,
         images: [
-            "/assets/PROJECTMANAGEMENT.jpg",
-            "/assets/ARCHITECTURALDESIGN.jpg",
-            "/assets/BUILDINGMANAGEMENTSERVICES.jpg",
+            PROJECTMANAGEMENT,
+            ARCHITECTURALDESIGN,
+            BUILDINGMANAGEMENTSERVICES,
         ],
         sections: [
             "Strategic Planning & Scope Establishment",
