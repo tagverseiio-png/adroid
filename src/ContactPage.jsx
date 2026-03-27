@@ -99,7 +99,9 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                             <h3 className="text-[10px] text-white/40 uppercase tracking-[0.3em] font-sans font-bold mb-6">Social Connect</h3>
                             <div className="flex gap-8">
                                 {[
-                                    { icon: Linkedin, url: "https://www.linkedin.com/company/adroit-design-india-pvt-ltd" }
+                                    { icon: Linkedin, url: import.meta.env.VITE_SOCIAL_LINKEDIN_URL },
+                                    { icon: Instagram, url: import.meta.env.VITE_SOCIAL_INSTAGRAM_URL },
+                                    { icon: Facebook, url: import.meta.env.VITE_SOCIAL_FACEBOOK_URL }
                                 ].map((item, idx) => (
                                     <motion.a
                                         key={idx}
