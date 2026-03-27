@@ -10,7 +10,7 @@ import PROJECTMANAGEMENT from '/assets/PROJECTMANAGEMENT.jpg';
 import BUILDINGMANAGEMENTSERVICES from '/assets/BUILDINGMANAGEMENTSERVICES.jpg';
 import CIVILPEBCONSTRUCTION from '/assets/CIVIL&PEBCONSTRUCTION.jpg';
 
-const SECTIONS = ['Profile', 'Services', 'Projects', 'Insights', 'Shop', 'Careers', 'Contact'];
+const SECTIONS = ['Profile', 'Services', 'Projects', 'Insights', 'Shop', 'Careers', 'Contact Us'];
 const SERVICES_QUICK_ACCESS = [
     {
         id: 1,

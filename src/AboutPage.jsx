@@ -174,7 +174,7 @@ export default function AboutPage() {
                     <motion.h1
                         initial={{ y: 30, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
-                        className="text-white font-logo text-4xl md:text-7xl uppercase tracking-[0.2em] mb-6"
+                        className="text-white font-logo text-2xl sm:text-4xl md:text-7xl uppercase tracking-[0.15em] md:tracking-[0.2em] mb-6 px-2"
                     >
                         Building Excellence Through Design
                     </motion.h1>
@@ -422,18 +422,18 @@ export default function AboutPage() {
                     >
                         <div
                             ref={reviewsTrackRef}
-                            className="flex gap-8 w-full overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing"
+                            className="flex gap-4 md:gap-8 w-full overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing px-4 md:px-0"
                             onTouchStart={() => setIsReviewsPaused(true)}
                             onTouchEnd={() => setIsReviewsPaused(false)}
                         >
                             {REVIEWS_MARQUEE.map((review, i) => (
                                 <div
                                     key={i}
-                                    className="w-[320px] md:w-[440px] flex-shrink-0 p-8 md:p-10 border border-white/10 bg-white/5 relative hover:-translate-y-2 transition-transform duration-500"
+                                    className="w-[85vw] sm:w-[320px] md:w-[440px] flex-shrink-0 p-6 md:p-10 border border-white/10 bg-white/5 relative hover:-translate-y-2 transition-transform duration-500"
                                 >
-                                    <Quote className="text-[#C5A059] w-10 h-10 mb-6 opacity-50" />
-                                    <p className="text-stone-300 font-light leading-relaxed mb-8 italic">"{review.text}"</p>
-                                    <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-6">
+                                    <Quote className="text-[#C5A059] w-8 h-8 md:w-10 md:h-10 mb-4 md:mb-6 opacity-50" />
+                                    <p className="text-stone-300 font-light leading-relaxed mb-6 md:mb-8 italic text-sm md:text-base">"{review.text}"</p>
+                                    <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-4 md:pt-6">
                                         <div>
                                             <h4 className="text-white font-bold tracking-wide uppercase text-sm mb-1">{review.name}</h4>
                                             <p className="text-[#C5A059] text-xs uppercase tracking-widest">{review.role}</p>

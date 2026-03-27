@@ -339,7 +339,7 @@ const App = () => {
           {/* Center Navigation - Primary Pages */}
           <nav className="hidden lg:flex items-center gap-10">
             <span
-              onClick={() => setCurrentPage('About Us')}
+              onClick={() => setCurrentPage('Profile')}
               className="text-xs font-medium tracking-[0.15em] uppercase cursor-pointer text-white/70 hover:text-white transition-colors duration-300"
             >
               Profile
@@ -483,7 +483,7 @@ const App = () => {
               <BlogPage onReadMore={(post) => setSelectedPost(post)} />
             )
           )}
-          {currentPage === 'About Us' && <AboutPage />}
+          {currentPage === 'Profile' && <AboutPage />}
           {currentPage === 'Contact Us' && <ContactPage initialSection={contactSection} />}
           {currentPage === 'Careers' && <CareersPage />}
           {currentPage === 'Shop' && (

@@ -67,10 +67,52 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
             </div>
 
             <div className="max-w-7xl mx-auto relative z-10">
+                {/* Mobile Tab Navigation */}
+                <div className="lg:hidden mb-8">
+                    <div className="flex flex-wrap gap-2 justify-center">
+                        {CONTACT_SECTIONS.map((section) => (
+                            <motion.button
+                                key={section.id}
+                                onClick={() => setActiveSection(section.id)}
+                                className={`px-4 py-2 text-xs font-logo tracking-[0.15em] uppercase transition-all duration-500 ${activeSection === section.id 
+                                    ? 'bg-[#C5A059] text-black' 
+                                    : 'bg-white/10 text-white/60 hover:bg-white/20'
+                                }`}
+                                whileHover={{ scale: 1.05 }}
+                            >
+                                {section.label}
+                            </motion.button>
+                        ))}
+                    </div>
+                    
+                    {/* Mobile Social Links */}
+                    <div className="mt-6 text-center">
+                        <h3 className="text-[10px] text-white/40 uppercase tracking-[0.3em] font-sans font-bold mb-4">Social Connect</h3>
+                        <div className="flex gap-6 justify-center">
+                            {[
+                                { icon: Linkedin, url: import.meta.env.VITE_SOCIAL_LINKEDIN_URL },
+                                { icon: Instagram, url: import.meta.env.VITE_SOCIAL_INSTAGRAM_URL },
+                                { icon: Facebook, url: import.meta.env.VITE_SOCIAL_FACEBOOK_URL }
+                            ].map((item, idx) => (
+                                <motion.a
+                                    key={idx}
+                                    href={item.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    whileHover={{ scale: 1.2, color: '#C5A059' }}
+                                    className="text-white/30 transition-colors"
+                                >
+                                    <item.icon size={18} />
+                                </motion.a>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-10 md:gap-12">
 
-                    {/* Left Column: Sub-Nav */}
-                    <div className="space-y-4">
+                    {/* Left Column: Sub-Nav - Hidden on mobile, shown on desktop */}
+                    <div className="hidden lg:block space-y-4">
                         {CONTACT_SECTIONS.map((section) => (
                             <motion.div
                                 key={section.id}
