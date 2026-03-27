@@ -119,7 +119,6 @@ const OrderManager = React.lazy(() => import('./admin/shop/OrderManager'));
 
 // --- Always-loaded Component Imports ---
 import Preloader from './components/Preloader';
-import CustomCursor from './components/CustomCursor';
 import Navigation from './components/Navigation';
 const AIChatbot = React.lazy(() => import('./components/AIChatbot'));
 import Footer from './components/Footer';
@@ -296,15 +295,12 @@ const App = () => {
   }
 
   return (
-    <div className="font-sans bg-[#f4f4f4] min-h-screen selection:bg-[#C5A059] selection:text-white text-stone-900 cursor-none">
+    <div className="font-sans bg-[#f4f4f4] min-h-screen selection:bg-[#C5A059] selection:text-white text-stone-900">
       <style>{`
         .font-sans { font-family: 'Montserrat', sans-serif; }
         .font-logo { font-family: 'Michroma', sans-serif; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        @media (hover: hover) and (pointer: fine) {
-          body { cursor: none; }
-        }
       `}</style>
 
       {/* Intro Loader */}
@@ -312,8 +308,7 @@ const App = () => {
         {loading && <Preloader setLoading={setLoading} />}
       </AnimatePresence>
 
-      {/* Custom Follower Cursor */}
-      {!loading && <CustomCursor />}
+
 
       {/* Header - Transparent */}
       <motion.header

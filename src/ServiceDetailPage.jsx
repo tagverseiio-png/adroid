@@ -405,6 +405,16 @@ const ServiceDetailPage = ({ service, setPage, onBack, onStartProject, onSchedul
                   <span className="block">Turnkey Interior</span>
                   <span className="block">Fit-Out</span>
                 </>
+              ) : service.id === 5 ? (
+                <>
+                  <span className="block">Building Management</span>
+                  <span className="block">Services</span>
+                </>
+              ) : service.id === 6 ? (
+                <>
+                  <span className="block">Project</span>
+                  <span className="block">Management</span>
+                </>
               ) : (
                 service.title
               )}
@@ -528,8 +538,8 @@ const ServiceDetailPage = ({ service, setPage, onBack, onStartProject, onSchedul
                 <span className="text-5xl md:text-6xl font-logo text-[#C5A059]/20 leading-none uppercase">
                   {p.step}
                 </span>
-                <h4 className="mt-4 text-lg md:text-xl xl:text-2xl font-logo mb-3 md:mb-4 uppercase tracking-tight leading-tight break-words">{p.title}</h4>
-                <p className="text-stone-600 text-base md:text-lg leading-relaxed break-words">{p.desc}</p>
+                <h4 className="mt-4 text-base md:text-lg xl:text-xl font-logo mb-3 md:mb-4 uppercase tracking-tight leading-tight">{p.title}</h4>
+                <p className="text-stone-600 text-sm md:text-base leading-relaxed">{p.desc}</p>
               </motion.div>
             ))}
           </div>

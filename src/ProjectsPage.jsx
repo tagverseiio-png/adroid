@@ -163,7 +163,7 @@ export default function ProjectsPage() {
       {/* CATEGORY FILTER */}
       {subCategories.length > 0 && (
         <div className="sticky top-20 z-30 bg-[#0a0a0a]/90 backdrop-blur border-b border-white/10 mb-20">
-          <div className="flex gap-8 py-5 overflow-x-auto scrollbar-hide">
+          <div className="flex gap-8 py-5 px-4 overflow-x-auto pb-6">
             {subCategories.map((cat) => (
               <button
                 key={cat}
