@@ -252,7 +252,7 @@ const FeaturedProjectsSection = ({ setPage }) => {
                     </motion.span>
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}
-                        className="text-3xl sm:text-4xl md:text-5xl font-logo text-stone-900 uppercase tracking-tight md:tracking-widest mt-3 md:mt-4"
+                        className="text-2xl sm:text-3xl md:text-5xl font-logo text-stone-900 uppercase tracking-tight md:tracking-widest mt-3 md:mt-4"
                     >
                         Curated Excellence
                     </motion.h2>

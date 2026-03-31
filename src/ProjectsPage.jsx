@@ -174,8 +174,8 @@ export default function ProjectsPage({ initialDivision = 'ALL', onDivisionUsed }
 
       {/* CATEGORY FILTER */}
       {subCategories.length > 0 && (
-        <div className="sticky top-20 z-30 bg-[#0a0a0a]/90 backdrop-blur border-b border-white/10 mb-20">
-          <div className="flex gap-8 py-5 px-4 overflow-x-auto pb-6">
+        <div className="sticky top-[53px] md:top-[65px] z-20 bg-[#0a0a0a]/95 backdrop-blur-xl border-b border-white/10 mb-10">
+          <div className="flex gap-8 py-4 px-4 overflow-x-auto pb-4 scrollbar-hide">
             {subCategories.map((cat) => (
               <button
                 key={cat}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { X, ArrowRight } from 'lucide-react';
-import { jobsAPI } from './services/api';
+import { X, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
+import { jobsAPI, inquiriesAPI } from './services/api';
 import BackButton from './components/BackButton';
 
 const Careers = () => {
@@ -17,10 +17,12 @@ const Careers = () => {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
+        setErrorMsg('');
         
         const formData = new FormData();
         formData.append('name', formState.name);
@@ -35,6 +37,7 @@ const Careers = () => {
         }
 
         try {
+            // Primary: Try jobs/apply endpoint
             await jobsAPI.apply(formData);
             setIsSuccess(true);
             setFormState({ 
@@ -43,10 +46,32 @@ const Careers = () => {
                 portfolio: '', message: '', 
                 resume: null 
             });
-            setTimeout(() => setIsSuccess(false), 3000);
-        } catch (error) {
-            console.error('Submission error:', error);
-            alert(error.message || 'Failed to submit application. Please try again.');
+            setTimeout(() => setIsSuccess(false), 5000);
+        } catch (primaryError) {
+            console.warn('jobs/apply failed, trying inquiriesAPI fallback:', primaryError.message);
+            try {
+                // Fallback: Submit as an inquiry (no file — text only)
+                await inquiriesAPI.create({
+                    name: formState.name,
+                    email: formState.email,
+                    phone: formState.phone,
+                    subject: `Career Application — ${formState.role} (${formState.applicantType})`,
+                    message: `${formState.message}\n\nPortfolio: ${formState.portfolio || 'N/A'}`,
+                    type: 'career',
+                    company: null,
+                });
+                setIsSuccess(true);
+                setFormState({ 
+                    name: '', email: '', phone: '', 
+                    applicantType: '', role: '', 
+                    portfolio: '', message: '', 
+                    resume: null 
+                });
+                setTimeout(() => setIsSuccess(false), 5000);
+            } catch (fallbackError) {
+                console.error('Both submission methods failed:', fallbackError);
+                setErrorMsg('Submission failed. Please email your application directly to info@adroitdesigns.in');
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -71,7 +96,8 @@ const Careers = () => {
                 </div>
 
                 {isSuccess ? (
-                    <div className="text-center py-20 bg-white/5 border border-white/10 max-w-2xl mx-auto backdrop-blur-md">
+                    <div className="text-center py-20 bg-white/5 border border-[#C5A059]/30 max-w-2xl mx-auto backdrop-blur-md">
+                        <CheckCircle className="text-[#C5A059] mx-auto mb-4" size={48} />
                         <h3 className="text-3xl font-logo uppercase text-[#C5A059] mb-4">Application Received</h3>
                         <p className="text-white/60 font-light tracking-wide">Thank you for your interest. We will review your application and get back to you.</p>
                     </div>
@@ -79,6 +105,13 @@ const Careers = () => {
                     <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto bg-white/5 p-8 md:p-12 border border-white/10 backdrop-blur-md">
                         <h3 className="text-2xl font-logo uppercase tracking-widest mb-8 text-center text-white">Application Form</h3>
 
+                        {/* Inline error message */}
+                        {errorMsg && (
+                            <div className="flex items-start gap-3 bg-red-900/20 border border-red-500/30 p-4 rounded">
+                                <AlertCircle className="text-red-400 flex-shrink-0 mt-0.5" size={18} />
+                                <p className="text-red-300 text-sm leading-relaxed">{errorMsg}</p>
+                            </div>
+                        )}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <select
                                 required

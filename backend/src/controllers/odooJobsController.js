@@ -18,49 +18,70 @@ const odooJobsController = {
       // Local File Path (if uploaded)
       const filePath = file ? `uploads/resumes/${file.filename}` : portfolio_link;
 
-      // 1. SAVE TO LOCAL DATABASE (Admin visibility)
-      // Since user said "don't migrate", we use existing columns:
-      // Store 'roles' and 'type' in the 'message' field or 'subject'
-      const localSubject = `Job Application: ${roles || 'General'}`;
-      const localMessage = `Type: ${type || 'Career'}\nRole: ${roles || 'N/A'}\nMessage: ${message || ''}`;
-      
-      await query(
-        `INSERT INTO inquiries (name, email, phone, subject, message, portfolio_link, type, status) 
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-        [name, email, phone || '', localSubject, localMessage, filePath, 'career', 'New']
-      );
-
-      // 2. SYNC TO ODOO
-      const odoo = getOdooClient();
-      
-      // Create/Find Candidate
-      let candidateId;
+      let dbSuccess = false;
+      let dbId = null;
       try {
-        const existingIds = await odoo.search('hr.candidate', [['email_from', '=', email]]);
-        if (existingIds.length > 0) {
-          candidateId = existingIds[0];
-        } else {
-          candidateId = await odoo.create('hr.candidate', {
-            partner_name: name,
-            email_from: email,
-            partner_phone: phone || '',
-          });
+        const localSubject = `Job Application: ${roles || 'General'}`;
+        const localMessage = `Type: ${type || 'Career'}\nRole: ${roles || 'N/A'}\nMessage: ${message || ''}`;
+        
+        const dbRes = await query(
+          `INSERT INTO inquiries (name, email, phone, subject, message, portfolio_link, type, status) 
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
+          [name, email, phone || '', localSubject, localMessage, filePath, 'career', 'New']
+        );
+        dbId = dbRes.rows[0]?.id;
+        dbSuccess = true;
+        console.log(`✅ Application saved locally in inquiries. ID: ${dbId}`);
+      } catch (dbErr) {
+        console.error('❌ Local DB insertion failed:', dbErr.message);
+      }
+
+      const resumeUrl = file ? `${process.env.VITE_API_URL || ''}/${filePath}` : portfolio_link || '';
+
+      let odooSuccess = false;
+      let applicantId = null;
+      try {
+        const odoo = getOdooClient();
+        
+        // Create/Find Candidate
+        let candidateId;
+        try {
+          const existingIds = await odoo.search('hr.candidate', [['email_from', '=', email]]);
+          if (existingIds.length > 0) {
+            candidateId = existingIds[0];
+          } else {
+            candidateId = await odoo.create('hr.candidate', {
+              partner_name: name,
+              email_from: email,
+              partner_phone: phone || '',
+            });
+          }
+        } catch (e) {
+          console.warn('⚠️ Odoo Candidate error (skipping candidate assignment):', e.message);
         }
-      } catch (e) { console.error('Odoo Candidate error:', e.message); }
 
-      const resumeUrl = file ? `${process.env.VITE_API_URL || ''}/${filePath}` : portfolio_link;
+        const applicantData = {
+          partner_name: name,
+          email_from: email,
+          partner_phone: phone || '',
+          applicant_notes: `<p><strong>Type:</strong> ${type || 'N/A'}</p><p><strong>Role:</strong> ${roles || 'N/A'}</p><p><strong>Resume/Portfolio:</strong> <a href="${resumeUrl}">${resumeUrl}</a></p><p><strong>Notes:</strong><br/>${(message || '').replace(/\n/g, '<br/>')}</p>`,
+        };
 
-      const applicantData = {
-        partner_name: name,
-        email_from: email,
-        partner_phone: phone || '',
-        applicant_notes: `<p><strong>Type:</strong> ${type || 'N/A'}</p><p><strong>Role:</strong> ${roles || 'N/A'}</p><p><strong>Resume/Portfolio:</strong> <a href="${resumeUrl}">${resumeUrl}</a></p><p><strong>Notes:</strong><br/>${(message || '').replace(/\n/g, '<br/>')}</p>`,
-      };
+        if (candidateId) applicantData.candidate_id = candidateId;
+        
+        applicantId = await odoo.create('hr.applicant', applicantData);
+        odooSuccess = true;
+        console.log(`✅ Application synced to Odoo. Applicant ID: ${applicantId}`);
+      } catch (odooErr) {
+        console.error('❌ Odoo HR Applicant creation failed:', odooErr.message);
+      }
 
-      if (candidateId) applicantData.candidate_id = candidateId;
-      const applicantId = await odoo.create('hr.applicant', applicantData);
+      // If both DB and Odoo failed, we should probably throw an error. But if DB worked, we succeed.
+      if (!dbSuccess && !odooSuccess) {
+        throw new Error('Both Database and Odoo submissions failed.');
+      }
 
-      return successResponse(res, { id: applicantId }, 'Application submitted successfully', 201);
+      return successResponse(res, { id: applicantId || dbId || 'local', syncedToOdoo: odooSuccess }, 'Application submitted successfully', 201);
     } catch (error) {
       console.error('Error in applyJob:', error);
       return errorResponse(res, 'Failed to process application', 500);
