@@ -252,7 +252,7 @@ const FeaturedProjectsSection = ({ setPage }) => {
                     </motion.span>
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}
-                        className="text-3xl sm:text-4xl md:text-5xl font-logo text-stone-900 uppercase tracking-widest mt-3 md:mt-4 break-words"
+                        className="text-3xl sm:text-4xl md:text-5xl font-logo text-stone-900 uppercase tracking-tight md:tracking-widest mt-3 md:mt-4"
                     >
                         Curated Excellence
                     </motion.h2>
@@ -278,13 +278,14 @@ const FeaturedProjectsSection = ({ setPage }) => {
                                 setPage('Projects');
                             }
                         }}
-                        className="shrink-0 w-[85vw] md:w-[40vw] aspect-[16/10] relative group select-none snap-start cursor-pointer"
+                        className="shrink-0 w-[80vw] sm:w-[70vw] md:w-[40vw] relative group select-none snap-start cursor-pointer"
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true, margin: "-100px" }}
                         transition={{ delay: idx * 0.1, duration: 0.8 }}
                     >
-                        <div className="w-full h-full overflow-hidden relative bg-stone-200">
+                        {/* Image */}
+                        <div className="w-full aspect-[4/3] overflow-hidden relative bg-stone-200">
                             <motion.img
                                 src={normalizeAssetUrl(proj.cover_image || proj.coverImage || IMAGES.hero)}
                                 alt={proj.title}
@@ -305,14 +306,15 @@ const FeaturedProjectsSection = ({ setPage }) => {
                             <div className="absolute inset-0 bg-black/20 group-hover:opacity-0 transition-opacity duration-500" />
                         </div>
 
-                        <div className="mt-6 flex justify-between items-start">
-                            <div>
-                                <span className="text-[10px] tracking-widest uppercase text-[#C5A059] block mb-1">
+                        {/* Metadata — contained within card width */}
+                        <div className="mt-4 flex justify-between items-start gap-2">
+                            <div className="min-w-0 flex-1">
+                                <span className="text-[10px] tracking-widest uppercase text-[#C5A059] block mb-1 truncate">
                                     {proj.category}
                                 </span>
-                                <h3 className="text-xl font-logo uppercase tracking-wider text-stone-900">{proj.title}</h3>
+                                <h3 className="text-base md:text-xl font-logo uppercase tracking-wide text-stone-900 leading-tight">{proj.title}</h3>
                             </div>
-                            <p className="text-xs text-stone-400 mt-1 font-light">{proj.location}</p>
+                            <p className="text-xs text-stone-400 mt-1 font-light flex-shrink-0">{proj.location}</p>
                         </div>
                     </motion.div>
                 ))}
