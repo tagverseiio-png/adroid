@@ -104,7 +104,7 @@ export default function ProjectsPage() {
   return (
     <div className="bg-[#0a0a0a] text-white min-h-screen px-6 md:px-12 pt-24 md:pt-40 pb-20 md:pb-32">
       {/* HEADER */}
-      <div className="max-w-7xl mx-auto mb-16 md:mb-24 flex flex-col md:flex-row justify-between items-end gap-10">
+      <div className="max-w-7xl mx-auto mb-16 md:mb-24 flex flex-col md:flex-row justify-between items-start md:items-end gap-10">
         <div className="overflow-hidden">
           <motion.h1
             initial={{ y: "100%" }}
@@ -120,13 +120,13 @@ export default function ProjectsPage() {
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="flex items-center gap-12"
+          className="flex items-center gap-8 md:gap-12"
         >
           <div className="relative group">
             <div className="absolute -inset-4 bg-[#C5A059]/10 rounded-full blur-2xl group-hover:bg-[#C5A059]/20 transition-all duration-700" />
-            <div className="relative flex flex-col items-center">
-              <span className="text-6xl md:text-8xl font-logo text-[#C5A059] leading-none mb-2">{projects.length || '200'}</span>
-              <span className="text-[10px] md:text-xs font-bold tracking-[0.4em] text-white/40 uppercase">Total Masterpieces</span>
+            <div className="relative flex flex-col items-center md:items-end">
+              <span className="text-5xl sm:text-6xl md:text-8xl font-logo text-[#C5A059] leading-none mb-2">{projects.length || '59'}</span>
+              <span className="text-[9px] md:text-xs font-bold tracking-[0.4em] text-white/40 uppercase whitespace-nowrap">Total Masterpieces</span>
             </div>
           </div>
           
@@ -143,7 +143,7 @@ export default function ProjectsPage() {
 
       {/* DIVISIONS FILTER */}
       <div className="max-w-7xl mx-auto mb-10">
-        <div className="flex gap-10 border-b border-white/10 pb-4">
+        <div className="flex gap-10 border-b border-white/10 pb-4 overflow-x-auto scrollbar-hide">
           {MAIN_DIVISIONS.map((div) => (
             <button
               key={div}
@@ -151,7 +151,7 @@ export default function ProjectsPage() {
                 setSelectedDivision(div);
                 setSelectedCategory("ALL"); // Reset category when division changes
               }}
-              className={`text-sm tracking-[0.3em] font-sans font-bold uppercase transition-colors ${selectedDivision === div ? "text-[#C5A059]" : "text-stone-500 hover:text-white"
+              className={`text-[10px] md:text-sm tracking-[0.3em] font-sans font-bold uppercase transition-colors whitespace-nowrap ${selectedDivision === div ? "text-[#C5A059]" : "text-stone-500 hover:text-white"
                 }`}
             >
               {div}

@@ -204,7 +204,7 @@ const Footer = ({ setPage }) => {
                 {/* Back to top button */}
                 <div
                     onClick={scrollToTop}
-                    className="static md:absolute md:-right-4 md:-top-6 bg-[#2563eb] text-white p-3 cursor-pointer hover:bg-[#1d4ed8] transition-colors shadow-xl rounded-sm"
+                    className="static md:absolute md:-right-4 md:-top-6 bg-[#C5A059] text-black p-3 cursor-pointer hover:bg-white transition-colors shadow-xl rounded-sm"
                 >
                     <ArrowUp size={20} />
                 </div>
