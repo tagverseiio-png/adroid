@@ -12,7 +12,7 @@ const SOCIAL_LINKS = {
     linkedin: import.meta.env.VITE_SOCIAL_LINKEDIN_URL
 };
 
-const Footer = ({ setPage }) => {
+const Footer = ({ setPage, setProjectDivision }) => {
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
@@ -85,9 +85,9 @@ const Footer = ({ setPage }) => {
                 <div>
                     <h4 className="text-[#C5A059] text-xs font-bold uppercase tracking-[0.2em] mb-6 md:mb-8 font-sans">Quick Links</h4>
                     <ul className="space-y-4 text-xs tracking-widest text-white/60 font-light font-sans uppercase">
-                        <li className="hover:text-[#C5A059] transition-colors cursor-pointer" onClick={() => setPage('Projects')}>Architecture Projects</li>
-                        <li className="hover:text-[#C5A059] transition-colors cursor-pointer" onClick={() => setPage('Projects')}>Interiors Projects</li>
-                        <li className="hover:text-[#C5A059] transition-colors cursor-pointer" onClick={() => setPage('Projects')}>Ongoing Projects</li>
+                        <li className="hover:text-[#C5A059] transition-colors cursor-pointer" onClick={() => { setPage('Projects'); setProjectDivision && setProjectDivision('ARCHITECTURE'); }}>Architecture Projects</li>
+                        <li className="hover:text-[#C5A059] transition-colors cursor-pointer" onClick={() => { setPage('Projects'); setProjectDivision && setProjectDivision('INTERIOR'); }}>Interiors Projects</li>
+                        <li className="hover:text-[#C5A059] transition-colors cursor-pointer" onClick={() => { setPage('Projects'); setProjectDivision && setProjectDivision('ONGOING'); }}>Ongoing Projects</li>
                         <li className="hover:text-[#C5A059] transition-colors cursor-pointer" onClick={() => setPage('Shop')}>Shop</li>
                     </ul>
                 </div>

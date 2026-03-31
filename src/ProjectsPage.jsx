@@ -7,8 +7,8 @@ import { MAIN_DIVISIONS, ARCHITECTURE_CATEGORIES, INTERIOR_CATEGORIES } from "./
 import ProjectDetailPage from "./ProjectDetailPage";
 import { projectsAPI, normalizeAssetUrl } from "./services/api";
 
-export default function ProjectsPage() {
-  const [selectedDivision, setSelectedDivision] = useState("ALL");
+export default function ProjectsPage({ initialDivision = 'ALL', onDivisionUsed }) {
+  const [selectedDivision, setSelectedDivision] = useState(initialDivision);
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [activeProject, setActiveProject] = useState(null);
   const [projects, setProjects] = useState([]);
@@ -47,8 +47,14 @@ export default function ProjectsPage() {
   };
 
   useEffect(() => {
-
     fetchProjects();
+
+    // Apply initialDivision from footer quick links
+    if (initialDivision && initialDivision !== 'ALL') {
+      setSelectedDivision(initialDivision);
+      setSelectedCategory('ALL');
+      onDivisionUsed && onDivisionUsed();
+    }
 
     // Check if a project was selected from chatbot
     if (window.projectToLoad) {
@@ -79,16 +85,22 @@ export default function ProjectsPage() {
   }
 
   const filtered = projects.filter((project) => {
-    if (selectedDivision === "ALL") {
-      return selectedCategory === "ALL" || project.category === selectedCategory;
-    }
+    const projectType = (project.type || '').toUpperCase();
+    const projectCategory = (project.category || '').toUpperCase();
+    const projectStatus = (project.status || '').toUpperCase();
 
     if (selectedDivision === "ONGOING") {
-      return project.status === "ONGOING" || project.type === "ONGOING";
+      return projectStatus === "ONGOING" || projectType === "ONGOING";
     }
 
-    const matchesDivision = project.type === selectedDivision;
-    const matchesCategory = selectedCategory === "ALL" || project.category === selectedCategory;
+    const matchesDivision =
+      selectedDivision === "ALL" || projectType === selectedDivision;
+
+    const matchesCategory =
+      selectedCategory === "ALL" ||
+      projectCategory === selectedCategory ||
+      projectCategory.includes(selectedCategory) ||
+      selectedCategory.includes(projectCategory);
 
     return matchesDivision && matchesCategory;
   });
@@ -102,7 +114,7 @@ export default function ProjectsPage() {
   const subCategories = getSubCategories();
 
   return (
-    <div className="bg-[#0a0a0a] text-white min-h-screen px-6 md:px-12 pt-24 md:pt-40 pb-20 md:pb-32">
+    <div className="bg-[#0a0a0a] text-white min-h-screen px-6 md:px-12 pt-32 md:pt-40 pb-20 md:pb-32">
       {/* HEADER */}
       <div className="max-w-7xl mx-auto mb-16 md:mb-24 flex flex-col md:flex-row justify-between items-start md:items-end gap-10">
         <div className="overflow-hidden">

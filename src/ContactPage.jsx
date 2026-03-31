@@ -59,7 +59,7 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
     const inputClasses = "w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/30 focus:outline-none focus:border-[#C5A059] transition-colors duration-500 font-light tracking-wide text-sm";
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white pt-24 md:pt-40 pb-16 md:pb-24 px-6 md:px-24 relative overflow-hidden">
+        <div className="min-h-screen bg-[#050505] text-white pt-32 md:pt-40 pb-16 md:pb-24 px-6 md:px-24 relative overflow-hidden">
             {/* Background Ambience */}
             <div className="fixed inset-0 pointer-events-none">
                 <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-[#C5A059]/5 rounded-full blur-[120px]" />

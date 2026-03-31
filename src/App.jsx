@@ -137,11 +137,24 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState('Home');
   const [selectedService, setSelectedService] = useState(null);
   const [isDesktopServicesOpen, setIsDesktopServicesOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const servicesMenuCloseTimeoutRef = useRef(null);
   const [contactSection] = useState('enquiry');
 
+  // Handle Header Scroll Effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   // Blog State
   const [selectedPost, setSelectedPost] = useState(null);
+
+  // Projects Division State (for footer quick links)
+  const [projectDivision, setProjectDivision] = useState('ALL');
 
   // Shop State
   const [selectedShopProduct, setSelectedShopProduct] = useState(null);
@@ -312,12 +325,16 @@ const App = () => {
 
 
 
-      {/* Header - Transparent */}
+      {/* Header - Transparent/Blurred on scroll */}
       <motion.header
-        className={`fixed top-0 w-full z-30 bg-transparent py-4 md:py-5 transition-opacity duration-300 ${isNavOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+        className={`fixed top-0 w-full z-30 py-4 md:py-5 border-b transition-all duration-500 ${
+          scrolled 
+          ? "bg-[#050505]/90 backdrop-blur-xl border-white/5 py-3 md:py-4 shadow-xl" 
+          : "bg-transparent border-transparent py-4 md:py-6"
+        } ${isNavOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 3 }}
+        transition={{ duration: 1.2, delay: 3 }}
       >
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between gap-4 md:gap-12">
 
@@ -460,7 +477,7 @@ const App = () => {
       <Suspense fallback={<PageLoader />}>
         <main>
           {currentPage === 'Home' && <Home setPage={setCurrentPage} />}
-          {currentPage === 'Projects' && <ProjectsPage />}
+          {currentPage === 'Projects' && <ProjectsPage initialDivision={projectDivision} onDivisionUsed={() => setProjectDivision('ALL')} />}
           {currentPage === 'Services' && (
             selectedService ? (
               <ServiceDetailPage
@@ -497,7 +514,7 @@ const App = () => {
 
       <CartDrawer onCheckout={() => { setIsCheckout(true); setCurrentPage('Shop'); }} />
       <Suspense fallback={null}><AIChatbot setPage={setCurrentPage} /></Suspense>
-      <Footer setPage={setCurrentPage} />
+      <Footer setPage={handlePageChange} setProjectDivision={setProjectDivision} />
     </div>
   );
 };
