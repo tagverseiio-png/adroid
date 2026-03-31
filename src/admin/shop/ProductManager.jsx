@@ -29,7 +29,6 @@ const ProductManager = () => {
         name: '', sku: '', category_id: '', short_description: '', description: '',
         price: '', sale_price: '', stock_qty: '', weight_grams: '', cover_image: '',
         images: [], tags: '', published: false, featured: false,
-        specifications: '',
     };
     const [form, setForm] = useState(emptyForm);
 
@@ -56,7 +55,6 @@ const ProductManager = () => {
             ...p,
             tags: (p.tags || []).join(', '),
             category_id: p.category_id || '',
-            specifications: typeof p.specifications === 'object' ? JSON.stringify(p.specifications, null, 2) : (p.specifications || ''),
             images: p.images || [],
         });
         setEditProduct(p);
@@ -102,12 +100,9 @@ const ProductManager = () => {
         if (!form.name || !form.price) return;
         setSaving(true);
         try {
-            let specs = {};
-            try { specs = form.specifications ? JSON.parse(form.specifications) : {}; } catch { specs = {}; }
             const payload = {
                 ...form,
                 tags: form.tags ? form.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
-                specifications: specs,
                 price: parseFloat(form.price),
                 sale_price: form.sale_price ? parseFloat(form.sale_price) : null,
                 stock_qty: parseInt(form.stock_qty || 0),
@@ -342,12 +337,6 @@ const ProductManager = () => {
                             <div>
                                 <label className="text-white/50 text-xs uppercase tracking-wider block mb-1">Full Description</label>
                                 <textarea rows={3} value={form.description} onChange={set('description')} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#C5A059]/50 resize-none" />
-                            </div>
-
-                            {/* Specs */}
-                            <div>
-                                <label className="text-white/50 text-xs uppercase tracking-wider block mb-1">Specifications (JSON)</label>
-                                <textarea rows={3} value={form.specifications} onChange={set('specifications')} placeholder='{"Material": "Teak Wood", "Dimensions": "120x60x75 cm"}' className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#C5A059]/50 resize-none font-mono" />
                             </div>
 
                             {/* Tags */}

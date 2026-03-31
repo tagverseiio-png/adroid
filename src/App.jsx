@@ -158,6 +158,8 @@ const App = () => {
   }, [currentPage, adminPage, selectedPost]);
 
   useEffect(() => {
+    if (currentPage === 'Admin') return;
+
     // Skip smooth scroll on touch devices for better performance
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -189,7 +191,7 @@ const App = () => {
       cancelAnimationFrame(rafId);
       lenis.destroy();
     };
-  }, []);
+  }, [currentPage]);
 
   useEffect(() => {
     const applyHashRoute = () => {
