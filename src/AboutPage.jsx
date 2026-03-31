@@ -416,42 +416,43 @@ export default function AboutPage() {
                     </div>
 
                     <div
-                        className="relative overflow-hidden"
+                        className="relative"
                         onMouseEnter={() => setIsReviewsPaused(true)}
                         onMouseLeave={() => setIsReviewsPaused(false)}
                     >
                         <div
                             ref={reviewsTrackRef}
-                            className="flex gap-4 md:gap-8 w-full overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing px-4 md:px-0"
+                            className="flex gap-4 md:gap-8 w-full overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing py-2"
                             onTouchStart={() => setIsReviewsPaused(true)}
                             onTouchEnd={() => setIsReviewsPaused(false)}
                         >
                             {REVIEWS_MARQUEE.map((review, i) => (
                                 <div
                                     key={i}
-                                    className="w-[85vw] sm:w-[320px] md:w-[440px] flex-shrink-0 p-6 md:p-10 border border-white/10 bg-white/5 relative hover:-translate-y-2 transition-transform duration-500"
+                                    className="w-[88vw] sm:w-[360px] md:w-[440px] flex-shrink-0 p-6 md:p-10 border border-white/10 bg-white/5 relative hover:-translate-y-2 transition-transform duration-500 flex flex-col"
                                 >
                                     <Quote className="text-[#C5A059] w-8 h-8 md:w-10 md:h-10 mb-4 md:mb-6 opacity-50" />
-                                    <p className="text-stone-300 font-light leading-relaxed mb-6 md:mb-8 italic text-sm md:text-base">"{review.text}"</p>
+                                    <p className="text-stone-300 font-light leading-relaxed mb-6 md:mb-8 italic text-sm md:text-base line-clamp-6 md:line-clamp-none">"{review.text}"</p>
                                     <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-4 md:pt-6">
-                                        <div>
-                                            <h4 className="text-white font-bold tracking-wide uppercase text-sm mb-1">{review.name}</h4>
-                                            <p className="text-[#C5A059] text-xs uppercase tracking-widest">{review.role}</p>
+                                        <div className="flex-1 min-w-0 pr-3">
+                                            <h4 className="text-white font-bold tracking-wide uppercase text-xs md:text-sm mb-1 truncate">{review.name}</h4>
+                                            <p className="text-[#C5A059] text-[10px] md:text-xs uppercase tracking-widest line-clamp-2">{review.role}</p>
                                         </div>
-                                        <div className="flex gap-1 text-[#C5A059]">
-                                            <Star fill="currentColor" size={14} />
-                                            <Star fill="currentColor" size={14} />
-                                            <Star fill="currentColor" size={14} />
-                                            <Star fill="currentColor" size={14} />
-                                            <Star fill="currentColor" size={14} />
+                                        <div className="flex gap-1 text-[#C5A059] flex-shrink-0">
+                                            <Star fill="currentColor" size={12} />
+                                            <Star fill="currentColor" size={12} />
+                                            <Star fill="currentColor" size={12} />
+                                            <Star fill="currentColor" size={12} />
+                                            <Star fill="currentColor" size={12} />
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
 
-                        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-24 bg-gradient-to-r from-[#050505] to-transparent" />
-                        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-24 bg-gradient-to-l from-[#050505] to-transparent" />
+                        {/* Gradient overlays — desktop only */}
+                        <div className="hidden md:block pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#050505] to-transparent" />
+                        <div className="hidden md:block pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#050505] to-transparent" />
                     </div>
 
                     <style>{`
