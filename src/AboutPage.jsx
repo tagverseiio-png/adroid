@@ -432,7 +432,7 @@ export default function AboutPage() {
                                     className="w-[88vw] sm:w-[360px] md:w-[440px] flex-shrink-0 p-6 md:p-10 border border-white/10 bg-white/5 relative hover:-translate-y-2 transition-transform duration-500 flex flex-col"
                                 >
                                     <Quote className="text-[#C5A059] w-8 h-8 md:w-10 md:h-10 mb-4 md:mb-6 opacity-50" />
-                                    <p className="text-stone-300 font-light leading-relaxed mb-6 md:mb-8 italic text-sm md:text-base line-clamp-6 md:line-clamp-none">"{review.text}"</p>
+                                    <p className="text-stone-300 font-light leading-relaxed mb-6 md:mb-8 italic text-sm md:text-base">"{review.text}"</p>
                                     <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-4 md:pt-6">
                                         <div className="flex-1 min-w-0 pr-3">
                                             <h4 className="text-white font-bold tracking-wide uppercase text-xs md:text-sm mb-1 truncate">{review.name}</h4>
