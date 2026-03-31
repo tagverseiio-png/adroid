@@ -325,12 +325,12 @@ const App = () => {
 
 
 
-      {/* Header - Transparent/Blurred on scroll */}
+      {/* Header - Always dark blur */}
       <motion.header
-        className={`fixed top-0 w-full z-30 py-4 md:py-5 border-b transition-all duration-500 ${
-          scrolled 
-          ? "bg-[#050505]/90 backdrop-blur-xl border-white/5 py-3 md:py-4 shadow-xl" 
-          : "bg-transparent border-transparent py-4 md:py-6"
+        className={`fixed top-0 w-full z-30 transition-all duration-500 border-b ${
+          scrolled
+            ? "bg-[#050505]/95 backdrop-blur-2xl border-white/10 py-3 md:py-4 shadow-2xl"
+            : "bg-[#050505]/75 backdrop-blur-xl border-white/5 py-4 md:py-5"
         } ${isNavOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

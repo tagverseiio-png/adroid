@@ -33,7 +33,7 @@ const Hero = () => {
     const y2 = useTransform(scrollY, [0, 500], [0, -60]);
 
     return (
-        <div className="relative h-screen w-full overflow-hidden bg-[#050505] pt-28 md:pt-20">
+        <div className="relative h-screen w-full overflow-hidden bg-[#050505]">
             {/* Video Background */}
             <motion.div
                 className="absolute inset-0"
@@ -58,7 +58,7 @@ const Hero = () => {
             </motion.div>
 
             {/* Hero Content */}
-            <div className="relative z-20 h-full flex flex-col justify-start md:justify-center items-center px-6 md:px-24 text-center mt-12 md:mt-0">
+            <div className="relative z-20 h-full flex flex-col justify-center items-center px-6 md:px-24 text-center">
                 <motion.div style={{ y: y1 }} className="flex flex-col items-center">
                     <div className="overflow-hidden">
                         <motion.h1
