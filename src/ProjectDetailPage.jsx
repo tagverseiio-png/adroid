@@ -221,17 +221,30 @@ export default function ProjectDetailPage({ project, onBack }) {
 
             {/* --- GALLERY --- */}
             {(() => {
-                const galleryImages = project.images || project.gallery || project.gallery_images || [];
-                const resolvedImages = Array.isArray(galleryImages) 
-                    ? galleryImages 
-                    : (typeof galleryImages === 'string' && galleryImages.startsWith('[') 
-                        ? JSON.parse(galleryImages) 
-                        : (galleryImages ? [galleryImages] : []));
+                // Try to find images in various possible fields
+                const findImages = () => {
+                    const fields = ['images', 'assets', 'gallery', 'project_images', 'gallery_images', 'additional_images'];
+                    for (const field of fields) {
+                        const val = project[field];
+                        if (val) {
+                            if (Array.isArray(val) && val.length > 0) return val;
+                            if (typeof val === 'string' && val.trim().length > 0) {
+                                if (val.startsWith('[')) {
+                                    try { 
+                                        const parsed = JSON.parse(val);
+                                        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                                    } catch (e) { /* ignore */ }
+                                }
+                                return [val]; // Single string image
+                            }
+                        }
+                    }
+                    return [];
+                };
+
+                const resolvedImages = findImages();
                 
-                // If the cover image isn't in the gallery, but we have a cover image, and gallery is otherwise empty or small
-                // we might want to show it, but the user specifically said they added 3 photos.
-                
-                if (resolvedImages.length > 0) {
+                if (resolvedImages.length > 1 || (resolvedImages.length === 1 && resolvedImages[0] !== project.cover_image)) {
                     return (
                         <section className="bg-white text-black py-16 md:py-32 px-6 md:px-12">
                             <div className="max-w-7xl mx-auto">
