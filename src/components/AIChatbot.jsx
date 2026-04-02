@@ -1,118 +1,123 @@
-import React, { useMemo, useState, useRef, useEffect } from 'react';
+import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { MessageSquare, X, Loader, ArrowRight } from 'lucide-react';
+import { MessageSquare, X, Loader, ArrowRight, Send, RotateCcw, Sparkles } from 'lucide-react';
 import { projectsAPI, normalizeAssetUrl } from '../services/api';
 
 const CHATBOT_API_URL = import.meta.env.VITE_CHATBOT_URL;
+
+/* ── Quick‑suggestion chips ────────────────────────────────────────── */
+const SUGGESTIONS = [
+    'What services do you offer?',
+    'Show me your projects',
+    'How can I contact you?',
+    'Tell me about your design process',
+];
+
+/* ── Simple markdown‑ish renderer (bold, line breaks) ──────────────── */
+const renderText = (text) => {
+    if (!text) return null;
+    return text.split('\n').map((line, i) => (
+        <span key={i}>
+            {line.split(/(\*\*[^*]+\*\*)/).map((part, j) => {
+                if (part.startsWith('**') && part.endsWith('**')) {
+                    return <strong key={j} className="font-semibold">{part.slice(2, -2)}</strong>;
+                }
+                return part;
+            })}
+            {i < text.split('\n').length - 1 && <br />}
+        </span>
+    ));
+};
 
 const AIChatbot = ({ setPage = () => {} }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [messages, setMessages] = useState([
-        { id: 1, role: 'assistant', text: 'Welcome. How may I assist with your design inquiry today?', projects: null }
+        {
+            id: 1,
+            role: 'assistant',
+            text: "Welcome to Adroit Design. I'm your AI concierge — ask me about our services, projects, or how to get in touch.",
+            projects: null,
+        },
     ]);
     const [isLoading, setIsLoading] = useState(false);
     const [projects, setProjects] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(true);
     const messagesEndRef = useRef(null);
     const messagesContainerRef = useRef(null);
+    const inputRef = useRef(null);
 
-    const scrollToBottom = () => {
-        setTimeout(() => {
+    /* ── Auto‑scroll ───────────────────────────────────────────────── */
+    const scrollToBottom = useCallback(() => {
+        requestAnimationFrame(() => {
             messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-        }, 0);
-    };
+        });
+    }, []);
 
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages, isLoading]);
+    useEffect(() => { scrollToBottom(); }, [messages, isLoading, scrollToBottom]);
 
-    // Fetch projects only when chatbot is opened (deferred)
+    /* ── Lazy‑fetch projects ───────────────────────────────────────── */
     useEffect(() => {
         if (!isOpen || projects.length > 0) return;
-        const fetchProjects = async () => {
+        (async () => {
             try {
-                const response = await projectsAPI.getFeatured(4);
-                if (response.success) {
-                    setProjects(response.data || []);
-                }
+                const res = await projectsAPI.getFeatured(6);
+                if (res.success) setProjects(res.data || []);
             } catch (error) {
                 console.error('Failed to fetch projects:', error);
-                setProjects([
-                    { id: 1, title: "Sample Villa", location: "Chennai", category: "Architecture", slug: "sample-villa" },
-                    { id: 2, title: "Office Space", location: "Dubai", category: "Interior", slug: "office-space" }
-                ]);
             }
-        };
-        fetchProjects();
+        })();
+    }, [isOpen, projects.length]);
+
+    /* ── Focus input when opened ───────────────────────────────────── */
+    useEffect(() => {
+        if (isOpen) setTimeout(() => inputRef.current?.focus(), 300);
     }, [isOpen]);
 
     const canSend = useMemo(() => inputValue.trim().length > 0 && !isLoading, [inputValue, isLoading]);
 
+    /* ── Project‑filter helpers ────────────────────────────────────── */
     const extractProjectFilters = (text) => {
-        const lowerText = text.toLowerCase();
-        
-        // Extract location (look for city names)
-        const locations = ['chennai', 'bangalore', 'delhi', 'mumbai', 'hyderabad', 'pune', 'kolkata', 'delhi', 'malibu', 'dubai', 'kyoto', 'berlin'];
-        const location = locations.find(loc => lowerText.includes(loc));
-        
-        // Extract area (numbers followed by sqft/sft/sq.ft)
+        const lower = text.toLowerCase();
+        const locations = [
+            'chennai', 'bangalore', 'bengaluru', 'delhi', 'mumbai',
+            'hyderabad', 'pune', 'kolkata', 'dubai', 'coimbatore',
+            'thiruvannamalai', 'perungudi', 'pallavaram', 'thoraipakkam',
+        ];
+        const location = locations.find((loc) => lower.includes(loc));
         const areaMatch = text.match(/(\d+(?:,\d+)*)\s*(?:sqft|sft|sq\.ft|square\s*feet)/i);
         const area = areaMatch ? parseInt(areaMatch[1].replace(',', '')) : null;
-        
         return { location, area };
     };
 
     const filterProjectsByResponse = (allProjects, responseText) => {
         const { location, area } = extractProjectFilters(responseText);
-        
-        // If no filters found, return all projects
         if (!location && !area) return allProjects;
-        
-        return allProjects.filter(project => {
-            let matches = 0;
-            let required = 0;
-            
-            // Check location match
-            if (location) {
-                required++;
-                if (project.location && project.location.toLowerCase().includes(location)) {
-                    matches++;
-                }
-            }
-            
-            // Check area match (within 20% range)
+        const filtered = allProjects.filter((p) => {
+            let matches = 0, required = 0;
+            if (location) { required++; if (p.location?.toLowerCase().includes(location)) matches++; }
             if (area) {
                 required++;
-                const projectArea = parseInt(project.area) || 0;
-                if (projectArea > 0) {
-                    const tolerance = area * 0.2;
-                    if (projectArea >= area - tolerance && projectArea <= area + tolerance) {
-                        matches++;
-                    }
-                }
+                const pa = parseInt(p.area) || 0;
+                if (pa > 0 && pa >= area * 0.8 && pa <= area * 1.2) matches++;
             }
-            
-            // Return project if it matches the filters
             return matches === required && required > 0;
         });
+        return filtered.length > 0 ? filtered : allProjects;
     };
 
-    const handleSend = async () => {
-        if (!canSend) return;
-        const trimmed = inputValue.trim();
-        
-        // Add user message
-        setMessages((prev) => [
-            ...prev,
-            { id: Date.now(), role: 'user', text: trimmed, projects: null }
-        ]);
+    /* ── Send message ──────────────────────────────────────────────── */
+    const handleSend = async (overrideText) => {
+        const trimmed = (overrideText || inputValue).trim();
+        if (!trimmed || isLoading) return;
+
+        setShowSuggestions(false);
+        setMessages((prev) => [...prev, { id: Date.now(), role: 'user', text: trimmed, projects: null }]);
         setInputValue('');
         setIsLoading(true);
 
         try {
-            if (!CHATBOT_API_URL) {
-                throw new Error('VITE_CHATBOT_URL is not set');
-            }
+            if (!CHATBOT_API_URL) throw new Error('Chatbot URL not configured');
 
             const response = await fetch(CHATBOT_API_URL, {
                 method: 'POST',
@@ -120,59 +125,45 @@ const AIChatbot = ({ setPage = () => {} }) => {
                 body: JSON.stringify({ query: trimmed }),
             });
 
-            if (!response.ok) throw new Error(`API error: ${response.status}`);
+            if (!response.ok) throw new Error(`API ${response.status}`);
 
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let buffer = '';
             let assistantText = '';
-
-            // Add placeholder for assistant response
             const assistantMsgId = Date.now() + 1;
-            setMessages((prev) => [
-                ...prev,
-                { id: assistantMsgId, role: 'assistant', text: '', projects: null }
-            ]);
+
+            setMessages((prev) => [...prev, { id: assistantMsgId, role: 'assistant', text: '', projects: null }]);
 
             while (true) {
                 const { value, done } = await reader.read();
                 if (done) break;
-
-                const chunk = decoder.decode(value, { stream: true });
-                buffer += chunk;
+                buffer += decoder.decode(value, { stream: true });
 
                 if (buffer.includes('[END]')) {
                     assistantText = buffer.split('[END]')[0].trim();
                     break;
-                } else {
-                    assistantText = buffer.trim();
-                    setMessages((prev) =>
-                        prev.map((msg) =>
-                            msg.id === assistantMsgId ? { ...msg, text: assistantText } : msg
-                        )
-                    );
                 }
+                assistantText = buffer.trim();
+                setMessages((prev) =>
+                    prev.map((m) => (m.id === assistantMsgId ? { ...m, text: assistantText } : m)),
+                );
             }
 
-            // Check if AI response mentions projects - then show matching project cards
-            const shouldShowProjects = assistantText.toLowerCase().includes('project') || 
-                                      assistantText.toLowerCase().includes('design') ||
-                                      assistantText.toLowerCase().includes('work') ||
-                                      assistantText.toLowerCase().includes('case study');
-            
+            // Attach project cards when appropriate
+            const shouldShowProjects =
+                /project|design|work|case study|portfolio|residential|commercial/i.test(assistantText);
             let filteredProjects = null;
             if (shouldShowProjects && projects.length > 0) {
                 filteredProjects = filterProjectsByResponse(projects, assistantText);
-                // If filtering found matches, use filtered; otherwise show all
-                if (filteredProjects.length === 0) {
-                    filteredProjects = projects;
-                }
             }
-            
+
             setMessages((prev) =>
-                prev.map((msg) =>
-                    msg.id === assistantMsgId ? { ...msg, text: assistantText || 'No response received.', projects: filteredProjects } : msg
-                )
+                prev.map((m) =>
+                    m.id === assistantMsgId
+                        ? { ...m, text: assistantText || 'No response received.', projects: filteredProjects }
+                        : m,
+                ),
             );
         } catch (error) {
             console.error('Chat error:', error);
@@ -181,12 +172,13 @@ const AIChatbot = ({ setPage = () => {} }) => {
                 {
                     id: Date.now() + 2,
                     role: 'assistant',
-                    text: 'Sorry, I encountered an error. Please try again.',
-                    projects: null
-                }
+                    text: "I'm having trouble connecting right now. You can reach us directly at info@adroitdesigns.in or call (+91) 44-45561113.",
+                    projects: null,
+                },
             ]);
         } finally {
             setIsLoading(false);
+            setTimeout(() => inputRef.current?.focus(), 100);
         }
     };
 
@@ -197,125 +189,218 @@ const AIChatbot = ({ setPage = () => {} }) => {
         }
     };
 
+    const resetChat = () => {
+        setMessages([
+            {
+                id: Date.now(),
+                role: 'assistant',
+                text: "Welcome to Adroit Design. I'm your AI concierge — ask me about our services, projects, or how to get in touch.",
+                projects: null,
+            },
+        ]);
+        setShowSuggestions(true);
+    };
+
+    /* ── Render ─────────────────────────────────────────────────────── */
     return (
         <>
-            <div
-                className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-40 bg-[#0a0a0a] text-white p-4 rounded-full shadow-2xl cursor-pointer hover:bg-[#C5A059] transition-colors duration-500"
-                onClick={() => setIsOpen(!isOpen)}
+            {/* Floating Action Button */}
+            <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-40"
             >
-                {isOpen ? <X size={20} /> : <MessageSquare size={20} />}
-            </div>
+                <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="relative bg-[#0a0a0a] text-white p-4 rounded-full shadow-2xl cursor-pointer hover:bg-[#C5A059] transition-colors duration-500 border border-white/10"
+                    aria-label={isOpen ? 'Close chat' : 'Open chat'}
+                >
+                    {isOpen ? <X size={20} /> : <MessageSquare size={20} />}
+                    {!isOpen && (
+                        <span className="absolute -top-1 -right-1 w-3 h-3 bg-[#C5A059] rounded-full animate-pulse" />
+                    )}
+                </button>
+            </motion.div>
+
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 20 }}
-                        className="fixed bottom-20 right-4 md:right-8 z-40 w-[92vw] sm:w-96 md:w-[28rem] max-w-[28rem] max-h-[75vh] bg-white shadow-2xl border border-stone-100 rounded-xl overflow-hidden flex flex-col"
+                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                        className="fixed bottom-20 right-4 md:right-8 z-40 w-[92vw] sm:w-96 md:w-[28rem] max-w-[28rem] max-h-[75vh] bg-white shadow-2xl border border-stone-200 rounded-2xl overflow-hidden flex flex-col"
                     >
-                        <div className="px-5 py-4 border-b border-stone-100 bg-[#0a0a0a] text-white">
-                            <span className="text-[10px] tracking-widest uppercase text-[#C5A059] font-sans font-bold">Concierge</span>
-                            <p className="text-lg font-logo mt-1 uppercase tracking-tight">Adroit Assistant</p>
-                            <p className="text-xs text-white/60 mt-1">Ask about our projects & designs</p>
+                        {/* ── Header ──────────────────────────────────────── */}
+                        <div className="px-5 py-4 border-b border-stone-100 bg-[#0a0a0a] text-white flex items-center justify-between">
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <Sparkles size={12} className="text-[#C5A059]" />
+                                    <span className="text-[10px] tracking-widest uppercase text-[#C5A059] font-sans font-bold">
+                                        AI Concierge
+                                    </span>
+                                </div>
+                                <p className="text-base font-logo mt-1 uppercase tracking-tight">Adroit Assistant</p>
+                            </div>
+                            <button
+                                onClick={resetChat}
+                                className="p-2 rounded-lg hover:bg-white/10 transition-colors text-white/40 hover:text-white"
+                                title="Reset conversation"
+                            >
+                                <RotateCcw size={14} />
+                            </button>
                         </div>
-                        <div className="flex-1 min-h-[300px] md:h-[32rem] overflow-y-auto bg-stone-50 p-4 space-y-4 flex flex-col" ref={messagesContainerRef}>
+
+                        {/* ── Messages ─────────────────────────────────────── */}
+                        <div
+                            className="flex-1 min-h-[300px] md:h-[32rem] overflow-y-auto bg-stone-50 p-4 space-y-4 flex flex-col"
+                            ref={messagesContainerRef}
+                        >
                             {messages.map((msg) => (
                                 <div key={msg.id} className="flex flex-col gap-2">
-                                    {/* Text Message */}
-                                    <div className={msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'}>
+                                    {/* Text Bubble */}
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 8 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.3 }}
+                                        className={msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'}
+                                    >
                                         <div
                                             className={
                                                 msg.role === 'user'
-                                                    ? 'max-w-[85%] bg-[#0a0a0a] text-white px-4 py-3 text-sm rounded-2xl rounded-br-md shadow'
-                                                    : 'max-w-[85%] bg-white text-stone-700 px-4 py-3 text-sm rounded-2xl rounded-bl-md shadow border border-stone-100'
+                                                    ? 'max-w-[85%] bg-[#0a0a0a] text-white px-4 py-3 text-sm rounded-2xl rounded-br-sm shadow-md leading-relaxed'
+                                                    : 'max-w-[85%] bg-white text-stone-700 px-4 py-3 text-sm rounded-2xl rounded-bl-sm shadow border border-stone-100 leading-relaxed'
                                             }
                                         >
-                                            {msg.text}
+                                            {renderText(msg.text)}
                                         </div>
-                                    </div>
+                                    </motion.div>
 
                                     {/* Project Cards */}
                                     {msg.projects && msg.projects.length > 0 && (
-                                        <div className="flex flex-col gap-2 mt-2">
-                                            {msg.projects.map((project) => (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: 0.2 }}
+                                            className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide"
+                                        >
+                                            {msg.projects.slice(0, 4).map((project) => (
                                                 <div
                                                     key={project.id}
-                                                    className="max-w-xs bg-white border border-stone-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                                                    className="min-w-[200px] max-w-[220px] bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow flex-shrink-0"
                                                 >
-                                                    {/* Project Image */}
-                                                    <div className="relative h-28 bg-stone-200 overflow-hidden">
+                                                    <div className="relative h-24 bg-stone-200 overflow-hidden">
                                                         <img
-                                                            src={normalizeAssetUrl(project.cover_image || project.coverImage || 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=400')}
+                                                            src={normalizeAssetUrl(
+                                                                project.cover_image ||
+                                                                    project.coverImage ||
+                                                                    'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=400',
+                                                            )}
                                                             alt={project.title}
-                                                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                                                             onError={(e) => {
-                                                                e.target.src = 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=400';
+                                                                e.target.onerror = null;
+                                                                e.target.src =
+                                                                    'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=400';
                                                             }}
                                                         />
                                                     </div>
-
-                                                    {/* Project Info */}
-                                                    <div className="p-3">
-                                                        <p className="text-[9px] text-[#C5A059] font-bold uppercase tracking-widest mb-1">
+                                                    <div className="p-2.5">
+                                                        <p className="text-[8px] text-[#C5A059] font-bold uppercase tracking-widest mb-0.5">
                                                             {project.category || 'Design'}
                                                         </p>
-                                                        <h4 className="text-xs font-semibold text-stone-900 mb-1 line-clamp-1">
+                                                        <h4 className="text-[11px] font-semibold text-stone-900 mb-0.5 line-clamp-1">
                                                             {project.title}
                                                         </h4>
-                                                        <p className="text-[11px] text-stone-500 mb-2 line-clamp-1">
+                                                        <p className="text-[10px] text-stone-400 mb-2 line-clamp-1">
                                                             {project.location || 'Design Project'}
                                                         </p>
                                                         <button
                                                             onClick={() => {
                                                                 setPage('Projects');
-                                                                // Store the slug to fetch details when ProjectsPage loads
                                                                 window.projectToLoad = project.slug;
+                                                                setIsOpen(false);
                                                             }}
-                                                            className="w-full flex items-center justify-between px-2.5 py-2 bg-[#0a0a0a] text-white text-[10px] font-bold uppercase tracking-widest rounded hover:bg-[#C5A059] transition-colors"
+                                                            className="w-full flex items-center justify-between px-2 py-1.5 bg-[#0a0a0a] text-white text-[9px] font-bold uppercase tracking-widest rounded-md hover:bg-[#C5A059] transition-colors"
                                                         >
-                                                            View
-                                                            <ArrowRight size={12} />
+                                                            View Project
+                                                            <ArrowRight size={10} />
                                                         </button>
                                                     </div>
                                                 </div>
                                             ))}
-                                        </div>
+                                        </motion.div>
                                     )}
                                 </div>
                             ))}
-                            {isLoading && (
-                                <div className="flex justify-start">
-                                    <div className="bg-white text-stone-700 px-4 py-3 text-sm rounded-2xl rounded-bl-md shadow border border-stone-100 flex items-center gap-2">
-                                        <Loader size={14} className="animate-spin" />
-                                        Thinking...
-                                    </div>
-                                </div>
+
+                            {/* Suggestions */}
+                            {showSuggestions && messages.length <= 1 && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ delay: 0.5 }}
+                                    className="flex flex-wrap gap-2 mt-2"
+                                >
+                                    {SUGGESTIONS.map((s) => (
+                                        <button
+                                            key={s}
+                                            onClick={() => handleSend(s)}
+                                            className="text-[11px] px-3 py-1.5 rounded-full border border-stone-200 text-stone-500 hover:bg-[#C5A059] hover:text-white hover:border-[#C5A059] transition-all duration-300"
+                                        >
+                                            {s}
+                                        </button>
+                                    ))}
+                                </motion.div>
                             )}
+
+                            {/* Loading indicator */}
+                            {isLoading && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="flex justify-start"
+                                >
+                                    <div className="bg-white text-stone-500 px-4 py-3 text-sm rounded-2xl rounded-bl-sm shadow border border-stone-100 flex items-center gap-2">
+                                        <div className="flex gap-1">
+                                            <span className="w-1.5 h-1.5 bg-[#C5A059] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                                            <span className="w-1.5 h-1.5 bg-[#C5A059] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                                            <span className="w-1.5 h-1.5 bg-[#C5A059] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                                        </div>
+                                        <span className="text-xs text-stone-400">Thinking...</span>
+                                    </div>
+                                </motion.div>
+                            )}
+
                             <div ref={messagesEndRef} className="h-1" />
                         </div>
-                        <div className="p-4 bg-white border-t border-stone-100">
-                            <div className="flex items-end gap-3">
+
+                        {/* ── Input ────────────────────────────────────────── */}
+                        <div className="p-3 bg-white border-t border-stone-100">
+                            <div className="flex items-end gap-2 bg-stone-50 rounded-xl px-3 py-2 border border-stone-100 focus-within:border-[#C5A059] transition-colors">
                                 <textarea
+                                    ref={inputRef}
                                     value={inputValue}
                                     onChange={(e) => setInputValue(e.target.value)}
                                     onKeyDown={handleKeyDown}
-                                    placeholder="Ask about projects..."
+                                    placeholder="Ask about projects, services..."
                                     rows={1}
                                     disabled={isLoading}
-                                    className="flex-1 resize-none text-sm outline-none placeholder:text-stone-300 bg-white max-h-24 disabled:opacity-60"
+                                    className="flex-1 resize-none text-sm outline-none placeholder:text-stone-300 bg-transparent max-h-24 disabled:opacity-60"
                                 />
                                 <button
                                     type="button"
-                                    onClick={handleSend}
+                                    onClick={() => handleSend()}
                                     disabled={!canSend}
-                                    className="px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-md bg-[#C5A059] text-white hover:bg-black transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 flex-shrink-0"
+                                    className="p-2 rounded-lg bg-[#C5A059] text-white hover:bg-black transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex-shrink-0"
+                                    aria-label="Send message"
                                 >
-                                    {isLoading ? <Loader size={12} className="animate-spin" /> : 'Send'}
+                                    <Send size={14} />
                                 </button>
                             </div>
-                            <div className="mt-2 text-[10px] text-stone-400">
-                                Press Enter to send
-                            </div>
+                            <p className="text-center text-[9px] text-stone-300 mt-1.5">
+                                Powered by Adroit AI · Press Enter to send
+                            </p>
                         </div>
                     </motion.div>
                 )}
