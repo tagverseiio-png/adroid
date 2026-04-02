@@ -1,4 +1,4 @@
-const { query } = require('../config/database');
+const { pool, query } = require('../config/database');
 const { successResponse, errorResponse, paginatedResponse } = require('../utils/response');
 const { generateUniqueSlug } = require('../utils/slugify');
 const fileService = require('../services/fileService');
@@ -48,8 +48,14 @@ exports.getAllProjects = async (req, res) => {
     let countQuery = 'SELECT COUNT(*) FROM projects WHERE 1=1';
     const countParams = params.slice(0, -2);
     if (type) countQuery += ' AND type = $1';
-    if (category) countQuery += ` AND category = $${countParams.length}`;
-    if (published !== undefined) countQuery += ` AND published = $${countParams.length}`;
+    if (category) {
+        if (countParams.length > 0) countQuery += ` AND category = $${countParams.length}`;
+        else countQuery += ` AND category = $1`;
+    }
+    if (published !== undefined) {
+        if (countParams.length > 0) countQuery += ` AND published = $${countParams.length}`;
+        else countQuery += ` AND published = $1`;
+    }
     
     const countResult = await query(countQuery, countParams);
     const total = parseInt(countResult.rows[0].count);
@@ -104,11 +110,12 @@ exports.getProject = async (req, res) => {
  * Create project
  */
 exports.createProject = async (req, res) => {
+  const client = await pool.connect();
   try {
     const {
-      title, category, type, location, year, area, client,
+      title, category, type, location, year, area, client: clientName,
       status, design_style, cover_image, description,
-      highlights, scope
+      highlights, scope, images
     } = req.body;
 
     // Generate unique slug
@@ -119,20 +126,62 @@ exports.createProject = async (req, res) => {
 
     const slug = await generateUniqueSlug(title, checkSlugExists);
 
-    const result = await query(
+    await client.query('BEGIN');
+
+    const result = await client.query(
       `INSERT INTO projects 
        (title, slug, category, type, location, year, area, client, status, design_style, 
         cover_image, description, highlights, scope, published) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, false) 
        RETURNING *`,
-      [title, slug, category, type, location, year, area, client, status, design_style,
+      [title, slug, category, type, location, year, area, clientName, status, design_style,
        cover_image, description, highlights, scope]
     );
 
-    successResponse(res, result.rows[0], 'Project created successfully', 201);
+    const projectId = result.rows[0].id;
+
+    // Handle project images if provided
+    if (images && Array.isArray(images) && images.length > 0) {
+      const imageValues = images.map((img, index) => {
+        const filePath = typeof img === 'string' ? img : (img.file_path || img.path || img.url);
+        const thumbPath = typeof img === 'string' ? '' : (img.thumbnail_path || '');
+        return [projectId, filePath, thumbPath, index];
+      });
+
+      for (const [pid, f, t, o] of imageValues) {
+        if (f) {
+            await client.query(
+               'INSERT INTO project_images (project_id, file_path, thumbnail_path, display_order) VALUES ($1, $2, $3, $4)',
+               [pid, f, t, o]
+            );
+        }
+      }
+    }
+
+    // Fetch final state with images
+    const finalImages = await client.query(
+        'SELECT * FROM project_images WHERE project_id = $1 ORDER BY display_order ASC',
+        [projectId]
+    );
+
+    const project = {
+        ...result.rows[0],
+        cover_image: fileService.normalizePublicUrl(result.rows[0].cover_image, req),
+        images: finalImages.rows.map(img => ({
+            ...img,
+            file_path: fileService.normalizePublicUrl(img.file_path, req),
+            thumbnail_path: fileService.normalizePublicUrl(img.thumbnail_path, req)
+        }))
+    };
+
+    await client.query('COMMIT');
+    successResponse(res, project, 'Project created successfully', 201);
   } catch (error) {
+    await client.query('ROLLBACK');
     console.error('Create project error:', error);
     errorResponse(res, 'Failed to create project', 500);
+  } finally {
+    client.release();
   }
 };
 
@@ -140,9 +189,10 @@ exports.createProject = async (req, res) => {
  * Update project
  */
 exports.updateProject = async (req, res) => {
+  const client = await pool.connect();
   try {
     const { id } = req.params;
-    const updates = req.body;
+    const { images, ...updates } = req.body;
 
     // Validate ID
     if (!id || isNaN(parseInt(id))) {
@@ -160,42 +210,93 @@ exports.updateProject = async (req, res) => {
     const fields = Object.keys(updates)
       .filter(key => allowedFields.includes(key) && key !== 'id');
 
-    if (fields.length === 0) {
-      return errorResponse(res, 'No valid fields to update', 400);
-    }
+    await client.query('BEGIN');
 
-    // Build dynamic update query with proper parameterization
-    const setClause = fields.map((field, index) => `${field} = $${index + 1}`).join(', ');
-    const values = fields.map(field => {
-      // Handle type conversion for boolean fields
-      if (field === 'published' || field === 'is_featured') {
-        return updates[field] === true || updates[field] === 'true';
+    let projectRaw = null;
+
+    if (fields.length > 0) {
+      // Build dynamic update query
+      const setClause = fields.map((field, index) => `${field} = $${index + 1}`).join(', ');
+      const values = fields.map(field => {
+        if (field === 'published' || field === 'is_featured') {
+          return updates[field] === true || updates[field] === 'true';
+        }
+        return updates[field];
+      });
+      
+      values.push(parseInt(id));
+
+      const queryText = `
+        UPDATE projects 
+        SET ${setClause}, updated_at = NOW() 
+        WHERE id = $${values.length} 
+        RETURNING *
+      `;
+
+      const result = await client.query(queryText, values);
+      if (result.rows.length === 0) {
+        await client.query('ROLLBACK');
+        return errorResponse(res, 'Project not found', 404);
       }
-      return updates[field];
-    });
-    
-    values.push(parseInt(id));
-
-    const queryText = `
-      UPDATE projects 
-      SET ${setClause}, updated_at = NOW() 
-      WHERE id = $${values.length} 
-      RETURNING *
-    `;
-
-    console.log('Update query:', queryText);
-    console.log('Update values:', values);
-
-    const result = await query(queryText, values);
-
-    if (result.rows.length === 0) {
-      return errorResponse(res, 'Project not found', 404);
+      projectRaw = result.rows[0];
+    } else {
+      // Just fetch the project if no fields to update
+      const result = await client.query('SELECT * FROM projects WHERE id = $1', [id]);
+      if (result.rows.length === 0) {
+          await client.query('ROLLBACK');
+          return errorResponse(res, 'Project not found', 404);
+      }
+      projectRaw = result.rows[0];
     }
 
-    successResponse(res, result.rows[0], 'Project updated successfully');
+    // --- SYNC IMAGES ---
+    if (images && Array.isArray(images)) {
+      // Clear old images
+      await client.query('DELETE FROM project_images WHERE project_id = $1', [id]);
+      
+      // Insert new images
+      if (images.length > 0) {
+        const imageValues = images.map((img, index) => {
+          const filePath = typeof img === 'string' ? img : (img.file_path || img.path || img.url);
+          const thumbPath = typeof img === 'string' ? '' : (img.thumbnail_path || '');
+          return [id, filePath, thumbPath, index];
+        });
+
+        for (const [pid, f, t, o] of imageValues) {
+          if (f) {
+              await client.query(
+                 'INSERT INTO project_images (project_id, file_path, thumbnail_path, display_order) VALUES ($1, $2, $3, $4)',
+                 [pid, f, t, o]
+              );
+          }
+        }
+      }
+    }
+
+    // Fetch final state with images
+    const finalImages = await client.query(
+        'SELECT * FROM project_images WHERE project_id = $1 ORDER BY display_order ASC',
+        [id]
+    );
+
+    const project = {
+        ...projectRaw,
+        cover_image: fileService.normalizePublicUrl(projectRaw.cover_image, req),
+        images: finalImages.rows.map(img => ({
+            ...img,
+            file_path: fileService.normalizePublicUrl(img.file_path, req),
+            thumbnail_path: fileService.normalizePublicUrl(img.thumbnail_path, req)
+        }))
+    };
+
+    await client.query('COMMIT');
+    successResponse(res, project, 'Project updated successfully');
   } catch (error) {
+    await client.query('ROLLBACK');
     console.error('Update project error:', error);
     errorResponse(res, `Failed to update project: ${error.message}`, 500);
+  } finally {
+    client.release();
   }
 };
 
