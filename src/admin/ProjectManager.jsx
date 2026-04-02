@@ -278,23 +278,34 @@ const ProjectManager = () => {
     };
 
     const openAdd = () => { setFormData({ ...emptyProject }); setPanel('add'); };
-    const openEdit = (project) => {
-        let rawImages = project.images || [];
+    const openEdit = async (project) => {
+        // Fetch full project data (with images from project_images table)
+        let fullProject = project;
+        try {
+            const res = await projectsAPI.getBySlug(project.slug);
+            if (res.success && res.data) {
+                fullProject = res.data;
+            }
+        } catch (e) {
+            console.warn('Could not fetch full project, using list data:', e);
+        }
+
+        let rawImages = fullProject.images || [];
         if (typeof rawImages === 'string') {
             try { rawImages = JSON.parse(rawImages); } catch (e) { rawImages = []; }
         }
         
-        // Ensure we have an array of paths
+        // Ensure we have an array of string paths
         const imgs = Array.isArray(rawImages) 
-            ? rawImages.map(i => (typeof i === 'string' ? i : (i.file_path || i.path || i.url)))
+            ? rawImages.map(i => (typeof i === 'string' ? i : (i.file_path || i.path || i.url))).filter(Boolean)
             : [];
             
-        const cover = project.cover_image;
+        const cover = fullProject.cover_image || project.cover_image;
         
         // Merge cover and gallery, avoiding duplicates
-        const merged = (cover && !imgs.includes(cover)) ? [cover, ...imgs] : imgs;
+        const merged = (cover && !imgs.includes(cover)) ? [cover, ...imgs] : (imgs.length > 0 ? imgs : (cover ? [cover] : []));
         
-        setFormData({ ...project, images: merged, cover_image: cover });
+        setFormData({ ...fullProject, images: merged, cover_image: cover });
         setPanel(project);
     };
     const closePanel = () => setPanel(null);
