@@ -113,6 +113,76 @@ export default function ProjectDetailPage({ project, onBack }) {
                 </div>
             </div>
 
+            {/* --- GALLERY --- */}
+            {(() => {
+                const findImages = () => {
+                    const fields = ['images', 'assets', 'gallery', 'project_images', 'gallery_images', 'additional_images'];
+                    for (const field of fields) {
+                        const val = project[field];
+                        if (val) {
+                            if (Array.isArray(val) && val.length > 0) return val;
+                            if (typeof val === 'string' && val.trim().length > 0) {
+                                if (val.startsWith('[')) {
+                                    try { 
+                                        const parsed = JSON.parse(val);
+                                        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                                    } catch (e) { /* ignore */ }
+                                }
+                                return [val]; // Single string image
+                            }
+                        }
+                    }
+                    return [];
+                };
+
+                const resolvedImages = findImages();
+                
+                if (resolvedImages.length > 0) {
+                    return (
+                        <section className="bg-[#0a0a0a] text-white py-16 md:py-24 px-6 md:px-12 border-b border-white/5 relative z-10">
+                            <div className="max-w-7xl mx-auto">
+                                <div className="text-center mb-12 md:mb-20 overflow-hidden">
+                                    <motion.div
+                                        initial={{ y: "100%" }}
+                                        whileInView={{ y: 0 }}
+                                        viewport={{ once: true }}
+                                        transition={{ duration: 0.8, ease: "circOut" }}
+                                    >
+                                        <span className="text-[#C5A059] tracking-[0.4em] uppercase text-[10px] md:text-xs font-bold font-sans">Visual Journey</span>
+                                        <h2 className="text-3xl md:text-5xl font-logo uppercase mt-4 tracking-widest">Gallery</h2>
+                                    </motion.div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                                    {resolvedImages.map((img, idx) => (
+                                        <motion.div
+                                            key={idx}
+                                            initial={{ opacity: 0, scale: 0.95 }}
+                                            whileInView={{ opacity: 1, scale: 1 }}
+                                            viewport={{ once: true, margin: "-100px" }}
+                                            transition={{ duration: 0.8, delay: idx * 0.1, ease: "easeOut" }}
+                                            className={`relative overflow-hidden group ${idx % 3 === 0 ? 'md:col-span-2 aspect-[16/9]' : 'aspect-[4/5]'}`}
+                                        >
+                                            <img
+                                                src={resolveImageSrc(img)}
+                                                alt={`${project.title} - ${idx + 1}`}
+                                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800';
+                                                }}
+                                            />
+                                            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </div>
+                        </section>
+                    );
+                }
+                return null;
+            })()}
+
             {/* --- CONTENT GRID --- */}
             <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-32 grid grid-cols-1 md:grid-cols-[1.5fr_1fr] gap-12 md:gap-20 relative z-10 bg-[#0a0a0a]">
 
@@ -218,77 +288,6 @@ export default function ProjectDetailPage({ project, onBack }) {
                     </motion.div>
                 </div>
             </div>
-
-            {/* --- GALLERY --- */}
-            {(() => {
-                // Try to find images in various possible fields
-                const findImages = () => {
-                    const fields = ['images', 'assets', 'gallery', 'project_images', 'gallery_images', 'additional_images'];
-                    for (const field of fields) {
-                        const val = project[field];
-                        if (val) {
-                            if (Array.isArray(val) && val.length > 0) return val;
-                            if (typeof val === 'string' && val.trim().length > 0) {
-                                if (val.startsWith('[')) {
-                                    try { 
-                                        const parsed = JSON.parse(val);
-                                        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-                                    } catch (e) { /* ignore */ }
-                                }
-                                return [val]; // Single string image
-                            }
-                        }
-                    }
-                    return [];
-                };
-
-                const resolvedImages = findImages();
-                
-                if (resolvedImages.length > 1 || (resolvedImages.length === 1 && resolvedImages[0] !== project.cover_image)) {
-                    return (
-                        <section className="bg-white text-black py-16 md:py-32 px-6 md:px-12">
-                            <div className="max-w-7xl mx-auto">
-                                <div className="text-center mb-12 md:mb-20 overflow-hidden">
-                                    <motion.div
-                                        initial={{ y: "100%" }}
-                                        whileInView={{ y: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ duration: 0.8, ease: "circOut" }}
-                                    >
-                                        <span className="text-[#C5A059] tracking-[0.4em] uppercase text-[10px] md:text-xs font-bold font-sans">Visual Journey</span>
-                                        <h2 className="text-3xl md:text-5xl font-logo uppercase mt-4 tracking-widest">Gallery</h2>
-                                    </motion.div>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-                                    {resolvedImages.map((img, idx) => (
-                                        <motion.div
-                                            key={idx}
-                                            initial={{ opacity: 0, scale: 0.95 }}
-                                            whileInView={{ opacity: 1, scale: 1 }}
-                                            viewport={{ once: true, margin: "-100px" }}
-                                            transition={{ duration: 0.8, delay: idx * 0.1, ease: "easeOut" }}
-                                            className={`relative overflow-hidden group ${idx % 3 === 0 ? 'md:col-span-2 aspect-[16/9]' : 'aspect-[4/5]'}`}
-                                        >
-                                            <img
-                                                src={resolveImageSrc(img)}
-                                                alt={`${project.title} - ${idx + 1}`}
-                                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                                                onError={(e) => {
-                                                    e.target.onerror = null;
-                                                    e.target.src = 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800';
-                                                }}
-                                            />
-                                            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </div>
-                        </section>
-                    );
-                }
-                return null;
-            })()}
 
             {/* --- NEXT PROJECT CTA (Optional - Placeholder) --- */}
             <div className="bg-[#0a0a0a] py-32 text-center border-t border-white/10">
