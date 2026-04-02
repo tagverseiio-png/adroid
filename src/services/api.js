@@ -15,6 +15,9 @@ export const getApiOrigin = () => {
 export const normalizeAssetUrl = (value) => {
     if (!value || typeof value !== 'string') return value;
 
+    // Strip accidental API_URL= prefix from corrupted DB data
+    value = value.replace(/^API_URL=/, '');
+
     const apiOrigin = getApiOrigin() || window.location.origin;
 
     // Relative /uploads/ path — prefix with current API origin

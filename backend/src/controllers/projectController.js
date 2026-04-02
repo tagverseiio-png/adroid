@@ -4,6 +4,21 @@ const { generateUniqueSlug } = require('../utils/slugify');
 const fileService = require('../services/fileService');
 
 /**
+ * Sanitize a file path before storing in the DB.
+ * Strips the accidental "API_URL=" prefix and converts absolute URLs
+ * back to relative /uploads/... paths for consistent storage.
+ */
+const sanitizePath = (value) => {
+  if (!value || typeof value !== 'string') return value;
+  // Strip accidental API_URL= prefix
+  let clean = value.replace(/^API_URL=/, '');
+  // If it's an absolute URL containing /uploads/, extract the relative path
+  const uploadsMatch = clean.match(/(\/uploads\/.+)/);
+  if (uploadsMatch) return uploadsMatch[1];
+  return clean;
+};
+
+/**
  * Get all projects with filtering
  */
 exports.getAllProjects = async (req, res) => {
@@ -135,7 +150,7 @@ exports.createProject = async (req, res) => {
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, false) 
        RETURNING *`,
       [title, slug, category, type, location, year, area, clientName, status, design_style,
-       cover_image, description, highlights, scope]
+       sanitizePath(cover_image), description, highlights, scope]
     );
 
     const projectId = result.rows[0].id;
@@ -143,9 +158,9 @@ exports.createProject = async (req, res) => {
     // Handle project images if provided
     if (images && Array.isArray(images) && images.length > 0) {
       const imageValues = images.map((img, index) => {
-        const filePath = typeof img === 'string' ? img : (img.file_path || img.path || img.url);
-        const thumbPath = typeof img === 'string' ? '' : (img.thumbnail_path || '');
-        return [projectId, filePath, thumbPath, index];
+        const rawPath = typeof img === 'string' ? img : (img.file_path || img.path || img.url);
+        const rawThumb = typeof img === 'string' ? '' : (img.thumbnail_path || '');
+        return [projectId, sanitizePath(rawPath), sanitizePath(rawThumb), index];
       });
 
       for (const [pid, f, t, o] of imageValues) {
@@ -221,6 +236,10 @@ exports.updateProject = async (req, res) => {
         if (field === 'published' || field === 'is_featured') {
           return updates[field] === true || updates[field] === 'true';
         }
+        // Sanitize cover_image path
+        if (field === 'cover_image') {
+          return sanitizePath(updates[field]);
+        }
         return updates[field];
       });
       
@@ -257,9 +276,9 @@ exports.updateProject = async (req, res) => {
       // Insert new images
       if (images.length > 0) {
         const imageValues = images.map((img, index) => {
-          const filePath = typeof img === 'string' ? img : (img.file_path || img.path || img.url);
-          const thumbPath = typeof img === 'string' ? '' : (img.thumbnail_path || '');
-          return [id, filePath, thumbPath, index];
+          const rawPath = typeof img === 'string' ? img : (img.file_path || img.path || img.url);
+          const rawThumb = typeof img === 'string' ? '' : (img.thumbnail_path || '');
+          return [id, sanitizePath(rawPath), sanitizePath(rawThumb), index];
         });
 
         for (const [pid, f, t, o] of imageValues) {

@@ -94,12 +94,23 @@ class FileService {
   }
 
   /**
+   * Sanitize a stored value – strip the accidental "API_URL=" prefix that
+   * was injected into the database by an earlier bug.
+   */
+  static sanitize(value) {
+    if (!value || typeof value !== 'string') return value;
+    return value.replace(/^API_URL=/, '');
+  }
+
+  /**
    * Convert path to URL
    */
   getBaseUrl(req) {
-    const configured = process.env.API_URL;
+    let configured = process.env.API_URL || '';
+    // Strip accidental 'API_URL=' prefix if the env var was mis-set
+    configured = configured.replace(/^API_URL=/, '').replace(/\/$/, '');
     if (configured) {
-      return configured.replace(/\/$/, '');
+      return configured;
     }
 
     if (!req) {
@@ -121,6 +132,9 @@ class FileService {
 
   normalizePublicUrl(value, req) {
     if (!value) return value;
+
+    // Strip accidental API_URL= prefix from stored data
+    value = FileService.sanitize(value);
 
     const baseUrl = this.getBaseUrl(req);
     if (!baseUrl) return value;
