@@ -24,7 +24,12 @@ export default function ProjectDetailPage({ project, onBack }) {
     const resolveImageSrc = (image) => {
         if (!image) return image;
         if (typeof image === 'string') return normalizeAssetUrl(image);
-        return normalizeAssetUrl(image.file_path || image.thumbnail_path || image.path || image.url);
+        // Handle common nested structures from different CMS/APIs
+        const path = image.file_path || image.thumbnail_path || image.path || image.url || image.link || image.src || image.original;
+        if (path) return normalizeAssetUrl(path);
+        // If it's an object with no known keys but has a value property
+        if (image.value && typeof image.value === 'string') return normalizeAssetUrl(image.value);
+        return normalizeAssetUrl(image);
     };
 
     return (
@@ -116,26 +121,37 @@ export default function ProjectDetailPage({ project, onBack }) {
             {/* --- GALLERY --- */}
             {(() => {
                 const findImages = () => {
-                    const fields = ['images', 'assets', 'gallery', 'project_images', 'gallery_images', 'additional_images'];
+                    const fields = ['images', 'assets', 'gallery', 'project_images', 'gallery_images', 'additional_images', 'media', 'photos', 'project_media'];
                     for (const field of fields) {
                         const val = project[field];
-                        if (val) {
-                            if (Array.isArray(val) && val.length > 0) return val;
-                            if (typeof val === 'string' && val.trim().length > 0) {
-                                if (val.startsWith('[')) {
-                                    try { 
-                                        const parsed = JSON.parse(val);
-                                        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-                                    } catch (e) { /* ignore */ }
-                                }
-                                return [val]; // Single string image
-                            }
+                        if (!val) continue;
+                        
+                        // Handle Strapi-style data wrapper
+                        const list = (val && val.data && Array.isArray(val.data)) ? val.data : (Array.isArray(val) ? val : []);
+                        
+                        if (list.length > 0) return list;
+                        
+                        // Handle stringified JSON
+                        if (typeof val === 'string' && val.trim().startsWith('[')) {
+                            try { 
+                                const parsed = JSON.parse(val);
+                                if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                            } catch (e) { /* ignore */ }
                         }
+                        
+                        // Handle single string
+                        if (typeof val === 'string' && val.trim().length > 10) return [val];
                     }
                     return [];
                 };
 
-                const resolvedImages = findImages();
+                let resolvedImages = findImages();
+                
+                // If NO images found but we have a cover image, and it's not the ONLY thing we want to show,
+                // we might fallback, but here we only show it if it's the only hope.
+                if (resolvedImages.length === 0 && (project.cover_image || project.coverImage)) {
+                    resolvedImages = [project.cover_image || project.coverImage];
+                }
                 
                 if (resolvedImages.length > 0) {
                     return (
