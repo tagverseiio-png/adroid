@@ -69,7 +69,7 @@ const ImageGallery = ({ images = [], onChange }) => {
         const url = list[idx];
         // Try server delete (non-blocking)
         try {
-            const path = url.replace(/^.*\/uploads\//, '/uploads/');
+            const path = toRelativePath(url);
             if (path.startsWith('/uploads/')) await uploadAPI.deleteImage(path);
         } catch { /* ignore */ }
         onChange(list.filter((_, i) => i !== idx));
@@ -107,8 +107,8 @@ const ImageGallery = ({ images = [], onChange }) => {
                                 <button type="button"
                                     onClick={() => {
                                         const a = [...list];
-                                        a.splice(idx, 1);
-                                        onChange([url, ...a]);
+                                        const [item] = a.splice(idx, 1);
+                                        onChange([item, ...a]);
                                     }}
                                     className="absolute bottom-1 left-1 text-[8px] bg-black/70 text-white/80 hover:bg-[#C5A059] hover:text-black px-1.5 py-0.5 rounded transition-colors font-bold"
                                     title="Set as cover image"
@@ -283,10 +283,18 @@ const ProjectManager = () => {
         if (typeof rawImages === 'string') {
             try { rawImages = JSON.parse(rawImages); } catch (e) { rawImages = []; }
         }
-        const imgs = Array.isArray(rawImages) ? rawImages.map(i => i.file_path || i) : [];
+        
+        // Ensure we have an array of paths
+        const imgs = Array.isArray(rawImages) 
+            ? rawImages.map(i => (typeof i === 'string' ? i : (i.file_path || i.path || i.url)))
+            : [];
+            
         const cover = project.cover_image;
-        const merged = cover && !imgs.includes(cover) ? [cover, ...imgs] : imgs;
-        setFormData({ ...project, images: merged });
+        
+        // Merge cover and gallery, avoiding duplicates
+        const merged = (cover && !imgs.includes(cover)) ? [cover, ...imgs] : imgs;
+        
+        setFormData({ ...project, images: merged, cover_image: cover });
         setPanel(project);
     };
     const closePanel = () => setPanel(null);
@@ -295,20 +303,34 @@ const ProjectManager = () => {
         if (!formData.title || !formData.category) { alert('Title and Category are required'); return; }
         setSaving(true);
         try {
+            // CRITICAL: Convert all absolute URLs back to relative paths for storage
+            const relativeImages = (formData.images || []).map(img => toRelativePath(img));
+            const relativeCover = toRelativePath(formData.cover_image || relativeImages[0] || '');
+
             const payload = {
                 ...formData,
                 featured_order: Number.parseInt(formData.featured_order || 0, 10) || 0,
-                cover_image: formData.images?.[0] || formData.cover_image || '',
+                images: relativeImages,
+                cover_image: relativeCover,
             };
+
             if (panel === 'add') {
                 const res = await projectsAPI.create(payload);
-                if (res.success) { setProjects(p => [res.data, ...p]); closePanel(); }
+                if (res.success) { 
+                    setProjects(p => [res.data, ...p]); 
+                    closePanel(); 
+                }
             } else {
-                await projectsAPI.update(panel.id, payload);
-                setProjects(p => p.map(x => x.id === panel.id ? { ...x, ...payload } : x));
-                closePanel();
+                const res = await projectsAPI.update(panel.id, payload);
+                if (res.success) {
+                    setProjects(p => p.map(x => x.id === panel.id ? { ...x, ...res.data } : x));
+                    closePanel();
+                }
             }
-        } catch { alert('Failed to save project'); }
+        } catch (e) { 
+            console.error('Save error:', e);
+            alert('Failed to save project'); 
+        }
         finally { setSaving(false); }
     };
 

@@ -7,7 +7,9 @@ if (!API_BASE_URL) {
 
 export const getApiOrigin = () => {
     if (!API_BASE_URL) return '';
-    return API_BASE_URL.replace(/\/api\/?$/, '');
+    // Strip accidental 'API_URL=' prefix if present in env var
+    const cleanBase = API_BASE_URL.replace(/^API_URL=/, '');
+    return cleanBase.replace(/\/api\/?$/, '');
 };
 
 export const normalizeAssetUrl = (value) => {
