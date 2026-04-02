@@ -279,7 +279,11 @@ const ProjectManager = () => {
 
     const openAdd = () => { setFormData({ ...emptyProject }); setPanel('add'); };
     const openEdit = (project) => {
-        const imgs = Array.isArray(project.images) ? project.images.map(i => i.file_path || i) : [];
+        let rawImages = project.images || [];
+        if (typeof rawImages === 'string') {
+            try { rawImages = JSON.parse(rawImages); } catch (e) { rawImages = []; }
+        }
+        const imgs = Array.isArray(rawImages) ? rawImages.map(i => i.file_path || i) : [];
         const cover = project.cover_image;
         const merged = cover && !imgs.includes(cover) ? [cover, ...imgs] : imgs;
         setFormData({ ...project, images: merged });

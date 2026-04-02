@@ -178,7 +178,7 @@ const Footer = ({ setPage, setProjectDivision }) => {
                         C
                     </div>
                     <p className="text-[9px] lg:text-xs uppercase tracking-[0.2em] md:tracking-[0.3em] text-white/40 font-bold font-sans max-w-[250px] md:max-w-none">
-                        © 2021 ADROIT DESIGN INDIA PRIVATE LIMITED
+                        © 2026 ADROIT DESIGN INDIA PRIVATE LIMITED
                     </p>
                 </div>
 
