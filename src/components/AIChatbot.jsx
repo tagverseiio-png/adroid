@@ -107,138 +107,112 @@ const AIChatbot = ({ setPage = () => {} }) => {
     const findRelevantProjects = useCallback((userQuery, aiResponse) => {
         if (allProjects.length === 0) return null;
 
-        const combinedText = `${userQuery} ${aiResponse}`.toLowerCase();
+        const queryLower = userQuery.toLowerCase();
 
-        // Check if the conversation is about projects at all
-        const isProjectRelated = PROJECT_KEYWORDS.some(kw => combinedText.includes(kw));
-        if (!isProjectRelated) return null;
+        // Only show project cards when the USER is asking about projects/work
+        const userWantsProjects = /project|work|portfolio|show me|case stud|what.*done|your.*design|recent|completed/i.test(queryLower);
+        if (!userWantsProjects) return null;
 
-        /* ── STEP 1: Try to match projects mentioned by NAME in the AI response ── */
-        const nameMatched = [];
-        const responseText = aiResponse.toLowerCase();
-
-        for (const project of allProjects) {
-            const title = (project.title || '').toLowerCase().trim();
-            if (!title || title.length < 3) continue;
-
-            // Extract meaningful words from the project title (skip M/s, Mr, Mrs, etc.)
-            const cleanTitle = title
-                .replace(/^(m\/s|mr\s*&?\s*mrs|mr|mrs|dr)\s+/i, '')
-                .trim();
-
-            // Check if the AI response contains a substantial part of the project title
-            // Use multiple matching strategies:
-
-            // Strategy 1: Full clean title appears in the response
-            if (cleanTitle.length > 4 && responseText.includes(cleanTitle)) {
-                nameMatched.push({ ...project, _nameScore: 100 });
-                continue;
-            }
-
-            // Strategy 2: Title words (significant ones) match in the response
-            const titleWords = cleanTitle
-                .split(/[\s,\-–]+/)
-                .filter(w => w.length > 3)
-                .filter(w => !['residence', 'villa', 'apartment', 'office', 'hotel',
-                    'restaurant', 'building', 'house', 'project', 'design',
-                    'interior', 'interiors', 'private', 'limited', 'pvt', 'ltd'].includes(w));
-
-            if (titleWords.length > 0) {
-                const matchCount = titleWords.filter(w => responseText.includes(w)).length;
-                // If most unique words from the title are in the response, it's a match
-                if (matchCount >= Math.ceil(titleWords.length * 0.6) && matchCount >= 1) {
-                    nameMatched.push({ ...project, _nameScore: 50 + (matchCount / titleWords.length) * 50 });
-                }
-            }
-        }
-
-        // If we found projects mentioned by name, return those (sorted by match quality)
-        if (nameMatched.length > 0) {
-            const uniqueMatched = nameMatched
-                .sort((a, b) => b._nameScore - a._nameScore)
-                .filter((p, i, arr) => arr.findIndex(x => x.id === p.id) === i)
-                .slice(0, 4);
-            return uniqueMatched;
-        }
-
-        /* ── STEP 2: Fallback — keyword-based scoring ──────────────────── */
+        // Extract specific context from user query
         const locations = [
             'chennai', 'bangalore', 'bengaluru', 'delhi', 'mumbai',
             'hyderabad', 'pune', 'kolkata', 'dubai', 'coimbatore',
             'thiruvannamalai', 'perungudi', 'pallavaram', 'thoraipakkam',
             'kodaikanal', 'madurai', 'trichy', 'salem', 'pondicherry',
+            'nagercoil', 'vellore', 'goa', 'kerala', 'andaman',
+            'nellore', 'oragadam', 'guindy', 'adyar', 'velachery',
         ];
-        const matchedLocation = locations.find(loc => combinedText.includes(loc));
+        // Check both user query AND AI response for location (AI may clarify location)
+        const combinedForLocation = `${queryLower} ${aiResponse.toLowerCase()}`;
+        const matchedLocation = locations.find(loc => combinedForLocation.includes(loc));
 
+        // Category matching from user query only
         const categoryMap = {
-            'residential': ['residential', 'villa', 'apartment', 'home', 'house'],
-            'commercial': ['commercial', 'office', 'it park', 'retail', 'showroom', 'shop'],
-            'hospitality': ['hotel', 'restaurant', 'resort', 'club', 'motel', 'hospitality'],
+            'residential': ['residential', 'villa', 'apartment', 'home', 'house', 'flat'],
+            'commercial': ['commercial', 'office', 'retail', 'showroom', 'shop'],
+            'hospitality': ['hotel', 'restaurant', 'resort', 'club', 'motel', 'hospitality', 'lodge'],
             'healthcare': ['hospital', 'clinic', 'healthcare', 'nursing', 'medical'],
             'institutional': ['school', 'college', 'university', 'institution', 'campus'],
-            'industrial': ['factory', 'warehouse', 'industrial', 'manufacturing', 'plant'],
+            'industrial': ['factory', 'warehouse', 'industrial', 'manufacturing', 'plant', 'kitchen'],
             'interior': ['interior', 'fit-out', 'fitout', 'turnkey', 'renovation'],
+            'it': ['it ', 'ites', 'software', 'tech'],
+            'lab': ['lab', 'clean room', 'testing'],
+            'gym': ['gym', 'spa', 'fitness'],
+            'marriage': ['marriage', 'banquet', 'convention', 'wedding'],
+            'supermarket': ['supermarket', 'grocery', 'store'],
+            'building': ['building', 'lifting', 'rcc', 'construction'],
         };
 
         let matchedCategories = [];
         for (const [category, keywords] of Object.entries(categoryMap)) {
-            if (keywords.some(kw => combinedText.includes(kw))) {
+            if (keywords.some(kw => queryLower.includes(kw))) {
                 matchedCategories.push(category);
             }
         }
 
-        const areaMatch = combinedText.match(/(\d+(?:,\d+)*)\s*(?:sqft|sft|sq\.ft|square\s*feet)/i);
-        const targetArea = areaMatch ? parseInt(areaMatch[1].replace(',', '')) : null;
-
+        // Score projects
         const scored = allProjects.map(project => {
             let score = 0;
             const pTitle = (project.title || '').toLowerCase();
             const pCategory = (project.category || '').toLowerCase();
             const pType = (project.type || '').toLowerCase();
             const pLocation = (project.location || '').toLowerCase();
-            const pDescription = (project.description || '').toLowerCase();
 
-            if (matchedLocation && pLocation.includes(matchedLocation)) score += 10;
+            // Location match — highest priority
+            if (matchedLocation && pLocation.includes(matchedLocation)) {
+                score += 15;
+            }
 
+            // Category match
             for (const cat of matchedCategories) {
-                if (pCategory.includes(cat) || pType.includes(cat) || pTitle.includes(cat)) score += 8;
                 const keywords = categoryMap[cat] || [];
-                if (keywords.some(kw => pCategory.includes(kw) || pType.includes(kw) || pTitle.includes(kw) || pDescription.includes(kw))) score += 5;
+                if (keywords.some(kw => pCategory.includes(kw) || pType.includes(kw) || pTitle.includes(kw))) {
+                    score += 12;
+                }
             }
 
-            if (targetArea) {
-                const pArea = parseInt(project.area) || 0;
-                if (pArea > 0 && pArea >= targetArea * 0.7 && pArea <= targetArea * 1.3) score += 6;
-            }
-
-            // Extract meaningful words from user query (not generic ones)
+            // Direct keyword match from user query (specific meaningful words only)
             const skipWords = new Set([
                 'what', 'which', 'show', 'tell', 'about', 'your', 'have', 'done',
                 'project', 'projects', 'design', 'work', 'service', 'services',
                 'portfolio', 'like', 'some', 'give', 'list', 'type', 'types',
                 'that', 'this', 'with', 'from', 'the', 'and', 'for', 'are',
+                'please', 'recent', 'completed', 'case', 'study', 'offer',
             ]);
-            const queryWords = userQuery.toLowerCase().split(/\s+/).filter(w => w.length > 3 && !skipWords.has(w));
+            const queryWords = queryLower.split(/\s+/).filter(w => w.length > 2 && !skipWords.has(w));
             for (const word of queryWords) {
-                if (pTitle.includes(word)) score += 4;
-                if (pLocation.includes(word)) score += 6;
-                if (pCategory.includes(word)) score += 5;
+                if (pTitle.includes(word)) score += 5;
+                if (pLocation.includes(word)) score += 8;
+                if (pCategory.includes(word)) score += 6;
             }
 
             return { ...project, _score: score };
         });
 
-        const sorted = scored
+        // Get top scorers
+        const topScored = scored
             .filter(p => p._score > 0)
-            .sort((a, b) => b._score - a._score)
-            .slice(0, 4);
+            .sort((a, b) => b._score - a._score);
 
-        if (sorted.length === 0) {
-            const shuffled = [...allProjects].sort(() => Math.random() - 0.5);
-            return shuffled.slice(0, 4);
+        // If we have specific matches (location or category), return top 4
+        if (topScored.length > 0 && (matchedLocation || matchedCategories.length > 0)) {
+            return topScored.slice(0, 4);
         }
 
-        return sorted;
+        // Generic project request — show diverse projects (one per category)
+        const seenCategories = new Set();
+        const diverse = [];
+        // Shuffle to avoid always showing same order
+        const shuffled = [...allProjects].sort(() => Math.random() - 0.5);
+        for (const p of shuffled) {
+            const cat = (p.category || 'other').toLowerCase();
+            if (!seenCategories.has(cat)) {
+                seenCategories.add(cat);
+                diverse.push(p);
+                if (diverse.length >= 4) break;
+            }
+        }
+        return diverse;
     }, [allProjects]);
 
     /* ── Send message ──────────────────────────────────────────────── */
