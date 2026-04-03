@@ -154,7 +154,7 @@ const App = () => {
   const [selectedPost, setSelectedPost] = useState(null);
 
   // Projects Division State (for footer quick links)
-  const [projectDivision, setProjectDivision] = useState('ALL');
+  const [projectDivision, setProjectDivision] = useState(null);
 
   // Shop State
   const [selectedShopProduct, setSelectedShopProduct] = useState(null);
@@ -478,7 +478,7 @@ const App = () => {
       <Suspense fallback={<PageLoader />}>
         <main>
           {currentPage === 'Home' && <Home setPage={setCurrentPage} />}
-          {currentPage === 'Projects' && <ProjectsPage initialDivision={projectDivision} onDivisionUsed={() => setProjectDivision('ALL')} />}
+          {currentPage === 'Projects' && <ProjectsPage initialDivision={projectDivision} onDivisionUsed={() => setProjectDivision(null)} />}
           {currentPage === 'Services' && (
             selectedService ? (
               <ServiceDetailPage

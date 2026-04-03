@@ -7,9 +7,9 @@ import { MAIN_DIVISIONS, ARCHITECTURE_CATEGORIES, INTERIOR_CATEGORIES } from "./
 import ProjectDetailPage from "./ProjectDetailPage";
 import { projectsAPI, normalizeAssetUrl } from "./services/api";
 
-export default function ProjectsPage({ initialDivision = 'ALL', onDivisionUsed }) {
-  const [selectedDivision, setSelectedDivision] = useState(initialDivision);
-  const [selectedCategory, setSelectedCategory] = useState("ALL");
+export default function ProjectsPage({ initialDivision, onDivisionUsed }) {
+  const [selectedDivision, setSelectedDivision] = useState(initialDivision || MAIN_DIVISIONS[0]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [activeProject, setActiveProject] = useState(null);
   const [projects, setProjects] = useState([]);
   const [isLoadingProject, setIsLoadingProject] = useState(false);
@@ -50,9 +50,9 @@ export default function ProjectsPage({ initialDivision = 'ALL', onDivisionUsed }
     fetchProjects();
 
     // Apply initialDivision from footer quick links
-    if (initialDivision && initialDivision !== 'ALL') {
+    if (initialDivision && MAIN_DIVISIONS.includes(initialDivision)) {
       setSelectedDivision(initialDivision);
-      setSelectedCategory('ALL');
+      setSelectedCategory(null);
       onDivisionUsed && onDivisionUsed();
     }
 
@@ -93,11 +93,10 @@ export default function ProjectsPage({ initialDivision = 'ALL', onDivisionUsed }
       return projectStatus === "ONGOING" || projectType === "ONGOING";
     }
 
-    const matchesDivision =
-      selectedDivision === "ALL" || projectType === selectedDivision;
+    const matchesDivision = projectType === selectedDivision;
 
     const matchesCategory =
-      selectedCategory === "ALL" ||
+      !selectedCategory ||
       projectCategory === selectedCategory ||
       projectCategory.includes(selectedCategory) ||
       selectedCategory.includes(projectCategory);
@@ -161,7 +160,7 @@ export default function ProjectsPage({ initialDivision = 'ALL', onDivisionUsed }
               key={div}
               onClick={() => {
                 setSelectedDivision(div);
-                setSelectedCategory("ALL"); // Reset category when division changes
+                setSelectedCategory(null); // Reset category when division changes
               }}
               className={`text-[10px] md:text-sm tracking-[0.3em] font-sans font-bold uppercase transition-colors whitespace-nowrap ${selectedDivision === div ? "text-[#C5A059]" : "text-stone-500 hover:text-white"
                 }`}

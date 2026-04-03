@@ -1,9 +1,8 @@
 // data/projectCategories.js
 
-export const MAIN_DIVISIONS = ["ALL", "ARCHITECTURE", "INTERIOR", "ONGOING"];
+export const MAIN_DIVISIONS = ["ARCHITECTURE", "INTERIOR", "ONGOING"];
 
 export const ARCHITECTURE_CATEGORIES = [
-    "ALL",
     "RESIDENTIAL",
     "COMMERCIAL",
     "IT & ITES",
@@ -17,8 +16,8 @@ export const ARCHITECTURE_CATEGORIES = [
 ];
 
 export const INTERIOR_CATEGORIES = [
-    "ALL",
     "RESIDENTIAL INTERIORS",
+    "COMMERCIAL OFFICES",
     "IT & ITES OFFICES",
     "FACTORY OFFICES",
     "CLUBS & RESTOBARS",
