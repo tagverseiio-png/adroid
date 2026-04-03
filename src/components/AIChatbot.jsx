@@ -29,6 +29,16 @@ const renderText = (text) => {
     ));
 };
 
+/* ── Keywords that indicate project-related intent ──────────────────── */
+const PROJECT_KEYWORDS = [
+    'project', 'design', 'work', 'case study', 'portfolio',
+    'residential', 'commercial', 'interior', 'architecture',
+    'office', 'villa', 'apartment', 'hotel', 'hospital',
+    'factory', 'warehouse', 'school', 'college', 'restaurant',
+    'showroom', 'retail', 'industrial', 'turnkey', 'fit-out',
+    'peb', 'civil', 'construction', 'renovation', 'renovation',
+];
+
 const AIChatbot = ({ setPage = () => {} }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
@@ -41,7 +51,8 @@ const AIChatbot = ({ setPage = () => {} }) => {
         },
     ]);
     const [isLoading, setIsLoading] = useState(false);
-    const [projects, setProjects] = useState([]);
+    const [allProjects, setAllProjects] = useState([]);
+    const [projectsFetched, setProjectsFetched] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(true);
     const messagesEndRef = useRef(null);
     const messagesContainerRef = useRef(null);
@@ -50,24 +61,40 @@ const AIChatbot = ({ setPage = () => {} }) => {
     /* ── Auto‑scroll ───────────────────────────────────────────────── */
     const scrollToBottom = useCallback(() => {
         requestAnimationFrame(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            if (messagesContainerRef.current) {
+                messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+            }
         });
     }, []);
 
     useEffect(() => { scrollToBottom(); }, [messages, isLoading, scrollToBottom]);
 
-    /* ── Lazy‑fetch projects ───────────────────────────────────────── */
+    /* ── Fetch ALL published projects from backend ─────────────────── */
     useEffect(() => {
-        if (!isOpen || projects.length > 0) return;
+        if (!isOpen || projectsFetched) return;
         (async () => {
             try {
-                const res = await projectsAPI.getFeatured(6);
-                if (res.success) setProjects(res.data || []);
+                const res = await projectsAPI.getAll({ published: true, limit: 200 });
+                const data = res.data || res.projects || [];
+                // Handle paginated response shapes
+                const projectList = Array.isArray(data) ? data : (data.rows || data.data || []);
+                setAllProjects(projectList);
+                setProjectsFetched(true);
             } catch (error) {
                 console.error('Failed to fetch projects:', error);
+                // Fallback: try featured
+                try {
+                    const res = await projectsAPI.getFeatured(20);
+                    if (res.success) {
+                        setAllProjects(res.data || []);
+                        setProjectsFetched(true);
+                    }
+                } catch (e2) {
+                    console.error('Fallback fetch also failed:', e2);
+                }
             }
         })();
-    }, [isOpen, projects.length]);
+    }, [isOpen, projectsFetched]);
 
     /* ── Focus input when opened ───────────────────────────────────── */
     useEffect(() => {
@@ -76,35 +103,106 @@ const AIChatbot = ({ setPage = () => {} }) => {
 
     const canSend = useMemo(() => inputValue.trim().length > 0 && !isLoading, [inputValue, isLoading]);
 
-    /* ── Project‑filter helpers ────────────────────────────────────── */
-    const extractProjectFilters = (text) => {
-        const lower = text.toLowerCase();
+    /* ── Smart project matching based on chat context ───────────────── */
+    const findRelevantProjects = useCallback((userQuery, aiResponse) => {
+        if (allProjects.length === 0) return null;
+
+        const combinedText = `${userQuery} ${aiResponse}`.toLowerCase();
+
+        // Check if the conversation is about projects at all
+        const isProjectRelated = PROJECT_KEYWORDS.some(kw => combinedText.includes(kw));
+        if (!isProjectRelated) return null;
+
+        // Extract context clues from the conversation
         const locations = [
             'chennai', 'bangalore', 'bengaluru', 'delhi', 'mumbai',
             'hyderabad', 'pune', 'kolkata', 'dubai', 'coimbatore',
             'thiruvannamalai', 'perungudi', 'pallavaram', 'thoraipakkam',
+            'kodaikanal', 'madurai', 'trichy', 'salem', 'pondicherry',
         ];
-        const location = locations.find((loc) => lower.includes(loc));
-        const areaMatch = text.match(/(\d+(?:,\d+)*)\s*(?:sqft|sft|sq\.ft|square\s*feet)/i);
-        const area = areaMatch ? parseInt(areaMatch[1].replace(',', '')) : null;
-        return { location, area };
-    };
+        const matchedLocation = locations.find(loc => combinedText.includes(loc));
 
-    const filterProjectsByResponse = (allProjects, responseText) => {
-        const { location, area } = extractProjectFilters(responseText);
-        if (!location && !area) return allProjects;
-        const filtered = allProjects.filter((p) => {
-            let matches = 0, required = 0;
-            if (location) { required++; if (p.location?.toLowerCase().includes(location)) matches++; }
-            if (area) {
-                required++;
-                const pa = parseInt(p.area) || 0;
-                if (pa > 0 && pa >= area * 0.8 && pa <= area * 1.2) matches++;
+        // Category / type matching
+        const categoryMap = {
+            'residential': ['residential', 'villa', 'apartment', 'home', 'house'],
+            'commercial': ['commercial', 'office', 'it park', 'retail', 'showroom', 'shop'],
+            'hospitality': ['hotel', 'restaurant', 'resort', 'club', 'motel', 'hospitality'],
+            'healthcare': ['hospital', 'clinic', 'healthcare', 'nursing', 'medical'],
+            'institutional': ['school', 'college', 'university', 'institution', 'campus'],
+            'industrial': ['factory', 'warehouse', 'industrial', 'manufacturing', 'plant'],
+            'interior': ['interior', 'fit-out', 'fitout', 'turnkey', 'renovation'],
+        };
+
+        let matchedCategories = [];
+        for (const [category, keywords] of Object.entries(categoryMap)) {
+            if (keywords.some(kw => combinedText.includes(kw))) {
+                matchedCategories.push(category);
             }
-            return matches === required && required > 0;
+        }
+
+        // Area matching
+        const areaMatch = combinedText.match(/(\d+(?:,\d+)*)\s*(?:sqft|sft|sq\.ft|square\s*feet)/i);
+        const targetArea = areaMatch ? parseInt(areaMatch[1].replace(',', '')) : null;
+
+        // Score and rank projects
+        const scored = allProjects.map(project => {
+            let score = 0;
+            const pTitle = (project.title || '').toLowerCase();
+            const pCategory = (project.category || '').toLowerCase();
+            const pType = (project.type || '').toLowerCase();
+            const pLocation = (project.location || '').toLowerCase();
+            const pDescription = (project.description || '').toLowerCase();
+
+            // Location match (high priority)
+            if (matchedLocation && pLocation.includes(matchedLocation)) {
+                score += 10;
+            }
+
+            // Category/type match
+            for (const cat of matchedCategories) {
+                if (pCategory.includes(cat) || pType.includes(cat) || pTitle.includes(cat)) {
+                    score += 8;
+                }
+                // Also check if parent category keywords match
+                const keywords = categoryMap[cat] || [];
+                if (keywords.some(kw => pCategory.includes(kw) || pType.includes(kw) || pTitle.includes(kw) || pDescription.includes(kw))) {
+                    score += 5;
+                }
+            }
+
+            // Area match (within 30% range)
+            if (targetArea) {
+                const pArea = parseInt(project.area) || 0;
+                if (pArea > 0 && pArea >= targetArea * 0.7 && pArea <= targetArea * 1.3) {
+                    score += 6;
+                }
+            }
+
+            // Direct keyword match in title/description
+            const queryWords = combinedText.split(/\s+/).filter(w => w.length > 3);
+            for (const word of queryWords) {
+                if (pTitle.includes(word)) score += 3;
+                if (pDescription.includes(word)) score += 1;
+            }
+
+            return { ...project, _score: score };
         });
-        return filtered.length > 0 ? filtered : allProjects;
-    };
+
+        // Sort by score descending, take top matches
+        const sorted = scored
+            .filter(p => p._score > 0)
+            .sort((a, b) => b._score - a._score)
+            .slice(0, 4);
+
+        // If no specific matches found, show a diverse selection
+        if (sorted.length === 0) {
+            // Show random diverse projects (not the same ones every time)
+            const shuffled = [...allProjects].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, 4);
+        }
+
+        return sorted;
+    }, [allProjects]);
 
     /* ── Send message ──────────────────────────────────────────────── */
     const handleSend = async (overrideText) => {
@@ -150,18 +248,13 @@ const AIChatbot = ({ setPage = () => {} }) => {
                 );
             }
 
-            // Attach project cards when appropriate
-            const shouldShowProjects =
-                /project|design|work|case study|portfolio|residential|commercial/i.test(assistantText);
-            let filteredProjects = null;
-            if (shouldShowProjects && projects.length > 0) {
-                filteredProjects = filterProjectsByResponse(projects, assistantText);
-            }
+            // Find relevant projects based on conversation context
+            const relevantProjects = findRelevantProjects(trimmed, assistantText);
 
             setMessages((prev) =>
                 prev.map((m) =>
                     m.id === assistantMsgId
-                        ? { ...m, text: assistantText || 'No response received.', projects: filteredProjects }
+                        ? { ...m, text: assistantText || 'No response received.', projects: relevantProjects }
                         : m,
                 ),
             );
@@ -201,6 +294,15 @@ const AIChatbot = ({ setPage = () => {} }) => {
         setShowSuggestions(true);
     };
 
+    /* ── Stop Lenis from hijacking scroll inside chatbot ────────────── */
+    const handleWheel = useCallback((e) => {
+        e.stopPropagation();
+    }, []);
+
+    const handleTouchMove = useCallback((e) => {
+        e.stopPropagation();
+    }, []);
+
     /* ── Render ─────────────────────────────────────────────────────── */
     return (
         <>
@@ -230,6 +332,7 @@ const AIChatbot = ({ setPage = () => {} }) => {
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                         className="fixed bottom-20 right-4 md:right-8 z-40 w-[92vw] sm:w-96 md:w-[28rem] max-w-[28rem] max-h-[75vh] bg-white shadow-2xl border border-stone-200 rounded-2xl overflow-hidden flex flex-col"
+                        data-lenis-prevent
                     >
                         {/* ── Header ──────────────────────────────────────── */}
                         <div className="px-5 py-4 border-b border-stone-100 bg-[#0a0a0a] text-white flex items-center justify-between">
@@ -253,8 +356,16 @@ const AIChatbot = ({ setPage = () => {} }) => {
 
                         {/* ── Messages ─────────────────────────────────────── */}
                         <div
-                            className="flex-1 min-h-[300px] md:h-[32rem] overflow-y-auto bg-stone-50 p-4 space-y-4 flex flex-col"
+                            className="flex-1 min-h-[300px] md:h-[32rem] bg-stone-50 p-4 space-y-4 flex flex-col"
                             ref={messagesContainerRef}
+                            onWheel={handleWheel}
+                            onTouchMove={handleTouchMove}
+                            style={{
+                                overflowY: 'auto',
+                                overscrollBehavior: 'contain',
+                                WebkitOverflowScrolling: 'touch',
+                            }}
+                            data-lenis-prevent
                         >
                             {messages.map((msg) => (
                                 <div key={msg.id} className="flex flex-col gap-2">
@@ -282,7 +393,14 @@ const AIChatbot = ({ setPage = () => {} }) => {
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: 0.2 }}
-                                            className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide"
+                                            className="flex gap-2 pb-2"
+                                            style={{
+                                                overflowX: 'auto',
+                                                overscrollBehavior: 'contain',
+                                                WebkitOverflowScrolling: 'touch',
+                                                scrollbarWidth: 'none',
+                                                msOverflowStyle: 'none',
+                                            }}
                                         >
                                             {msg.projects.slice(0, 4).map((project) => (
                                                 <div

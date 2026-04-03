@@ -187,6 +187,7 @@ const App = () => {
       mouseMultiplier: 1,
       smoothTouch: false,
       touchMultiplier: 2,
+      prevent: (node) => node.closest('[data-lenis-prevent]'),
     });
 
     let rafId;
