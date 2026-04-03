@@ -113,7 +113,55 @@ const AIChatbot = ({ setPage = () => {} }) => {
         const isProjectRelated = PROJECT_KEYWORDS.some(kw => combinedText.includes(kw));
         if (!isProjectRelated) return null;
 
-        // Extract context clues from the conversation
+        /* ── STEP 1: Try to match projects mentioned by NAME in the AI response ── */
+        const nameMatched = [];
+        const responseText = aiResponse.toLowerCase();
+
+        for (const project of allProjects) {
+            const title = (project.title || '').toLowerCase().trim();
+            if (!title || title.length < 3) continue;
+
+            // Extract meaningful words from the project title (skip M/s, Mr, Mrs, etc.)
+            const cleanTitle = title
+                .replace(/^(m\/s|mr\s*&?\s*mrs|mr|mrs|dr)\s+/i, '')
+                .trim();
+
+            // Check if the AI response contains a substantial part of the project title
+            // Use multiple matching strategies:
+
+            // Strategy 1: Full clean title appears in the response
+            if (cleanTitle.length > 4 && responseText.includes(cleanTitle)) {
+                nameMatched.push({ ...project, _nameScore: 100 });
+                continue;
+            }
+
+            // Strategy 2: Title words (significant ones) match in the response
+            const titleWords = cleanTitle
+                .split(/[\s,\-–]+/)
+                .filter(w => w.length > 3)
+                .filter(w => !['residence', 'villa', 'apartment', 'office', 'hotel',
+                    'restaurant', 'building', 'house', 'project', 'design',
+                    'interior', 'interiors', 'private', 'limited', 'pvt', 'ltd'].includes(w));
+
+            if (titleWords.length > 0) {
+                const matchCount = titleWords.filter(w => responseText.includes(w)).length;
+                // If most unique words from the title are in the response, it's a match
+                if (matchCount >= Math.ceil(titleWords.length * 0.6) && matchCount >= 1) {
+                    nameMatched.push({ ...project, _nameScore: 50 + (matchCount / titleWords.length) * 50 });
+                }
+            }
+        }
+
+        // If we found projects mentioned by name, return those (sorted by match quality)
+        if (nameMatched.length > 0) {
+            const uniqueMatched = nameMatched
+                .sort((a, b) => b._nameScore - a._nameScore)
+                .filter((p, i, arr) => arr.findIndex(x => x.id === p.id) === i)
+                .slice(0, 4);
+            return uniqueMatched;
+        }
+
+        /* ── STEP 2: Fallback — keyword-based scoring ──────────────────── */
         const locations = [
             'chennai', 'bangalore', 'bengaluru', 'delhi', 'mumbai',
             'hyderabad', 'pune', 'kolkata', 'dubai', 'coimbatore',
@@ -122,7 +170,6 @@ const AIChatbot = ({ setPage = () => {} }) => {
         ];
         const matchedLocation = locations.find(loc => combinedText.includes(loc));
 
-        // Category / type matching
         const categoryMap = {
             'residential': ['residential', 'villa', 'apartment', 'home', 'house'],
             'commercial': ['commercial', 'office', 'it park', 'retail', 'showroom', 'shop'],
@@ -140,11 +187,9 @@ const AIChatbot = ({ setPage = () => {} }) => {
             }
         }
 
-        // Area matching
         const areaMatch = combinedText.match(/(\d+(?:,\d+)*)\s*(?:sqft|sft|sq\.ft|square\s*feet)/i);
         const targetArea = areaMatch ? parseInt(areaMatch[1].replace(',', '')) : null;
 
-        // Score and rank projects
         const scored = allProjects.map(project => {
             let score = 0;
             const pTitle = (project.title || '').toLowerCase();
@@ -153,50 +198,42 @@ const AIChatbot = ({ setPage = () => {} }) => {
             const pLocation = (project.location || '').toLowerCase();
             const pDescription = (project.description || '').toLowerCase();
 
-            // Location match (high priority)
-            if (matchedLocation && pLocation.includes(matchedLocation)) {
-                score += 10;
-            }
+            if (matchedLocation && pLocation.includes(matchedLocation)) score += 10;
 
-            // Category/type match
             for (const cat of matchedCategories) {
-                if (pCategory.includes(cat) || pType.includes(cat) || pTitle.includes(cat)) {
-                    score += 8;
-                }
-                // Also check if parent category keywords match
+                if (pCategory.includes(cat) || pType.includes(cat) || pTitle.includes(cat)) score += 8;
                 const keywords = categoryMap[cat] || [];
-                if (keywords.some(kw => pCategory.includes(kw) || pType.includes(kw) || pTitle.includes(kw) || pDescription.includes(kw))) {
-                    score += 5;
-                }
+                if (keywords.some(kw => pCategory.includes(kw) || pType.includes(kw) || pTitle.includes(kw) || pDescription.includes(kw))) score += 5;
             }
 
-            // Area match (within 30% range)
             if (targetArea) {
                 const pArea = parseInt(project.area) || 0;
-                if (pArea > 0 && pArea >= targetArea * 0.7 && pArea <= targetArea * 1.3) {
-                    score += 6;
-                }
+                if (pArea > 0 && pArea >= targetArea * 0.7 && pArea <= targetArea * 1.3) score += 6;
             }
 
-            // Direct keyword match in title/description
-            const queryWords = combinedText.split(/\s+/).filter(w => w.length > 3);
+            // Extract meaningful words from user query (not generic ones)
+            const skipWords = new Set([
+                'what', 'which', 'show', 'tell', 'about', 'your', 'have', 'done',
+                'project', 'projects', 'design', 'work', 'service', 'services',
+                'portfolio', 'like', 'some', 'give', 'list', 'type', 'types',
+                'that', 'this', 'with', 'from', 'the', 'and', 'for', 'are',
+            ]);
+            const queryWords = userQuery.toLowerCase().split(/\s+/).filter(w => w.length > 3 && !skipWords.has(w));
             for (const word of queryWords) {
-                if (pTitle.includes(word)) score += 3;
-                if (pDescription.includes(word)) score += 1;
+                if (pTitle.includes(word)) score += 4;
+                if (pLocation.includes(word)) score += 6;
+                if (pCategory.includes(word)) score += 5;
             }
 
             return { ...project, _score: score };
         });
 
-        // Sort by score descending, take top matches
         const sorted = scored
             .filter(p => p._score > 0)
             .sort((a, b) => b._score - a._score)
             .slice(0, 4);
 
-        // If no specific matches found, show a diverse selection
         if (sorted.length === 0) {
-            // Show random diverse projects (not the same ones every time)
             const shuffled = [...allProjects].sort(() => Math.random() - 0.5);
             return shuffled.slice(0, 4);
         }
