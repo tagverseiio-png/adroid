@@ -169,15 +169,15 @@ export default function ProjectDetailPage({ project, onBack }) {
                                     </motion.div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                                     {resolvedImages.map((img, idx) => (
                                         <motion.div
                                             key={idx}
                                             initial={{ opacity: 0, scale: 0.95 }}
                                             whileInView={{ opacity: 1, scale: 1 }}
                                             viewport={{ once: true, margin: "-100px" }}
-                                            transition={{ duration: 0.8, delay: idx * 0.1, ease: "easeOut" }}
-                                            className={`relative overflow-hidden group ${idx % 3 === 0 ? 'md:col-span-2 aspect-[16/9]' : 'aspect-[4/5]'}`}
+                                            transition={{ duration: 0.8, delay: (idx % 3) * 0.1, ease: "easeOut" }}
+                                            className="relative overflow-hidden group aspect-[4/3]"
                                         >
                                             <img
                                                 src={resolveImageSrc(img)}
