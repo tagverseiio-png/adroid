@@ -154,7 +154,7 @@ export default function ProjectsPage({ initialDivision, onDivisionUsed }) {
 
       {/* DIVISIONS FILTER */}
       <div className="max-w-7xl mx-auto mb-10">
-        <div className="flex gap-10 border-b border-white/10 pb-4 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-10 border-b border-white/10 pb-4 overflow-x-auto md:overflow-visible md:flex-wrap scrollbar-hide">
           {MAIN_DIVISIONS.map((div) => (
             <button
               key={div}
@@ -174,7 +174,7 @@ export default function ProjectsPage({ initialDivision, onDivisionUsed }) {
       {/* CATEGORY FILTER */}
       {subCategories.length > 0 && (
         <div className="sticky top-[53px] md:top-[65px] z-20 bg-[#0a0a0a]/95 backdrop-blur-xl border-b border-white/10 mb-10">
-          <div className="flex gap-8 py-4 px-4 overflow-x-auto pb-4 scrollbar-hide">
+          <div className="flex gap-8 py-4 px-4 overflow-x-auto md:overflow-visible md:flex-wrap pb-4 scrollbar-hide">
             {subCategories.map((cat) => (
               <button
                 key={cat}
@@ -216,7 +216,7 @@ export default function ProjectsPage({ initialDivision, onDivisionUsed }) {
               className="group cursor-pointer"
               onClick={() => fetchProjectDetails(project.slug)}
             >
-              <div className="relative aspect-[3/4] overflow-hidden bg-stone-200">
+              <div className="relative aspect-[4/3] overflow-hidden bg-stone-200">
                 <motion.img
                   src={normalizeAssetUrl(project.cover_image || project.coverImage || 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800')}
                   alt={project.title}
