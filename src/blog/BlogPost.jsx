@@ -14,7 +14,46 @@ const BlogPost = ({ post, onBack }) => {
     useEffect(() => {
         window.scrollTo(0, 0);
         fetchComments();
-    }, [post.slug]);
+
+        if (post) {
+            document.title = `${post.title} | Adroit Design Insights`;
+            const metaDesc = document.querySelector('meta[name="description"]');
+            if (metaDesc) metaDesc.setAttribute('content', post.excerpt || "Read the latest insights from Adroit Design.");
+
+            let script = document.getElementById('blog-seo-schema');
+            if (!script) {
+                script = document.createElement('script');
+                script.id = 'blog-seo-schema';
+                script.type = 'application/ld+json';
+                document.head.appendChild(script);
+            }
+            
+            const schema = {
+                "@context": "https://schema.org",
+                "@type": "BlogPosting",
+                "headline": post.title,
+                "description": post.excerpt,
+                "image": normalizeAssetUrl(post.featured_image || post.image),
+                "author": { "@type": "Person", "name": post.author || "Adroit Design" },
+                "datePublished": post.created_at,
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "Adroit Design",
+                    "logo": { "@type": "ImageObject", "url": "https://adroitdesigns.in/vite.svg" }
+                }
+            };
+            script.innerHTML = JSON.stringify(schema);
+        }
+
+        return () => {
+            const existingScript = document.getElementById('blog-seo-schema');
+            if (existingScript) existingScript.remove();
+            
+            document.title = "Adroit Design | Architecture, Interior Design & Construction in Chennai";
+            const metaDesc = document.querySelector('meta[name="description"]');
+            if (metaDesc) metaDesc.setAttribute('content', "End-to-End Architecture & Interior Design Solutions in Chennai, Bangalore & pan India. Adroit Designs delivers comprehensive architecture, interior design, MEP design and construction services.");
+        };
+    }, [post?.slug]);
 
     const fetchComments = async () => {
         try {

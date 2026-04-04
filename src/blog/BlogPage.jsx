@@ -9,7 +9,16 @@ const BlogPage = ({ onReadMore }) => {
     const [selectedSubCategory, setSelectedSubCategory] = useState('All');
 
     useEffect(() => {
+        document.title = "Insights & Design Stories | Adroit Design Blog";
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) metaDesc.setAttribute('content', "Thoughts, trends, and insights from our team on architecture, interior design, and the built environment.");
+        
         fetchPosts();
+
+        return () => {
+            document.title = "Adroit Design | Architecture, Interior Design & Construction in Chennai";
+            if (metaDesc) metaDesc.setAttribute('content', "End-to-End Architecture & Interior Design Solutions in Chennai, Bangalore & pan India. Adroit Designs delivers comprehensive architecture, interior design, MEP design and construction services.");
+        };
     }, []);
 
     const fetchPosts = async () => {

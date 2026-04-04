@@ -19,22 +19,22 @@ const stagger = {
 const CORE_COMPETENCIES = [
     {
         title: "Design–Build Expertise",
-        desc: "Seamlessly bridging the gap between innovative architectural concepts and turnkey execution, ensuring design integrity at every stage.",
+        desc: "Integrated Design & Build Services in Chennai. From architectural blueprints to turnkey execution, Adroit Designs seamlessly bridges creative vision with on-site reality — maintaining design integrity, quality, and precision at every stage of your project.",
         icon: PenTool,
     },
     {
         title: "Interior Design & Fit-Outs",
-        desc: "Crafting bespoke interior environments that balance aesthetic luxury with optimal spatial functionality and user experience.",
+        desc: "Premium Interior Design & Commercial Fit-Out Services. We craft bespoke interior spaces that blend aesthetic luxury with smart spatial planning — delivering interiors that look stunning, feel functional and elevate everyday user experience for homes, offices, and commercial spaces.",
         icon: Layout,
     },
     {
-        title: "Civil, PEB, Fire, HVAC, Security, IBMS, MEP & Design Works",
-        desc: "Integrating advanced civil engineering and PEB structures with intelligent MEP and life-safety systems for seamless, turnkey execution.",
+        title: "Complete Civil, PEB, FAS, FPS, HVAC, Security, IBMS, MEP & Design Works",
+        desc: "From heavy civil construction and Pre-Engineered Buildings (PEB) to Fire Safety, HVAC, Security, IBMS, and full MEP engineering — we integrate all building systems under one roof for a truly seamless, turnkey project delivery.",
         icon: Building2,
     },
     {
         title: "Project Management & Consultancy",
-        desc: "Strategic orchestration of complex projects, prioritizing transparent communication, risk mitigation, and on-time delivery.",
+        desc: "Expert Project Management & Construction Consultancy Services. Our seasoned project managers and consultants strategically oversee every phase — from planning and procurement to execution and handover — ensuring transparent communication, proactive risk mitigation, and on-time, on-budget delivery every time.",
         icon: ShieldCheck,
     },
 ];
@@ -187,10 +187,10 @@ export default function AboutPage() {
                     <span className="text-[#C5A059] uppercase tracking-[0.3em] text-[10px] md:text-xs mb-6 block font-bold"></span>
                     <h2 className="text-3xl md:text-5xl font-logo uppercase tracking-widest text-white mb-8">Who We Are</h2>
                     <p className="text-stone-300 text-lg leading-relaxed font-light mb-8">
-                        Adroit Design India Private Limited is a premier Architecture & Interior firm, committed to shaping spaces that resonate with functionality, aesthetic excellence, and enduring value.
+                        Adroit Design India Private Limited is a leading architecture, interior design and construction company having their offices in Chennai & Bangalore, specializing in residential, commercial, institutional and industrial building projects. Our expertise includes architectural design, structural planning, interior design solutions, MEP design, FAS & FPS design and turnkey construction services.
                     </p>
                     <p className="text-stone-400 text-sm leading-relaxed mb-10">
-                        As a lead solution provider in the built environment, we integrate architectural innovation with rigorous technical execution. Our multidisciplinary approach ensures that every project—from luxury residences to complex industrial facilities—is delivered with precision, transparency, and a focus on long-term sustainability.
+                        With a focus on innovation, quality construction and sustainable design practices, we transform concepts into functional, visually striking spaces that meet modern lifestyle and business needs. From concept development to project execution, Adroit Design delivers reliable and high-quality construction solutions across India and executed more projects in Chennai, Bangalore, Hyderabad, Delhi, Pune, Kolkata, Mumbai, Cochin, Jammu, Kohima etc.
                     </p>
                 </Reveal>
             </section>
@@ -201,7 +201,7 @@ export default function AboutPage() {
                     <div className="bg-black py-16 md:py-24 border border-[#191919]">
                         <Reveal>
                             <div className="px-4 md:px-10 flex flex-col items-center text-center">
-                                
+
 
                                 <div className="grid grid-cols-2 gap-x-10 gap-y-12 w-full md:hidden">
                                     {ACCOMPLISHMENTS.map((item, idx) => (
@@ -297,7 +297,7 @@ export default function AboutPage() {
                                 To lead the way in sustainable architecture and interior design, delivering world-class turnkey solutions that bring our clients' dreams to life. We aim to inspire industry peers, set new benchmarks, and build a unicorn from India for the world.
                             </p>
                         </div>
-                        
+
                         {/* Mission Card */}
                         <div className="bg-[#0a0a0a] p-10 md:p-16 border border-white/5 border-t-4 border-t-stone-600 hover:-translate-y-2 transition-transform duration-500 group">
                             <Compass className="text-stone-400 group-hover:text-white transition-colors mb-8" size={32} />
@@ -367,7 +367,7 @@ export default function AboutPage() {
                             The Minds Behind Excellence
                         </h2>
                         <p className="text-stone-400 text-base md:text-lg leading-relaxed font-light max-w-3xl mx-auto">
-                            Our team comprises over 20 skilled architects, engineers, and designers who share a singular vision: to craft spaces that inspire. With diverse expertise spanning corporate architecture, industrial design, turnkey interiors, and sustainable construction, we collaborate seamlessly to bring ambitious projects to life.
+                            Our team includes 50+ experienced architects, engineers, interior designers, project managers, procurement managers, quantity surveyors, site engineers & support staffs dedicated to delivering innovative architecture, turnkey interior solutions and high-quality construction projects. With expertise in corporate, industrial, commercial and residential design, we collaborate to create functional, sustainable and visually inspiring spaces.
                         </p>
                     </Reveal>
                 </div>

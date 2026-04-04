@@ -112,10 +112,10 @@ const Hero = () => {
 
 const ServicesSection = () => {
     const services = [
-        { title: "Architecture", desc: "Form follows function in our comprehensive structural design process." },
-        { title: "Interior Design", desc: "Curating sensory atmospheres through material, light, and spatial harmony." },
-        { title: "Construction", desc: "Turnkey execution with rigorous precision and management." },
-        { title: "Master Planning", desc: "Strategic development planning for large-scale communities." },
+        { title: "Architecture", desc: "Innovative architectural design and structural planning solutions for residential, commercial and large-scale development projects." },
+        { title: "Interior Design", desc: "Premium interior design and turnkey fit-out services creating functional, modern and luxury living and workspace environments." },
+        { title: "Construction", desc: "Trusted residential, commercial and industrial building construction company delivering high-quality, cost-effective and prompt delivery solutions." },
+        { title: "Master Planning", desc: "Strategic master planning and urban development services for sustainable townships, commercial hubs and infrastructure projects." },
     ];
 
     return (
@@ -138,11 +138,10 @@ const ServicesSection = () => {
                             transition={{ delay: 0.2 }}
                             className="text-2xl md:text-3xl lg:text-4xl font-logo uppercase tracking-wider mt-6 md:mt-8 text-white leading-tight"
                         >
-                            Comprehensive <br className="hidden lg:block" />
-                            Design Solutions
+                            End-to-End Architecture & Interior Design Solutions in Chennai, Bangalore & pan India
                         </motion.h2>
                         <p className="mt-8 text-sm md:text-base text-stone-400 leading-relaxed font-light max-w-sm">
-                            From concept to completion, we deliver integrated design services that transform spaces and create lasting impact.
+                            From initial concept to final handover, Adroit Designs delivers comprehensive architecture, interior design, MEP design and construction services that transform ordinary spaces into extraordinary environments — built to inspire, built to last.
                         </p>
                     </div>
 
