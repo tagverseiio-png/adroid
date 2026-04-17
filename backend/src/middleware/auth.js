@@ -1,56 +1,51 @@
 const jwt = require('jsonwebtoken');
 const { query } = require('../config/database');
 
+// ── Middleware: Verify JWT Token ─────────────────────────────────────────────
 const auth = async (req, res, next) => {
-  try {
-    // Get token from header
-    const token = req.header('Authorization')?.replace('Bearer ', '');
+    try {
+        const token = req.header('Authorization')?.replace('Bearer ', '');
 
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: 'Access denied. No token provided.'
-      });
+        if (!token) {
+            return res.status(401).json({ success: false, message: 'Access denied. No token provided.' });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        const result = await query(
+            'SELECT id, username, email, role FROM users WHERE id = $1',
+            [decoded.userId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(401).json({ success: false, message: 'Invalid token. User not found.' });
+        }
+
+        req.user = result.rows[0];
+        next();
+
+    } catch (error) {
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(401).json({ success: false, message: 'Invalid token.' });
+        }
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ success: false, message: 'Token expired. Please login again.' });
+        }
+        res.status(500).json({ success: false, message: 'Authentication failed.' });
     }
+};
 
-    // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // Get user from database
-    const result = await query(
-      'SELECT id, username, email, role FROM users WHERE id = $1',
-      [decoded.userId]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid token. User not found.'
-      });
+// ── Middleware: Require Admin Role ───────────────────────────────────────────
+// Must be used AFTER auth middleware: router.get('/route', auth, requireAdmin, handler)
+const requireAdmin = (req, res, next) => {
+    if (!req.user) {
+        return res.status(401).json({ success: false, message: 'Not authenticated.' });
     }
-
-    // Attach user to request
-    req.user = result.rows[0];
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: 'Forbidden. Admin access required.' });
+    }
     next();
-  } catch (error) {
-    if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid token.'
-      });
-    }
-    if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({
-        success: false,
-        message: 'Token expired. Please login again.'
-      });
-    }
-    res.status(500).json({
-      success: false,
-      message: 'Authentication failed.',
-      error: error.message
-    });
-  }
 };
 
 module.exports = auth;
+module.exports.requireAdmin = requireAdmin;
