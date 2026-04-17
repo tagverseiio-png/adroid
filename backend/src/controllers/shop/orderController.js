@@ -112,7 +112,7 @@ const createOrder = async (req, res) => {
                    AND (expiry_date IS NULL OR expiry_date > NOW())
                    AND (max_uses = 0 OR used_count < max_uses)
                    AND min_order_value <= $2
-                 FOR UPDATE`,   -- lock row: prevents concurrent orders using same coupon
+                 FOR UPDATE`, // lock row: prevents concurrent orders using same coupon
                 [cleanCode, subtotal]
             );
             if (couponRes.rows.length) {
