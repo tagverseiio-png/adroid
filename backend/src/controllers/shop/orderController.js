@@ -9,6 +9,10 @@ const generateOrderNumber = () => {
     return `AD-${ts}-${rand}`;
 };
 
+// Input sanitisation helper
+const sanitiseStr = (val, maxLen = 255) =>
+    typeof val === 'string' ? val.trim().substring(0, maxLen) : '';
+
 const ALL_STATUSES = ['placed', 'confirmed', 'preparing', 'ready', 'shipped', 'out_for_delivery', 'delivered', 'cancelled', 'returned'];
 
 // ── POST /api/shop/orders — Customer creates order ───────────────────────────
@@ -21,9 +25,50 @@ const createOrder = async (req, res) => {
 
         const { customer_name, customer_email, customer_phone, shipping_address, items: cartItems, coupon_code, notes } = req.body;
 
-        if (!customer_name || !customer_email || !customer_phone || !shipping_address || !cartItems?.length) {
+        // ── Sanitise & Validate ───────────────────────────────────────────
+        const name  = sanitiseStr(customer_name,  200);
+        const email = sanitiseStr(customer_email, 200).toLowerCase();
+        const phone = sanitiseStr(customer_phone, 20);
+        const note  = sanitiseStr(notes, 1000);
+
+        if (!name || !email || !phone || !shipping_address || !cartItems?.length) {
             await client.query('ROLLBACK');
             return res.status(400).json({ success: false, message: 'Missing required order fields' });
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            await client.query('ROLLBACK');
+            return res.status(400).json({ success: false, message: 'Invalid email address' });
+        }
+        if (!Array.isArray(cartItems) || cartItems.length > 50) {
+            await client.query('ROLLBACK');
+            return res.status(400).json({ success: false, message: 'Invalid cart (max 50 items)' });
+        }
+
+        // Sanitise & validate each cart item
+        for (const ci of cartItems) {
+            ci.product_id = parseInt(ci.product_id);
+            ci.qty        = parseInt(ci.qty);
+            if (!ci.product_id || ci.product_id < 1) {
+                await client.query('ROLLBACK');
+                return res.status(400).json({ success: false, message: 'Invalid product in cart' });
+            }
+            if (!ci.qty || ci.qty < 1 || ci.qty > 999) {
+                await client.query('ROLLBACK');
+                return res.status(400).json({ success: false, message: 'Invalid quantity in cart' });
+            }
+        }
+
+        // Sanitise shipping address fields
+        const addr = {
+            line1:   sanitiseStr(shipping_address.line1,   300),
+            line2:   sanitiseStr(shipping_address.line2,   300),
+            city:    sanitiseStr(shipping_address.city,    100),
+            state:   sanitiseStr(shipping_address.state,   100),
+            pincode: sanitiseStr(shipping_address.pincode, 10),
+        };
+        if (!addr.line1 || !addr.city || !addr.state || !addr.pincode) {
+            await client.query('ROLLBACK');
+            return res.status(400).json({ success: false, message: 'Incomplete shipping address' });
         }
 
         // Validate & fetch products + check stock
@@ -54,27 +99,35 @@ const createOrder = async (req, res) => {
             itemsSnapshot.push({ product_id: prod.id, name: prod.name, sku: prod.sku, qty: ci.qty, unit_price: unitPrice, total_price: lineTotal });
         }
 
-        // Apply coupon
+        // Apply coupon — SELECT FOR UPDATE locks the row inside the transaction
+        // preventing race-condition double-use of single-use coupons
         let discountAmount = 0;
         let couponApplied  = null;
         if (coupon_code) {
+            const cleanCode = sanitiseStr(coupon_code, 50);
             const couponRes = await client.query(
-                `SELECT * FROM shop_coupons WHERE UPPER(code) = UPPER($1) AND active = true
-                 AND (expiry_date IS NULL OR expiry_date > NOW())
-                 AND (max_uses = 0 OR used_count < max_uses)
-                 AND min_order_value <= $2`,
-                [coupon_code, subtotal]
+                `SELECT * FROM shop_coupons
+                 WHERE UPPER(code) = UPPER($1)
+                   AND active = true
+                   AND (expiry_date IS NULL OR expiry_date > NOW())
+                   AND (max_uses = 0 OR used_count < max_uses)
+                   AND min_order_value <= $2
+                 FOR UPDATE`,   -- lock row: prevents concurrent orders using same coupon
+                [cleanCode, subtotal]
             );
             if (couponRes.rows.length) {
                 const coupon = couponRes.rows[0];
                 if (coupon.type === 'percent') {
-                    discountAmount = Math.round((subtotal * coupon.value / 100) * 100) / 100;
+                    discountAmount = Math.round((subtotal * parseFloat(coupon.value) / 100) * 100) / 100;
                     if (coupon.max_discount) discountAmount = Math.min(discountAmount, parseFloat(coupon.max_discount));
                 } else {
                     discountAmount = Math.min(parseFloat(coupon.value), subtotal);
                 }
                 couponApplied = coupon.code;
-                await client.query(`UPDATE shop_coupons SET used_count = used_count + 1 WHERE id = $1`, [coupon.id]);
+                await client.query(
+                    `UPDATE shop_coupons SET used_count = used_count + 1 WHERE id = $1`,
+                    [coupon.id]
+                );
             }
         }
 
@@ -95,19 +148,21 @@ const createOrder = async (req, res) => {
             }
         }
 
-        // Insert order
+        // Insert order with sanitised fields
         const orderRes = await client.query(
             `INSERT INTO shop_orders
              (order_number, customer_name, customer_email, customer_phone,
               shipping_address, items, subtotal, discount_amount, coupon_code,
               shipping_charge, total, notes, payment_status, order_status)
              VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'pending','placed')
-             RETURNING *`,
+             RETURNING id, order_number, customer_name, customer_email, customer_phone,
+                       shipping_address, items, subtotal, discount_amount, coupon_code,
+                       shipping_charge, total, notes, payment_status, order_status, created_at`,
             [
-                orderNumber, customer_name, customer_email, customer_phone,
-                JSON.stringify(shipping_address), JSON.stringify(itemsSnapshot),
+                orderNumber, name, email, phone,
+                JSON.stringify(addr), JSON.stringify(itemsSnapshot),
                 subtotal, discountAmount, couponApplied,
-                shippingCharge, total, notes || null
+                shippingCharge, total, note || null
             ]
         );
 

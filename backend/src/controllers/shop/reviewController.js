@@ -1,19 +1,44 @@
 const { pool } = require('../../config/database');
 
-// POST /api/shop/reviews (public)
+// POST /api/shop/reviews (public, rate-limited in app.js at 20/10min)
 const create = async (req, res) => {
     try {
         const { product_id, order_id, reviewer_name, reviewer_email, rating, title, body } = req.body;
-        if (!product_id || !reviewer_name || !reviewer_email || !rating) {
-            return res.status(400).json({ success: false, message: 'product_id, name, email, rating required' });
+
+        // Input validation
+        const name  = typeof reviewer_name  === 'string' ? reviewer_name.trim().substring(0,  100) : '';
+        const email = typeof reviewer_email === 'string' ? reviewer_email.trim().toLowerCase().substring(0, 200) : '';
+        const head  = typeof title          === 'string' ? title.trim().substring(0,  150) : null;
+        const text  = typeof body           === 'string' ? body.trim().substring(0,  2000) : null;
+        const stars = parseInt(rating);
+
+        if (!product_id || !name || !email || !stars) {
+            return res.status(400).json({ success: false, message: 'product_id, reviewer_name, reviewer_email and rating are required' });
         }
+        if (stars < 1 || stars > 5) {
+            return res.status(400).json({ success: false, message: 'Rating must be between 1 and 5' });
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return res.status(400).json({ success: false, message: 'Invalid email address' });
+        }
+
+        // Prevent duplicate reviews: same email + same product
+        const existing = await pool.query(
+            `SELECT id FROM shop_reviews WHERE product_id = $1 AND LOWER(reviewer_email) = LOWER($2)`,
+            [parseInt(product_id), email]
+        );
+        if (existing.rows.length) {
+            return res.status(409).json({ success: false, message: 'You have already submitted a review for this product' });
+        }
+
         const result = await pool.query(
             `INSERT INTO shop_reviews (product_id, order_id, reviewer_name, reviewer_email, rating, title, body)
-             VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
-            [product_id, order_id || null, reviewer_name, reviewer_email, parseInt(rating), title || null, body || null]
+             VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id, product_id, reviewer_name, rating, title, body, created_at`,
+            [parseInt(product_id), order_id ? parseInt(order_id) : null, name, email, stars, head, text]
         );
         res.status(201).json({ success: true, data: result.rows[0], message: 'Review submitted and awaiting approval' });
     } catch (err) {
+        console.error('create review error:', err);
         res.status(500).json({ success: false, message: 'Failed to submit review' });
     }
 };

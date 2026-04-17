@@ -1,21 +1,32 @@
 const express = require('express');
-const router = express.Router();
+const router  = express.Router();
 const {
     createOrder, getAll, getStats, getByOrderNumber,
     updateStatus, cancelOrder, triggerShipment, lookupOrder
 } = require('../../controllers/shop/orderController');
 const auth = require('../../middleware/auth');
+const { requireAdmin } = require('../../middleware/auth');
 
-// Public
+// ── Public ────────────────────────────────────────────────────────────────────
+
+// Customer creates an order (rate limited in app.js at 20/10min)
 router.post('/', createOrder);
-router.get('/lookup', lookupOrder); // ?order_number= &email=
-router.get('/stats', auth, getStats);
-router.get('/admin/all', auth, getAll);
-router.get('/:orderNumber', getByOrderNumber);
 
-// Admin
-router.patch('/:id/status', auth, updateStatus);
-router.patch('/:id/cancel', auth, cancelOrder);
-router.post('/:id/create-shipment', auth, triggerShipment);
+// Customer self-lookup by order number + email — no PII leak without both
+router.get('/lookup', lookupOrder);
+
+// ── Admin Only ────────────────────────────────────────────────────────────────
+// All admin routes require a valid token AND admin role
+
+router.get('/stats',      auth, requireAdmin, getStats);
+router.get('/admin/all',  auth, requireAdmin, getAll);
+
+// Get single order — protected: must be admin OR owner (handled inside controller)
+// We protect it with auth so unauthenticated strangers can't enumerate orders
+router.get('/:orderNumber', auth, getByOrderNumber);
+
+router.patch('/:id/status',          auth, requireAdmin, updateStatus);
+router.patch('/:id/cancel',          auth, requireAdmin, cancelOrder);
+router.post('/:id/create-shipment',  auth, requireAdmin, triggerShipment);
 
 module.exports = router;
