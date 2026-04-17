@@ -1,11 +1,11 @@
 const crypto = require('crypto');
 const { pool } = require('../../config/database');
 
-const PAYU_KEY = process.env.PAYU_KEY || '';
-const PAYU_SALT = process.env.PAYU_SALT || '';
-const PAYU_BASE_URL = process.env.PAYU_BASE_URL || 'https://sandboxsecure.payu.in/_payment';
+const PAYU_KEY = (process.env.PAYU_KEY || '').replace(/^PAYU_KEY=/, '');
+const PAYU_SALT = (process.env.PAYU_SALT || '').replace(/^PAYU_SALT=/, '');
+const PAYU_BASE_URL = (process.env.PAYU_BASE_URL || 'https://sandboxsecure.payu.in/_payment').replace(/^PAYU_BASE_URL=/, '');
 const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:5173').split(',')[0].trim();
-const API_URL = process.env.API_URL || 'http://localhost:5000/api';
+const API_URL = (process.env.API_URL || 'http://localhost:5000/api').replace(/^API_URL=/, '');
 
 // ── Hash Generation ──────────────────────────────────────────────────────────
 
