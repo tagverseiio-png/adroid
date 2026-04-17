@@ -73,12 +73,13 @@ app.use('/api/odoo', require('./routes/odoo'));
 app.use('/api/jobs', require('./routes/jobs'));
 
 // Shop API Routes
-app.use('/api/shop/products', require('./routes/shop/products'));
-app.use('/api/shop/categories', require('./routes/shop/categories'));
-app.use('/api/shop/orders', require('./routes/shop/orders'));
-app.use('/api/shop/coupons', require('./routes/shop/coupons'));
-app.use('/api/shop/payu', require('./routes/shop/payu'));
-app.use('/api/shop/reviews', require('./routes/shop/reviews'));
+app.use('/api/shop/products',          require('./routes/shop/products'));
+app.use('/api/shop/categories',        require('./routes/shop/categories'));
+app.use('/api/shop/orders',            require('./routes/shop/orders'));
+app.use('/api/shop/coupons',           require('./routes/shop/coupons'));
+app.use('/api/shop/payu',              require('./routes/shop/payu'));
+app.use('/api/shop/reviews',           require('./routes/shop/reviews'));
+app.use('/api/shop/pickup-locations',  require('./routes/shop/pickupLocations'));
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({

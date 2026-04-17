@@ -297,9 +297,26 @@ export const orderAPI = {
         const query = new URLSearchParams({ ...params }).toString();
         return apiCall(`/shop/orders/admin/all?${query}`);
     },
-    updateStatus: (id, status, notes) => apiCall(`/shop/orders/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status, notes }) }),
-    createShipment: (id) => apiCall(`/shop/orders/${id}/create-shipment`, { method: 'POST' }),
+    // status: new status string, pickupLocation: optional pickup location name
+    updateStatus: (id, status, pickupLocation) => apiCall(`/shop/orders/${id}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status, pickup_location_name: pickupLocation }),
+    }),
+    cancelOrder:     (id)  => apiCall(`/shop/orders/${id}/cancel`,            { method: 'PATCH' }),
+    createShipment:  (id, pickupLocation) => apiCall(`/shop/orders/${id}/create-shipment`, {
+        method: 'POST',
+        body: JSON.stringify({ pickup_location_name: pickupLocation }),
+    }),
 };
+
+// Shop Pickup Locations API
+export const pickupLocationsAPI = {
+    getAll:  ()          => apiCall('/shop/pickup-locations'),
+    create:  (data)      => apiCall('/shop/pickup-locations',      { method: 'POST',   body: JSON.stringify(data) }),
+    update:  (id, data)  => apiCall(`/shop/pickup-locations/${id}`, { method: 'PUT',    body: JSON.stringify(data) }),
+    remove:  (id)        => apiCall(`/shop/pickup-locations/${id}`, { method: 'DELETE' }),
+};
+
 
 // Shop PayU API
 export const payuAPI = {

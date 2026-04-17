@@ -1,60 +1,107 @@
 const crypto = require('crypto');
 const { pool } = require('../../config/database');
 
-const PAYU_KEY = (process.env.PAYU_KEY || '').replace(/^PAYU_KEY=/, '');
-const PAYU_SALT = (process.env.PAYU_SALT || '').replace(/^PAYU_SALT=/, '');
-const PAYU_BASE_URL = (process.env.PAYU_BASE_URL || 'https://sandboxsecure.payu.in/_payment').replace(/^PAYU_BASE_URL=/, '');
-const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:5173').split(',')[0].trim();
-const API_URL = (process.env.API_URL || 'http://localhost:5000/api').replace(/^API_URL=/, '');
+// ── Environment ──────────────────────────────────────────────────────────────
+// Strip accidental "KEY=" prefix in case env vars are mis-formatted on server
+const clean = (val) => (val || '').trim().replace(/^\w+=/, '');
 
-// ── Hash Generation ──────────────────────────────────────────────────────────
+const PAYU_KEY      = clean(process.env.PAYU_KEY);
+const PAYU_SALT     = clean(process.env.PAYU_SALT);
+const PAYU_BASE_URL = clean(process.env.PAYU_BASE_URL) || 'https://secure.payu.in/_payment';
+// FRONTEND_URL: first URL used for browser redirects after payment
+const FRONTEND_URL  = clean((process.env.FRONTEND_URL || 'http://localhost:5173').split(',')[0]);
+// API_URL: the live API domain — PayU will POST to this after payment
+// Must NOT end with /api — we add the path ourselves below
+const API_BASE      = clean(process.env.API_URL || 'http://localhost:3333').replace(/\/+$/, '');
 
-const generateHash = ({ key, txnid, amount, productinfo, firstname, email, udf1 = '', udf2 = '', udf3 = '', udf4 = '', udf5 = '', salt }) => {
-    const hashString = `${key}|${txnid}|${amount}|${productinfo}|${firstname}|${email}|${udf1}|${udf2}|${udf3}|${udf4}|${udf5}||||||${salt}`;
-    return crypto.createHash('sha512').update(hashString).digest('hex');
+// ── PayU Hash Formula ─────────────────────────────────────────────────────────
+// Formula: key|txnid|amount|productinfo|firstname|email|udf1|udf2|udf3|udf4|udf5||||||SALT
+// 5 udf fields used + 5 empty + SALT at end = 16 pipes total
+const generateHash = ({ key, txnid, amount, productinfo, firstname, email,
+    udf1 = '', udf2 = '', udf3 = '', udf4 = '', udf5 = '', salt }) => {
+    const str = `${key}|${txnid}|${amount}|${productinfo}|${firstname}|${email}|${udf1}|${udf2}|${udf3}|${udf4}|${udf5}||||||${salt}`;
+    console.log('[PayU] Hash string:', str.replace(salt, '***SALT***'));
+    return crypto.createHash('sha512').update(str).digest('hex');
 };
 
+// ── PayU Reverse Hash (response verification) ─────────────────────────────────
+// Formula: SALT|status|||||||||||email|firstname|productinfo|amount|txnid|mihpayid|KEY
 const verifyReverseHash = (payuResponse) => {
-    const { status, mihpayid, txnid, amount, productinfo, firstname, email, additionalCharges, hash: receivedHash } = payuResponse;
-    let hashString;
-    if (additionalCharges) {
-        hashString = `${PAYU_SALT}|${status}|||||||||||${email}|${firstname}|${productinfo}|${amount}|${txnid}|${mihpayid}|${PAYU_KEY}`;
-    } else {
-        hashString = `${PAYU_SALT}|${status}|||||||||||${email}|${firstname}|${productinfo}|${amount}|${txnid}|${mihpayid}|${PAYU_KEY}`;
+    try {
+        const { status, mihpayid, txnid, amount, productinfo, firstname, email,
+            additionalCharges, udf1 = '', udf2 = '', udf3 = '', udf4 = '', udf5 = '',
+            hash: receivedHash } = payuResponse;
+
+        let hashStr;
+        if (additionalCharges) {
+            // When additionalCharges present, it's prepended before SALT
+            hashStr = `${PAYU_SALT}|${status}|${additionalCharges}|${udf5}|${udf4}|${udf3}|${udf2}|${udf1}|${email}|${firstname}|${productinfo}|${amount}|${txnid}|${mihpayid}|${PAYU_KEY}`;
+        } else {
+            hashStr = `${PAYU_SALT}|${status}||${udf5}|${udf4}|${udf3}|${udf2}|${udf1}|${email}|${firstname}|${productinfo}|${amount}|${txnid}|${mihpayid}|${PAYU_KEY}`;
+        }
+
+        const calculated = crypto.createHash('sha512').update(hashStr).digest('hex');
+        const valid = calculated === receivedHash;
+        if (!valid) {
+            console.error('[PayU] Hash mismatch!');
+            console.error('[PayU] Expected:', calculated);
+            console.error('[PayU] Received:', receivedHash);
+        }
+        return valid;
+    } catch (err) {
+        console.error('[PayU] verifyReverseHash error:', err);
+        return false;
     }
-    const calculatedHash = crypto.createHash('sha512').update(hashString).digest('hex');
-    return calculatedHash === receivedHash;
 };
 
-// ── Initiate Payment ─────────────────────────────────────────────────────────
-
-// POST /api/shop/payu/initiate
+// ── POST /api/shop/payu/initiate ─────────────────────────────────────────────
 const initiatePayment = async (req, res) => {
     try {
+        // Validate credentials are set
+        if (!PAYU_KEY || !PAYU_SALT) {
+            console.error('[PayU] Missing PAYU_KEY or PAYU_SALT in environment');
+            return res.status(500).json({ success: false, message: 'Payment gateway not configured' });
+        }
+
         const { order_id } = req.body;
-        if (!order_id) return res.status(400).json({ success: false, message: 'order_id is required' });
+        if (!order_id) {
+            return res.status(400).json({ success: false, message: 'order_id is required' });
+        }
 
         const orderRes = await pool.query(`SELECT * FROM shop_orders WHERE id = $1`, [order_id]);
-        if (!orderRes.rows.length) return res.status(404).json({ success: false, message: 'Order not found' });
+        if (!orderRes.rows.length) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
 
         const order = orderRes.rows[0];
 
         if (order.payment_status === 'paid') {
-            return res.status(400).json({ success: false, message: 'Order already paid' });
+            return res.status(400).json({ success: false, message: 'Order is already paid' });
         }
 
-        const txnid = order.order_number;
-        const amount = parseFloat(order.total).toFixed(2);
+        const txnid      = order.order_number;
+        const amount     = parseFloat(order.total).toFixed(2);
         const productinfo = `Adroit Design Order ${order.order_number}`;
-        const firstname = (order.customer_name.split(' ')[0] || '').trim();
-        const email = (order.customer_email || '').trim();
-        const phone = (order.customer_phone || '').trim();
-        const udf1 = order.id.toString();
+        const firstname  = (order.customer_name || '').split(' ')[0].trim() || 'Customer';
+        const email      = (order.customer_email || '').trim();
+        const phone      = (order.customer_phone || '').trim();
+        const udf1       = order.id.toString(); // store internal order id
+
+        // PayU callback URLs — PayU POSTs to these after payment
+        // Must be publicly accessible HTTPS endpoints on your live API domain
+        const surl = `${API_BASE}/api/shop/payu/success`;
+        const furl = `${API_BASE}/api/shop/payu/failure`;
+
+        console.log('[PayU] Initiating payment for order:', txnid);
+        console.log('[PayU] Amount:', amount);
+        console.log('[PayU] surl:', surl);
+        console.log('[PayU] furl:', furl);
+        console.log('[PayU] KEY:', PAYU_KEY, '| SALT length:', PAYU_SALT.length);
 
         const hash = generateHash({ key: PAYU_KEY, txnid, amount, productinfo, firstname, email, udf1, salt: PAYU_SALT });
 
         const payuData = {
-            key: PAYU_KEY,
+            key:              PAYU_KEY,
             txnid,
             amount,
             productinfo,
@@ -63,91 +110,117 @@ const initiatePayment = async (req, res) => {
             phone,
             udf1,
             hash,
-            surl: `${API_URL}/shop/payu/success`,
-            furl: `${API_URL}/shop/payu/failure`,
+            surl,
+            furl,
             service_provider: 'payu_paisa',
         };
 
+        console.log('[PayU] Sending to frontend, payuUrl:', PAYU_BASE_URL);
         res.json({ success: true, data: { payuData, payuUrl: PAYU_BASE_URL } });
+
     } catch (err) {
-        console.error('initiatePayment error:', err);
-        res.status(500).json({ success: false, message: 'Failed to initiate payment' });
+        console.error('[PayU] initiatePayment error:', err);
+        res.status(500).json({ success: false, message: 'Failed to initiate payment. Please try again.' });
     }
 };
 
-// ── Payment Callbacks (PayU POSTs here) ──────────────────────────────────────
-
-// POST /api/shop/payu/success
+// ── POST /api/shop/payu/success ──────────────────────────────────────────────
+// PayU POSTs here after successful payment. Must redirect to frontend.
 const paymentSuccess = async (req, res) => {
+    const payuResponse = req.body || {};
+    console.log('[PayU] Success callback received:', JSON.stringify(payuResponse, null, 2));
+
+    const orderNumber = payuResponse.txnid || 'unknown';
+
     try {
-        const payuResponse = req.body;
-        console.log('[PayU Success]', payuResponse);
+        // Verify hash to ensure request is genuinely from PayU
+        if (!verifyReverseHash(payuResponse)) {
+            console.error('[PayU] Hash verification FAILED — possible tampering for order:', orderNumber);
+            // Still update DB so admin can see it
+            await pool.query(
+                `UPDATE shop_orders SET payment_status = 'failed', payu_response = $1, updated_at = NOW() WHERE order_number = $2`,
+                [JSON.stringify({ ...payuResponse, debug: 'hash_failed' }), orderNumber]
+            ).catch(e => console.error('[PayU] DB update failed:', e));
+            return res.redirect(`${FRONTEND_URL}?page=Shop&sub=order-failed&order=${orderNumber}&reason=hash_mismatch`);
+        }
 
-        const orderNumber = payuResponse.txnid;
         const orderRes = await pool.query(`SELECT * FROM shop_orders WHERE order_number = $1`, [orderNumber]);
-
         if (!orderRes.rows.length) {
-            return res.redirect(`${FRONTEND_URL}?page=Shop&sub=order-failed&order=${orderNumber}`);
+            console.error('[PayU] Order not found in DB for txnid:', orderNumber);
+            return res.redirect(`${FRONTEND_URL}?page=Shop&sub=order-failed&order=${orderNumber}&reason=not_found`);
         }
 
         const order = orderRes.rows[0];
 
-        // Verify hash
-        const hashValid = verifyReverseHash(payuResponse);
-        if (!hashValid) {
-            console.error('[PayU] Hash verification FAILED for order:', orderNumber);
-            await pool.query(
-                `UPDATE shop_orders SET payment_status = 'failed', payu_response = $1, updated_at = NOW() WHERE id = $2`,
-                [JSON.stringify(payuResponse), order.id]
-            );
-            return res.redirect(`${FRONTEND_URL}?page=Shop&sub=order-failed&order=${orderNumber}`);
+        // Idempotent: if already paid, just redirect to success
+        if (order.payment_status === 'paid') {
+            console.log('[PayU] Order already marked paid, redirecting to success:', orderNumber);
+            return res.redirect(`${FRONTEND_URL}?page=Shop&sub=order-success&order=${orderNumber}`);
         }
 
-        // Mark as paid
+        // Mark order as paid and confirmed
         await pool.query(
             `UPDATE shop_orders SET
-                payment_status = 'paid',
-                payment_txn_id = $1,
-                payment_method = $2,
-                payu_mihpayid = $3,
-                payu_response = $4,
-                order_status = 'confirmed',
-                updated_at = NOW()
+                payment_status   = 'paid',
+                payment_txn_id   = $1,
+                payment_method   = $2,
+                payu_mihpayid    = $3,
+                payu_response    = $4,
+                order_status     = 'confirmed',
+                updated_at       = NOW()
              WHERE id = $5`,
-            [payuResponse.txnid, payuResponse.mode || 'PayU', payuResponse.mihpayid, JSON.stringify(payuResponse), order.id]
+            [
+                payuResponse.txnid,
+                payuResponse.mode || 'PayU',
+                payuResponse.mihpayid || null,
+                JSON.stringify(payuResponse),
+                order.id
+            ]
         );
 
-        // Update total_sales on products
-        const items = Array.isArray(order.items) ? order.items : JSON.parse(order.items);
+        // Increment total_sales counter on each product
+        const items = Array.isArray(order.items) ? order.items : JSON.parse(order.items || '[]');
         for (const item of items) {
-            await pool.query(`UPDATE shop_products SET total_sales = total_sales + $1 WHERE id = $2`, [item.qty, item.product_id]);
+            await pool.query(
+                `UPDATE shop_products SET total_sales = COALESCE(total_sales, 0) + $1 WHERE id = $2`,
+                [item.qty, item.product_id]
+            ).catch(e => console.warn('[PayU] total_sales update failed for product', item.product_id, e.message));
         }
 
+        console.log('[PayU] Order paid successfully:', orderNumber);
         res.redirect(`${FRONTEND_URL}?page=Shop&sub=order-success&order=${orderNumber}`);
+
     } catch (err) {
-        console.error('paymentSuccess error:', err);
-        res.redirect(`${FRONTEND_URL}?page=Shop&sub=order-failed&order=unknown`);
+        console.error('[PayU] paymentSuccess handler error:', err);
+        res.redirect(`${FRONTEND_URL}?page=Shop&sub=order-failed&order=${orderNumber}&reason=server_error`);
     }
 };
 
-// POST /api/shop/payu/failure
+// ── POST /api/shop/payu/failure ──────────────────────────────────────────────
+// PayU POSTs here when payment fails or is cancelled by user.
 const paymentFailure = async (req, res) => {
-    try {
-        const payuResponse = req.body;
-        console.log('[PayU Failure]', payuResponse);
+    const payuResponse = req.body || {};
+    console.log('[PayU] Failure callback received:', JSON.stringify(payuResponse, null, 2));
 
-        const orderNumber = payuResponse.txnid;
+    const orderNumber = payuResponse.txnid || 'unknown';
+
+    try {
         await pool.query(
-            `UPDATE shop_orders SET payment_status = 'failed', payu_response = $1, updated_at = NOW()
+            `UPDATE shop_orders SET
+                payment_status = 'failed',
+                payu_response  = $1,
+                updated_at     = NOW()
              WHERE order_number = $2`,
             [JSON.stringify(payuResponse), orderNumber]
         );
 
-        res.redirect(`${FRONTEND_URL}?page=Shop&sub=order-failed&order=${orderNumber}`);
+        console.log('[PayU] Order marked failed:', orderNumber);
     } catch (err) {
-        console.error('paymentFailure error:', err);
-        res.redirect(`${FRONTEND_URL}?page=Shop&sub=order-failed&order=unknown`);
+        console.error('[PayU] paymentFailure DB error:', err);
     }
+
+    // Always redirect — never show raw JSON to user
+    res.redirect(`${FRONTEND_URL}?page=Shop&sub=order-failed&order=${orderNumber}`);
 };
 
 module.exports = { initiatePayment, paymentSuccess, paymentFailure };
