@@ -10,7 +10,7 @@ const API_URL = process.env.API_URL || 'http://localhost:5000/api';
 // ── Hash Generation ──────────────────────────────────────────────────────────
 
 const generateHash = ({ key, txnid, amount, productinfo, firstname, email, udf1 = '', udf2 = '', udf3 = '', udf4 = '', udf5 = '', salt }) => {
-    const hashString = `${key}|${txnid}|${amount}|${productinfo}|${firstname}|${email}|${udf1}|${udf2}|${udf3}|${udf4}|${udf5}|||||||${salt}`;
+    const hashString = `${key}|${txnid}|${amount}|${productinfo}|${firstname}|${email}|${udf1}|${udf2}|${udf3}|${udf4}|${udf5}||||||${salt}`;
     return crypto.createHash('sha512').update(hashString).digest('hex');
 };
 
@@ -46,9 +46,9 @@ const initiatePayment = async (req, res) => {
         const txnid = order.order_number;
         const amount = parseFloat(order.total).toFixed(2);
         const productinfo = `Adroit Design Order ${order.order_number}`;
-        const firstname = order.customer_name.split(' ')[0];
-        const email = order.customer_email;
-        const phone = order.customer_phone;
+        const firstname = (order.customer_name.split(' ')[0] || '').trim();
+        const email = (order.customer_email || '').trim();
+        const phone = (order.customer_phone || '').trim();
         const udf1 = order.id.toString();
 
         const hash = generateHash({ key: PAYU_KEY, txnid, amount, productinfo, firstname, email, udf1, salt: PAYU_SALT });
