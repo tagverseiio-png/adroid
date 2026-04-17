@@ -324,6 +324,15 @@ export const payuAPI = {
     getStatus: (txnid) => apiCall(`/shop/payu/status/${txnid}`),
 };
 
+// Shop Coupon API
+export const couponAPI = {
+    validate: (code, cartTotal) => apiCall('/shop/coupons/validate', {
+        method: 'POST',
+        body: JSON.stringify({ code, cart_total: cartTotal }),
+    }),
+};
+
+
 
 // Shop Reviews API
 export const reviewAPI = {
