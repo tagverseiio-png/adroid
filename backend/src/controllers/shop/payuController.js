@@ -25,29 +25,63 @@ const generateHash = ({ key, txnid, amount, productinfo, firstname, email,
 };
 
 // ── PayU Reverse Hash (response verification) ─────────────────────────────────
-// Formula: SALT|status|||||||||||email|firstname|productinfo|amount|txnid|mihpayid|KEY
+// PayU India official formula (NO mihpayid):
+//   Without additionalCharges: SALT|status||udf5|udf4|udf3|udf2|udf1|email|firstname|productinfo|amount|txnid|KEY
+//   With    additionalCharges: SALT|status|additionalCharges|udf5|udf4|udf3|udf2|udf1|email|firstname|productinfo|amount|txnid|KEY
 const verifyReverseHash = (payuResponse) => {
     try {
         const { status, mihpayid, txnid, amount, productinfo, firstname, email,
             additionalCharges, udf1 = '', udf2 = '', udf3 = '', udf4 = '', udf5 = '',
             hash: receivedHash } = payuResponse;
 
+        // ── Full debug log so you can trace any future mismatch ──────────────
+        console.log('[PayU] verifyReverseHash inputs:', {
+            status, mihpayid, txnid, amount, productinfo, firstname, email,
+            additionalCharges, udf1, udf2, udf3, udf4, udf5,
+            receivedHash,
+            PAYU_KEY,
+            SALT_LEN: PAYU_SALT.length,
+        });
+
+        // Primary formula — PayU India official (no mihpayid)
         let hashStr;
         if (additionalCharges) {
-            // When additionalCharges present, it's prepended before SALT
-            hashStr = `${PAYU_SALT}|${status}|${additionalCharges}|${udf5}|${udf4}|${udf3}|${udf2}|${udf1}|${email}|${firstname}|${productinfo}|${amount}|${txnid}|${mihpayid}|${PAYU_KEY}`;
+            hashStr = `${PAYU_SALT}|${status}|${additionalCharges}|${udf5}|${udf4}|${udf3}|${udf2}|${udf1}|${email}|${firstname}|${productinfo}|${amount}|${txnid}|${PAYU_KEY}`;
         } else {
-            hashStr = `${PAYU_SALT}|${status}||${udf5}|${udf4}|${udf3}|${udf2}|${udf1}|${email}|${firstname}|${productinfo}|${amount}|${txnid}|${mihpayid}|${PAYU_KEY}`;
+            hashStr = `${PAYU_SALT}|${status}||${udf5}|${udf4}|${udf3}|${udf2}|${udf1}|${email}|${firstname}|${productinfo}|${amount}|${txnid}|${PAYU_KEY}`;
         }
 
+        console.log('[PayU] Hash string (primary):', hashStr.replace(PAYU_SALT, '***SALT***'));
         const calculated = crypto.createHash('sha512').update(hashStr).digest('hex');
-        const valid = calculated === receivedHash;
-        if (!valid) {
-            console.error('[PayU] Hash mismatch!');
-            console.error('[PayU] Expected:', calculated);
-            console.error('[PayU] Received:', receivedHash);
+
+        if (calculated === receivedHash) {
+            console.log('[PayU] Hash verified OK (primary formula)');
+            return true;
         }
-        return valid;
+
+        // Fallback formula — with mihpayid (some PayU SDK versions include it)
+        let hashStrFallback;
+        if (additionalCharges) {
+            hashStrFallback = `${PAYU_SALT}|${status}|${additionalCharges}|${udf5}|${udf4}|${udf3}|${udf2}|${udf1}|${email}|${firstname}|${productinfo}|${amount}|${txnid}|${mihpayid}|${PAYU_KEY}`;
+        } else {
+            hashStrFallback = `${PAYU_SALT}|${status}||${udf5}|${udf4}|${udf3}|${udf2}|${udf1}|${email}|${firstname}|${productinfo}|${amount}|${txnid}|${mihpayid}|${PAYU_KEY}`;
+        }
+
+        console.log('[PayU] Hash string (fallback with mihpayid):', hashStrFallback.replace(PAYU_SALT, '***SALT***'));
+        const calculatedFallback = crypto.createHash('sha512').update(hashStrFallback).digest('hex');
+
+        if (calculatedFallback === receivedHash) {
+            console.log('[PayU] Hash verified OK (fallback formula with mihpayid)');
+            return true;
+        }
+
+        // Both failed — log full mismatch details
+        console.error('[PayU] ❌ Hash mismatch — both formulas failed!');
+        console.error('[PayU] Primary   computed :', calculated);
+        console.error('[PayU] Fallback  computed :', calculatedFallback);
+        console.error('[PayU] PayU sent hash    :', receivedHash);
+        return false;
+
     } catch (err) {
         console.error('[PayU] verifyReverseHash error:', err);
         return false;
