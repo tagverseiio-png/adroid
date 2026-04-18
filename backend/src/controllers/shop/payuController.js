@@ -257,4 +257,157 @@ const paymentFailure = async (req, res) => {
     res.redirect(`${FRONTEND_URL}?page=Shop&sub=order-failed&order=${orderNumber}`);
 };
 
-module.exports = { initiatePayment, paymentSuccess, paymentFailure };
+// ── POST /api/shop/payu/verify/:orderNumber ── (Admin only) ──────────────────
+// Queries PayU's Verify Payment API to get the real current status from PayU's
+// side, then syncs it into the local DB if it shows success.
+const verifyPaymentStatus = async (req, res) => {
+    const { orderNumber } = req.params;
+
+    try {
+        // 1. Fetch our local order
+        const orderRes = await pool.query(
+            `SELECT * FROM shop_orders WHERE order_number = $1`,
+            [orderNumber]
+        );
+        if (!orderRes.rows.length) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+        const order = orderRes.rows[0];
+
+        // 2. Build PayU Verify Payment API request
+        // Docs: https://devguide.payu.in/api-reference/verify-payment-api/
+        // Endpoint: POST https://info.payu.in/merchant/postservice.php?form=2
+        // Command: verify_payment, var1 = pipe-separated txnids (our order_number)
+        const command  = 'verify_payment';
+        const var1     = order.order_number;
+        // Hash for verify: sha512(key|command|var1|salt)
+        const hashStr  = `${PAYU_KEY}|${command}|${var1}|${PAYU_SALT}`;
+        const hash     = crypto.createHash('sha512').update(hashStr).digest('hex');
+
+        const body = new URLSearchParams({
+            key:     PAYU_KEY,
+            command,
+            var1,
+            hash,
+        });
+
+        console.log('[PayU] Calling Verify Payment API for txnid:', var1);
+
+        const payuRes  = await fetch('https://info.payu.in/merchant/postservice.php?form=2', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body:    body.toString(),
+        });
+
+        const payuData = await payuRes.json();
+        console.log('[PayU] Verify API response:', JSON.stringify(payuData, null, 2));
+
+        // 3. Parse the response
+        // PayU wraps the transaction data inside transaction_details[txnid]
+        const txnDetails = payuData?.transaction_details?.[var1];
+
+        if (!txnDetails) {
+            return res.json({
+                success:     false,
+                payuStatus:  'unknown',
+                payuRaw:     payuData,
+                message:     'PayU returned no transaction details for this order. The payment may not have been initiated yet.',
+            });
+        }
+
+        const payuStatus = (txnDetails.status || '').toLowerCase(); // 'success' | 'failure' | 'pending'
+
+        // 4. If PayU says success and we have it as failed/pending — auto-fix
+        if (payuStatus === 'success' && order.payment_status !== 'paid') {
+            await pool.query(
+                `UPDATE shop_orders SET
+                    payment_status = 'paid',
+                    payment_txn_id = $1,
+                    payment_method = $2,
+                    payu_mihpayid  = $3,
+                    payu_response  = $4,
+                    order_status   = CASE WHEN order_status IN ('placed','cancelled') THEN 'confirmed' ELSE order_status END,
+                    updated_at     = NOW()
+                 WHERE id = $5`,
+                [
+                    txnDetails.txnid || order.order_number,
+                    txnDetails.mode  || 'PayU',
+                    txnDetails.mihpayid || null,
+                    JSON.stringify(txnDetails),
+                    order.id,
+                ]
+            );
+            console.log('[PayU] Verify: auto-fixed order to paid:', orderNumber);
+        }
+
+        return res.json({
+            success:     true,
+            payuStatus,
+            autoFixed:   payuStatus === 'success' && order.payment_status !== 'paid',
+            txnDetails,
+            message:     payuStatus === 'success'
+                ? order.payment_status === 'paid'
+                    ? 'PayU confirms payment successful (already marked paid).'
+                    : 'PayU confirms payment successful — order has been updated to PAID.'
+                : `PayU reports payment status as: ${payuStatus}`,
+        });
+
+    } catch (err) {
+        console.error('[PayU] verifyPaymentStatus error:', err);
+        return res.status(500).json({ success: false, message: `Verify failed: ${err.message}` });
+    }
+};
+
+// ── POST /api/shop/payu/mark-paid/:orderNumber ── (Admin only) ────────────────
+// Manually marks an order as paid. Use only when payment is confirmed outside
+// the normal flow (e.g. bank transfer, cash, or PayU webhook missed).
+const markOrderPaid = async (req, res) => {
+    const { orderNumber } = req.params;
+    const { method = 'Manual', note = '', txn_id = '' } = req.body;
+
+    try {
+        const orderRes = await pool.query(
+            `SELECT * FROM shop_orders WHERE order_number = $1`,
+            [orderNumber]
+        );
+        if (!orderRes.rows.length) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+        const order = orderRes.rows[0];
+
+        if (order.payment_status === 'paid') {
+            return res.json({ success: true, message: 'Order is already marked as paid.', alreadyPaid: true });
+        }
+
+        const manualNote = {
+            manually_marked: true,
+            method,
+            txn_id: txn_id || null,
+            note:   note   || null,
+            by:     req.user?.username || 'admin',
+            at:     new Date().toISOString(),
+        };
+
+        await pool.query(
+            `UPDATE shop_orders SET
+                payment_status = 'paid',
+                payment_method = $1,
+                payment_txn_id = $2,
+                payu_response  = $3,
+                order_status   = CASE WHEN order_status IN ('placed','cancelled') THEN 'confirmed' ELSE order_status END,
+                updated_at     = NOW()
+             WHERE id = $4`,
+            [method, txn_id || null, JSON.stringify(manualNote), order.id]
+        );
+
+        console.log('[PayU] Admin manually marked order paid:', orderNumber, 'by', req.user?.username);
+        return res.json({ success: true, message: 'Order marked as paid successfully.' });
+
+    } catch (err) {
+        console.error('[PayU] markOrderPaid error:', err);
+        return res.status(500).json({ success: false, message: `Failed: ${err.message}` });
+    }
+};
+
+module.exports = { initiatePayment, paymentSuccess, paymentFailure, verifyPaymentStatus, markOrderPaid };
+

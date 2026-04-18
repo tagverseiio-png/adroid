@@ -320,8 +320,12 @@ export const pickupLocationsAPI = {
 
 // Shop PayU API
 export const payuAPI = {
-    initiate: (orderId) => apiCall('/shop/payu/initiate', { method: 'POST', body: JSON.stringify({ order_id: orderId }) }),
-    getStatus: (txnid) => apiCall(`/shop/payu/status/${txnid}`),
+    initiate:      (orderId)                      => apiCall('/shop/payu/initiate', { method: 'POST', body: JSON.stringify({ order_id: orderId }) }),
+    getStatus:     (txnid)                        => apiCall(`/shop/payu/status/${txnid}`),
+    // Admin: query PayU live to verify real payment status (auto-fixes DB if paid)
+    verifyPayment: (orderNumber)                  => apiCall(`/shop/payu/verify/${orderNumber}`),
+    // Admin: manually mark an order as paid (with optional method/txn/note)
+    markPaid:      (orderNumber, data = {})       => apiCall(`/shop/payu/mark-paid/${orderNumber}`, { method: 'POST', body: JSON.stringify(data) }),
 };
 
 // Shop Coupon API

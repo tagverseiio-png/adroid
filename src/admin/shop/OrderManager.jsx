@@ -3,9 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     Package, Truck, Eye, X, Loader2, Search, RefreshCw,
     CheckCircle, XCircle, Clock, AlertTriangle, Ban,
-    MapPin, ChevronRight, ArrowRight, Warehouse, Bell
+    MapPin, ChevronRight, ArrowRight, Warehouse, Bell,
+    ShieldCheck, CreditCard, ChevronDown
 } from 'lucide-react';
-import { orderAPI, pickupLocationsAPI } from '../../services/api';
+import { orderAPI, pickupLocationsAPI, payuAPI } from '../../services/api';
 
 // ── Status flow config ────────────────────────────────────────────────────────
 const STATUS_CONFIG = {
@@ -97,12 +98,18 @@ const ProgressBar = ({ status }) => {
 
 // ── Order Detail Modal ────────────────────────────────────────────────────────
 const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRefresh }) => {
-    const [order, setOrder]           = useState(initialOrder);
-    const [newStatus, setNewStatus]   = useState(initialOrder.order_status);
-    const [pickupLoc, setPickupLoc]   = useState(initialOrder.pickup_location_name || '');
-    const [updating, setUpdating]     = useState(false);
-    const [cancelling, setCancelling] = useState(false);
-    const [toast, setToast]           = useState(null); // { msg, type: 'success'|'error'|'warn' }
+    const [order, setOrder]               = useState(initialOrder);
+    const [newStatus, setNewStatus]       = useState(initialOrder.order_status);
+    const [pickupLoc, setPickupLoc]       = useState(initialOrder.pickup_location_name || '');
+    const [updating, setUpdating]         = useState(false);
+    const [cancelling, setCancelling]     = useState(false);
+    const [verifying, setVerifying]       = useState(false);
+    const [showMarkPaid, setShowMarkPaid] = useState(false);
+    const [markingPaid, setMarkingPaid]   = useState(false);
+    const [paidMethod, setPaidMethod]     = useState('UPI');
+    const [paidTxnId, setPaidTxnId]       = useState('');
+    const [paidNote, setPaidNote]         = useState('');
+    const [toast, setToast]               = useState(null); // { msg, type: 'success'|'error'|'warn' }
 
     const showToast = (msg, type = 'success') => {
         setToast({ msg, type });
@@ -159,8 +166,51 @@ const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRef
         setCancelling(false);
     };
 
-    const canCancel = !['delivered', 'cancelled'].includes(order.order_status);
-    const isShipped = ['shipped', 'out_for_delivery', 'delivered'].includes(order.order_status);
+    const canCancel   = !['delivered', 'cancelled'].includes(order.order_status);
+    const isShipped   = ['shipped', 'out_for_delivery', 'delivered'].includes(order.order_status);
+    const isPaid      = order.payment_status === 'paid';
+
+    // ── Verify payment via PayU live API ─────────────────────────────────────
+    const handleVerifyPayment = async () => {
+        setVerifying(true);
+        try {
+            const res = await payuAPI.verifyPayment(order.order_number);
+            if (res.autoFixed) {
+                setOrder(o => ({ ...o, payment_status: 'paid', order_status: ['placed','cancelled'].includes(o.order_status) ? 'confirmed' : o.order_status }));
+                showToast('✅ PayU confirms payment! Order updated to PAID.', 'success');
+                onRefresh();
+            } else if (res.payuStatus === 'success') {
+                showToast('PayU confirms: already paid ✓', 'success');
+            } else if (res.payuStatus === 'unknown') {
+                showToast(res.message || 'No PayU record found for this order.', 'warn');
+            } else {
+                showToast(`PayU status: ${res.payuStatus || 'unknown'}`, 'warn');
+            }
+        } catch (err) {
+            showToast(err.message || 'Verification failed', 'error');
+        }
+        setVerifying(false);
+    };
+
+    // ── Manual mark as paid ───────────────────────────────────────────────────
+    const handleMarkPaid = async () => {
+        if (!window.confirm(`Mark this order as PAID via ${paidMethod}? This cannot be undone easily.`)) return;
+        setMarkingPaid(true);
+        try {
+            await payuAPI.markPaid(order.order_number, {
+                method: paidMethod,
+                txn_id: paidTxnId,
+                note:   paidNote,
+            });
+            setOrder(o => ({ ...o, payment_status: 'paid', payment_method: paidMethod, order_status: ['placed','cancelled'].includes(o.order_status) ? 'confirmed' : o.order_status }));
+            showToast('Order manually marked as paid.', 'success');
+            setShowMarkPaid(false);
+            onRefresh();
+        } catch (err) {
+            showToast(err.message || 'Failed to mark as paid', 'error');
+        }
+        setMarkingPaid(false);
+    };
 
     const toastColors = {
         success: 'bg-emerald-400/10 border-emerald-400/30 text-emerald-300',
@@ -283,6 +333,92 @@ const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRef
                                 {order.payu_mihpayid  && <InfoBlock label="MihPayID" value={order.payu_mihpayid} mono />}
                                 {order.payment_method && <InfoBlock label="Method"   value={order.payment_method} />}
                             </div>
+                        </div>
+                    )}
+
+                    {/* ── Payment Recovery Actions (only when NOT paid) ── */}
+                    {!isPaid && (
+                        <div className="border border-amber-400/20 bg-amber-400/4 rounded-xl p-4 space-y-3">
+                            <div className="flex items-center gap-2 mb-1">
+                                <AlertTriangle size={13} className="text-amber-400" />
+                                <p className="text-amber-300 text-xs font-bold uppercase tracking-widest">Payment Not Confirmed</p>
+                            </div>
+
+                            {/* Verify with PayU button */}
+                            <button
+                                onClick={handleVerifyPayment}
+                                disabled={verifying}
+                                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#C5A059]/10 hover:bg-[#C5A059]/20 border border-[#C5A059]/30 text-[#C5A059] font-bold text-xs uppercase tracking-wider rounded-xl transition-all disabled:opacity-50"
+                            >
+                                {verifying
+                                    ? <><Loader2 size={13} className="animate-spin" /> Checking PayU…</>
+                                    : <><ShieldCheck size={13} /> Verify with PayU</>}
+                            </button>
+                            <p className="text-white/30 text-[10px] text-center">
+                                Queries PayU live — auto-updates order if payment succeeded.
+                            </p>
+
+                            {/* Mark as Paid toggle */}
+                            <button
+                                onClick={() => setShowMarkPaid(v => !v)}
+                                className="w-full flex items-center justify-between gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/8 border border-white/10 text-white/60 font-bold text-xs uppercase tracking-wider rounded-xl transition-all"
+                            >
+                                <span className="flex items-center gap-2"><CreditCard size={13} /> Mark as Paid Manually</span>
+                                <ChevronDown size={13} className={`transition-transform ${showMarkPaid ? 'rotate-180' : ''}`} />
+                            </button>
+
+                            <AnimatePresence>
+                                {showMarkPaid && (
+                                    <motion.div
+                                        initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+                                        className="overflow-hidden"
+                                    >
+                                        <div className="pt-2 space-y-3">
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <label className="block text-white/40 text-[10px] uppercase tracking-wider mb-1">Payment Method</label>
+                                                    <select
+                                                        value={paidMethod}
+                                                        onChange={e => setPaidMethod(e.target.value)}
+                                                        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-[#C5A059]/50"
+                                                    >
+                                                        {['UPI', 'Cash', 'Bank Transfer', 'Card', 'PayU', 'Other'].map(m => (
+                                                            <option key={m} value={m} className="bg-[#111]">{m}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <label className="block text-white/40 text-[10px] uppercase tracking-wider mb-1">Txn / Ref ID (optional)</label>
+                                                    <input
+                                                        value={paidTxnId}
+                                                        onChange={e => setPaidTxnId(e.target.value)}
+                                                        placeholder="e.g. 28234367428"
+                                                        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-xs placeholder:text-white/20 focus:outline-none focus:border-[#C5A059]/50"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-white/40 text-[10px] uppercase tracking-wider mb-1">Admin Note (optional)</label>
+                                                <input
+                                                    value={paidNote}
+                                                    onChange={e => setPaidNote(e.target.value)}
+                                                    placeholder="Reason for manual override…"
+                                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-xs placeholder:text-white/20 focus:outline-none focus:border-[#C5A059]/50"
+                                                />
+                                            </div>
+                                            <button
+                                                onClick={handleMarkPaid}
+                                                disabled={markingPaid}
+                                                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-400 font-bold text-xs uppercase tracking-wider rounded-xl transition-all disabled:opacity-50"
+                                            >
+                                                {markingPaid
+                                                    ? <><Loader2 size={13} className="animate-spin" /> Saving…</>
+                                                    : <><CheckCircle size={13} /> Confirm — Mark as Paid</>}
+                                            </button>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
                     )}
 
