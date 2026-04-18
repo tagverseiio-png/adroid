@@ -440,25 +440,20 @@ const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRef
                         <div className="border-t border-white/10 pt-5 space-y-4">
                             <p className="text-white/35 text-[10px] uppercase tracking-widest font-bold">Admin Actions</p>
 
-                            {/* Pickup location selector (shown before marking ready) */}
+                            {/* Pickup location — free text input */}
                             {order.payment_status === 'paid' && !order.awb_code && (
                                 <div>
                                     <label className="block text-white/50 text-xs mb-1.5 font-medium">
                                         <Warehouse size={11} className="inline mr-1" />
                                         Pickup Location (Warehouse / Store)
                                     </label>
-                                    <select
+                                    <input
+                                        type="text"
                                         value={pickupLoc}
                                         onChange={e => setPickupLoc(e.target.value)}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#C5A059]/50"
-                                    >
-                                        <option value="" className="bg-[#111]">— Select pickup location —</option>
-                                        {pickupLocations.map(loc => (
-                                            <option key={loc.id} value={loc.name} className="bg-[#111]">
-                                                {loc.name} — {loc.city}, {loc.state}
-                                            </option>
-                                        ))}
-                                    </select>
+                                        placeholder="e.g. Main Warehouse, Chennai"
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-[#C5A059]/50"
+                                    />
                                     {pickupLoc && (
                                         <p className="text-white/30 text-xs mt-1.5">
                                             Shiprocket will schedule a pickup from this location and deliver to the customer's address.
