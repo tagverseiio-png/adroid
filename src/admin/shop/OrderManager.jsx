@@ -100,7 +100,7 @@ const ProgressBar = ({ status }) => {
 const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRefresh }) => {
     const [order, setOrder]               = useState(initialOrder);
     const [newStatus, setNewStatus]       = useState(initialOrder.order_status);
-    const [pickupLoc, setPickupLoc]       = useState(initialOrder.pickup_location_name || '');
+    const [pickupLoc, setPickupLoc]       = useState(initialOrder.pickup_location_name || 'Primary');
     const [updating, setUpdating]         = useState(false);
     const [cancelling, setCancelling]     = useState(false);
     const [verifying, setVerifying]       = useState(false);
@@ -545,13 +545,21 @@ const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRef
                                         <Warehouse size={11} className="inline mr-1" />
                                         Pickup Location (Warehouse / Store)
                                     </label>
-                                    <input
-                                        type="text"
+                                    <select
                                         value={pickupLoc}
                                         onChange={e => setPickupLoc(e.target.value)}
-                                        placeholder="e.g. Main Warehouse, Chennai"
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-[#C5A059]/50"
-                                    />
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#C5A059]/50"
+                                    >
+                                        {pickupLocations && pickupLocations.length > 0 ? (
+                                            pickupLocations.map(loc => (
+                                                <option key={loc.id} value={loc.shiprocket_pickup_name} className="bg-[#111]">
+                                                    {loc.name} (Shiprocket: {loc.shiprocket_pickup_name})
+                                                </option>
+                                            ))
+                                        ) : (
+                                            <option value="Primary" className="bg-[#111]">Default Warehouse (Primary)</option>
+                                        )}
+                                    </select>
                                     {pickupLoc && (
                                         <p className="text-white/30 text-xs mt-1.5">
                                             Shiprocket will schedule a pickup from this location and deliver to the customer's address.
