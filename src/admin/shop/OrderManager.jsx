@@ -29,7 +29,7 @@ const PAYMENT_CONFIG = {
 };
 
 // Admin selectable statuses (manual — not auto ones like 'shipped' set by Shiprocket)
-const ADMIN_STATUSES = ['confirmed', 'preparing', 'ready', 'out_for_delivery', 'delivered', 'cancelled', 'returned'];
+const ADMIN_STATUSES = ['confirmed', 'preparing', 'ready', 'cancelled'];
 
 // Tabs
 const TABS = [
@@ -615,29 +615,12 @@ const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRef
                     {/* Shipped info */}
                     {isShipped && (
                         <div className="border-t border-white/10 pt-4">
-                            <p className="text-white/35 text-[10px] uppercase tracking-widest font-bold mb-3">Admin Actions</p>
-                            {/* Allow marking delivered manually */}
-                            <div className="flex gap-3 items-end">
-                                <div className="flex-1">
-                                    <select
-                                        value={newStatus}
-                                        onChange={e => setNewStatus(e.target.value)}
-                                        disabled={updating}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#C5A059]/50"
-                                    >
-                                        {['shipped', 'out_for_delivery', 'delivered', 'returned'].map(s => (
-                                            <option key={s} value={s} className="bg-[#111]">{STATUS_CONFIG[s]?.label || s}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <button
-                                    onClick={applyStatusChange}
-                                    disabled={updating || newStatus === order.order_status}
-                                    className="flex items-center gap-2 px-5 py-2.5 bg-[#C5A059] hover:bg-amber-500 text-black font-bold text-xs uppercase tracking-wider rounded-xl transition-all disabled:opacity-40"
-                                >
-                                    {updating ? <Loader2 size={14} className="animate-spin" /> : <ArrowRight size={14} />}
-                                    Apply
-                                </button>
+                            <p className="text-white/35 text-[10px] uppercase tracking-widest font-bold mb-3">Shiprocket Automated Tracking</p>
+                            <div className="flex items-start gap-2 text-sky-300/80 text-xs bg-sky-400/5 border border-sky-400/15 rounded-xl px-4 py-3">
+                                <Truck size={12} className="mt-0.5 flex-shrink-0" />
+                                <span>
+                                    This order has been handed over to Shiprocket. The status will automatically update to <strong>Shipped</strong>, <strong>Out for Delivery</strong>, and <strong>Delivered</strong> as Shiprocket processes it. 
+                                </span>
                             </div>
                         </div>
                     )}

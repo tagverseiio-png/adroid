@@ -282,6 +282,14 @@ const updateStatus = async (req, res) => {
         return res.status(400).json({ success: false, message: `Invalid status. Valid: ${ALL_STATUSES.join(', ')}` });
     }
 
+    const SHIPROCKET_MANAGED_STATUSES = ['shipped', 'out_for_delivery', 'delivered', 'returned'];
+    if (SHIPROCKET_MANAGED_STATUSES.includes(status)) {
+        return res.status(403).json({ 
+            success: false, 
+            message: 'Status is managed automatically by Shiprocket and cannot be changed manually.' 
+        });
+    }
+
     try {
         const orderRes = await pool.query(`SELECT * FROM shop_orders WHERE id = $1`, [req.params.id]);
         if (!orderRes.rows.length) return res.status(404).json({ success: false, message: 'Order not found' });
