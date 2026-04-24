@@ -50,7 +50,9 @@ const OrderSuccess = ({ orderNumber, onShop, onTrack }) => {
                         </div>
                     </div>
                 )}
-                <p className="text-xs text-stone-400 mb-6">A confirmation email will be sent to your email address.</p>
+                <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-xl p-4 mb-8 text-sm text-emerald-700">
+                    <p>You can track your order using the button below. We'll also update you on WhatsApp when your order is shipped!</p>
+                </div>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <button
                         onClick={() => onTrack(orderNumber)}
@@ -60,7 +62,7 @@ const OrderSuccess = ({ orderNumber, onShop, onTrack }) => {
                     </button>
                     <button
                         onClick={onShop}
-                        className="flex items-center justify-center gap-2 px-6 py-3 bg-[#C5A059] hover:bg-amber-600 text-black text-sm font-bold uppercase tracking-wider rounded-xl transition-all"
+                        className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-stone-200 hover:bg-stone-50 text-stone-600 text-sm font-bold uppercase tracking-wider rounded-xl transition-all"
                     >
                         Continue Shopping <ArrowRight size={16} />
                     </button>

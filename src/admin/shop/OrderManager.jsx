@@ -172,6 +172,13 @@ const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRef
         }
         setAssigning(false);
     };
+    const handleWhatsAppUpdate = () => {
+        const phone = order.customer_phone.replace(/[^0-9]/g, '');
+        const statusLabel = STATUS_CONFIG[order.order_status]?.label || order.order_status;
+        const trackingMsg = order.awb_code ? `\n🚚 Track here: ${order.tracking_url || `https://shiprocket.co/tracking/${order.awb_code}`}` : '';
+        const text = `Hi ${order.customer_name}! 👋\n\nYour order *${order.order_number}* from Adroit Design is now *${statusLabel}*.${trackingMsg}\n\nThank you for shopping with us! ✨`;
+        window.open(`https://wa.me/${phone.length === 10 ? '91' + phone : phone}?text=${encodeURIComponent(text)}`, '_blank');
+    };
 
     const items   = Array.isArray(order.items)            ? order.items            : JSON.parse(order.items || '[]');
     const addr    = typeof order.shipping_address === 'string' ? JSON.parse(order.shipping_address) : (order.shipping_address || {});
@@ -496,8 +503,17 @@ const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRef
                                 <button onClick={handleGenerateInvoice} className="px-3 py-1.5 bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 text-[10px] uppercase font-bold tracking-wider rounded border border-violet-500/30 transition-colors">
                                     Invoice PDF
                                 </button>
-                                <button onClick={handleSyncShiprocket} className="px-3 py-1.5 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 text-[10px] uppercase font-bold tracking-wider rounded border border-sky-500/30 transition-colors flex items-center gap-1">
+                                <button 
+                                    onClick={handleSyncShiprocket} 
+                                    className="px-3 py-1.5 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 text-[10px] uppercase font-bold tracking-wider rounded border border-sky-500/30 transition-colors flex items-center gap-1"
+                                >
                                     <RefreshCw size={10} /> Sync Status
+                                </button>
+                                <button 
+                                    onClick={handleWhatsAppUpdate} 
+                                    className="px-3 py-1.5 bg-[#25D366]/20 hover:bg-[#25D366]/30 text-[#25D366] text-[10px] uppercase font-bold tracking-wider rounded border border-[#25D366]/30 transition-colors flex items-center gap-1"
+                                >
+                                    WhatsApp Update
                                 </button>
                                 {!order.awb_code && (
                                     <button 

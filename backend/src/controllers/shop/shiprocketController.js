@@ -146,7 +146,7 @@ const createShipment = async (order) => {
         billing_state:             address.state || 'Unknown',
         billing_country:           'India',
         billing_email:             order.customer_email || 'noemail@adroitdesigns.in',
-        billing_phone:             phone.length === 10 ? phone : '9999999999',
+        billing_phone:             phone.length === 10 ? phone : (() => { throw new Error('Invalid phone number — cannot create shipment'); })(),
         shipping_is_billing:       true,
         order_items:               items,
         payment_method:            order.payment_status === 'paid' ? 'Prepaid' : 'COD',
@@ -188,6 +188,11 @@ const createShipment = async (order) => {
                 awb_code     = awbResult.response.data.awb_code     || awb_code;
                 courier_name = awbResult.response.data.courier_name || courier_name;
                 tracking_url = awbResult.response.data.track_url    || tracking_url;
+            }
+            
+            // Fallback tracking URL if still missing
+            if (awb_code && !tracking_url) {
+                tracking_url = `https://shiprocket.co/tracking/${awb_code}`;
             }
         } catch (awbErr) {
             console.error('[Shiprocket] Failed to auto-assign AWB:', awbErr.message);
@@ -239,7 +244,12 @@ const trackAwbServer = async (awb) => {
 
 // ── Assign AWB (Server Side) ────────────────────────────────────────────────
 const assignAwbAPI = async (shipment_id) => {
-    return await srRequest('POST', '/courier/assign/awb', { shipment_id });
+    const result = await srRequest('POST', '/courier/assign/awb', { shipment_id });
+    if (result.response && result.response.data && result.response.data.awb_code) {
+        // Construct fallback tracking URL if not provided
+        result.response.data.tracking_url = result.response.data.track_url || `https://shiprocket.co/tracking/${result.response.data.awb_code}`;
+    }
+    return result;
 };
 
 module.exports = { getToken, createShipment, trackShipment, generateLabel, generateInvoice, cancelShipment, trackAwbServer, assignAwbAPI };

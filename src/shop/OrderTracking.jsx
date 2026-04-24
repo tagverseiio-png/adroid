@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Search, Package, Loader2, Truck, CheckCircle, Clock, MapPin } from 'lucide-react';
 import { orderAPI } from '../services/api';
 
-const STATUS_STEPS = ['placed', 'confirmed', 'processing', 'shipped', 'delivered'];
+const STATUS_STEPS = ['placed', 'confirmed', 'preparing', 'ready', 'shipped', 'out_for_delivery', 'delivered'];
 const STATUS_LABELS = {
     placed: 'Order Placed',
     confirmed: 'Confirmed',
-    processing: 'Processing',
+    preparing: 'Preparing',
+    ready: 'Ready for Pickup',
     shipped: 'Shipped',
+    out_for_delivery: 'Out for Delivery',
     delivered: 'Delivered',
     cancelled: 'Cancelled',
     returned: 'Returned',
@@ -20,6 +22,18 @@ const OrderTracking = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [searched, setSearched] = useState(false);
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(order.order_number);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    const shareOnWhatsApp = () => {
+        const text = `Hi! I'm tracking my order ${order.order_number} from Adroit Design. Status: ${STATUS_LABELS[order.order_status]}. Tracking Link: ${order.tracking_url || 'N/A'}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    };
 
     const handleSearch = async (e) => {
         e.preventDefault();
@@ -95,7 +109,12 @@ const OrderTracking = () => {
                             <div className="flex items-start justify-between mb-4">
                                 <div>
                                     <p className="text-xs text-stone-400 uppercase tracking-widest mb-1">Order Number</p>
-                                    <p className="text-lg font-bold text-stone-900 font-mono">{order.order_number}</p>
+                                    <div className="flex items-center gap-2">
+                                        <p className="text-lg font-bold text-stone-900 font-mono">{order.order_number}</p>
+                                        <button onClick={handleCopy} className="text-[#C5A059] hover:text-amber-600 transition-colors">
+                                            {copied ? <CheckCircle size={14} /> : <Package size={14} className="rotate-12" />}
+                                        </button>
+                                    </div>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-xs text-stone-400 mb-1">Placed on</p>
@@ -145,6 +164,24 @@ const OrderTracking = () => {
                             </div>
                         )}
 
+                        {/* Order Items */}
+                        {order.items && order.items.length > 0 && (
+                            <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-6">
+                                <h3 className="text-sm font-bold uppercase tracking-widest text-stone-700 mb-4">Items Ordered</h3>
+                                <div className="space-y-4">
+                                    {order.items.map((item, idx) => (
+                                        <div key={idx} className="flex justify-between items-center text-sm border-b border-stone-50 pb-3 last:border-0 last:pb-0">
+                                            <div>
+                                                <p className="font-bold text-stone-900">{item.name || item.product_name}</p>
+                                                <p className="text-xs text-stone-500">Qty: {item.qty || item.quantity}</p>
+                                            </div>
+                                            <p className="font-medium text-stone-700">₹{parseFloat(item.unit_price || item.price || 0).toLocaleString('en-IN')}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Tracking */}
                         {order.awb_code && (
                             <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-6">
@@ -155,6 +192,24 @@ const OrderTracking = () => {
                                 <div className="space-y-2 text-sm">
                                     {order.courier_name && <p><span className="text-stone-400">Courier:</span> <span className="font-medium text-stone-700">{order.courier_name}</span></p>}
                                     {order.awb_code && <p><span className="text-stone-400">AWB Code:</span> <span className="font-mono font-medium text-stone-700">{order.awb_code}</span></p>}
+                                    <div className="pt-4 flex flex-wrap gap-2">
+                                        {order.tracking_url && (
+                                            <a 
+                                                href={order.tracking_url} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer"
+                                                className="px-4 py-2 bg-stone-900 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-stone-700 transition-all flex items-center gap-2"
+                                            >
+                                                <Truck size={12} /> Track on Courier Site
+                                            </a>
+                                        )}
+                                        <button 
+                                            onClick={shareOnWhatsApp}
+                                            className="px-4 py-2 bg-[#25D366] text-white text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-[#128C7E] transition-all flex items-center gap-2"
+                                        >
+                                            Share on WhatsApp
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         )}

@@ -336,15 +336,17 @@ const updateStatus = async (req, res) => {
                         shipment_id          = $2,
                         awb_code             = $3,
                         courier_name         = $4,
-                        shiprocket_response  = $5,
+                        tracking_url         = $5,
+                        shiprocket_response  = $6,
                         order_status         = 'shipped',
                         updated_at           = NOW()
-                     WHERE id = $6`,
+                     WHERE id = $7`,
                     [
                         shipResult.shiprocket_order_id,
                         shipResult.shipment_id,
                         shipResult.awb_code || null,
                         shipResult.courier_name || null,
+                        shipResult.tracking_url || null,
                         JSON.stringify(shipResult),
                         order.id
                     ]
@@ -388,10 +390,10 @@ const assignAwb = async (req, res) => {
         if (awbResult.response && awbResult.response.data && awbResult.response.data.awb_code) {
             const data = awbResult.response.data;
             await pool.query(
-                `UPDATE shop_orders SET awb_code = $1, courier_name = $2, updated_at = NOW() WHERE id = $3`,
-                [data.awb_code, data.courier_name, order.id]
+                `UPDATE shop_orders SET awb_code = $1, courier_name = $2, tracking_url = $3, updated_at = NOW() WHERE id = $4`,
+                [data.awb_code, data.courier_name, data.tracking_url, order.id]
             );
-            return res.json({ success: true, message: 'AWB Assigned Successfully', data: { awb_code: data.awb_code, courier_name: data.courier_name } });
+            return res.json({ success: true, message: 'AWB Assigned Successfully', data: { awb_code: data.awb_code, courier_name: data.courier_name, tracking_url: data.tracking_url } });
         } else {
             return res.status(400).json({ success: false, message: awbResult.message || 'Failed to assign AWB. Ensure wallet has balance.', full_error: awbResult });
         }
@@ -547,7 +549,23 @@ const lookupOrder = async (req, res) => {
             [order_number, email]
         );
         if (!result.rows.length) return res.status(404).json({ success: false, message: 'Order not found' });
-        res.json({ success: true, data: result.rows[0] });
+        const order = result.rows[0];
+
+        // Items are stored as JSONB in shop_orders.items — parse them
+        let items = [];
+        try {
+            items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || []);
+        } catch (e) {
+            items = [];
+        }
+        order.items = items;
+
+        // Generate tracking_url fallback if missing but AWB exists
+        if (order.awb_code && !order.tracking_url) {
+            order.tracking_url = `https://shiprocket.co/tracking/${order.awb_code}`;
+        }
+
+        res.json({ success: true, data: order });
     } catch (err) {
         res.status(500).json({ success: false, message: 'Failed to lookup order' });
     }
