@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, ArrowUp, Instagram, Linkedin, Facebook } from 'lucide-react';
+import { Mail, Phone, MapPin, ArrowUp, Linkedin, Youtube } from 'lucide-react';
 import { inquiriesAPI } from '../services/api';
 
 const CONTACT_ADDRESS = import.meta.env.VITE_CONTACT_ADDRESS;
@@ -7,8 +7,7 @@ const CONTACT_EMAILS = import.meta.env.VITE_CONTACT_EMAILS;
 const CONTACT_PHONES = import.meta.env.VITE_CONTACT_PHONES;
 const MAPS_EMBED_URL = import.meta.env.VITE_MAPS_EMBED_URL;
 const SOCIAL_LINKS = {
-    facebook: import.meta.env.VITE_SOCIAL_FACEBOOK_URL,
-    instagram: import.meta.env.VITE_SOCIAL_INSTAGRAM_URL,
+    youtube: import.meta.env.VITE_SOCIAL_YOUTUBE_URL || 'https://youtube.com',
     linkedin: import.meta.env.VITE_SOCIAL_LINKEDIN_URL
 };
 
@@ -185,7 +184,8 @@ const Footer = ({ setPage, setProjectDivision }) => {
                 {/* Social Icons */}
                 <div className="flex gap-4">
                     {[
-                        { icon: Linkedin, url: SOCIAL_LINKS.linkedin }
+                        { icon: Linkedin, url: SOCIAL_LINKS.linkedin },
+                        { icon: Youtube, url: SOCIAL_LINKS.youtube }
                     ]
                         .filter((item) => item.url)
                         .map((item, idx) => (

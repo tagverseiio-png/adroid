@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, Mail, MapPin, Phone, Instagram, Linkedin, Facebook, Building2, UserPlus, MessageSquare } from 'lucide-react';
+import { ArrowRight, Mail, MapPin, Phone, Linkedin, Youtube, Building2, UserPlus, MessageSquare } from 'lucide-react';
 import { inquiriesAPI, uploadAPI } from './services/api';
 
 const CONTACT_SECTIONS = [
@@ -91,8 +91,7 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                         <div className="flex gap-6 justify-center">
                             {[
                                 { icon: Linkedin, url: import.meta.env.VITE_SOCIAL_LINKEDIN_URL },
-                                { icon: Instagram, url: import.meta.env.VITE_SOCIAL_INSTAGRAM_URL },
-                                { icon: Facebook, url: import.meta.env.VITE_SOCIAL_FACEBOOK_URL }
+                                { icon: Youtube, url: import.meta.env.VITE_SOCIAL_YOUTUBE_URL || 'https://youtube.com' }
                             ].map((item, idx) => (
                                 <motion.a
                                     key={idx}
@@ -142,8 +141,7 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                             <div className="flex gap-8">
                                 {[
                                     { icon: Linkedin, url: import.meta.env.VITE_SOCIAL_LINKEDIN_URL },
-                                    { icon: Instagram, url: import.meta.env.VITE_SOCIAL_INSTAGRAM_URL },
-                                    { icon: Facebook, url: import.meta.env.VITE_SOCIAL_FACEBOOK_URL }
+                                    { icon: Youtube, url: import.meta.env.VITE_SOCIAL_YOUTUBE_URL || 'https://youtube.com' }
                                 ].map((item, idx) => (
                                     <motion.a
                                         key={idx}
@@ -285,7 +283,7 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[400px] brightness-75 contrast-125 opacity-60 hover:opacity-100 transition-opacity duration-700">
                                         <div className="relative group overflow-hidden rounded-xl border border-white/10">
                                             <iframe 
-                                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.893247493361!2d80.231902!3d12.923838!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a525d064ca00001%3A0xc0d7197bba10dd06!2sADROIT%20DESIGN%20INDIA%20PVT%20LTD!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+                                                src="https://maps.google.com/maps?q=No%208,%20MCN%20Nagar%20Extension,%20Thoraipakkam,%20Chennai&t=&z=15&ie=UTF8&iwloc=&output=embed" 
                                                 width="100%" height="100%" style={{ border: 0 }} allowFullScreen="" loading="lazy"></iframe>
                                         </div>
                                         <div className="relative group overflow-hidden rounded-xl border border-white/10">

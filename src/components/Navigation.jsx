@@ -1,7 +1,7 @@
 import React from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
-import { X, Instagram, Linkedin, Facebook, ChevronDown } from 'lucide-react';
+import { X, Linkedin, Youtube, ChevronDown } from 'lucide-react';
 
 // Import local images for services
 import ARCHITECTURALDESIGN from '/assets/ARCHITECTURALDESIGN.jpg';
@@ -87,9 +87,8 @@ const SERVICES_QUICK_ACCESS = [
 ];
 
 const SOCIAL_LINKS = {
-    instagram: import.meta.env.VITE_SOCIAL_INSTAGRAM_URL,
-    linkedin: import.meta.env.VITE_SOCIAL_LINKEDIN_URL,
-    facebook: import.meta.env.VITE_SOCIAL_FACEBOOK_URL
+    youtube: import.meta.env.VITE_SOCIAL_YOUTUBE_URL || 'https://youtube.com',
+    linkedin: import.meta.env.VITE_SOCIAL_LINKEDIN_URL
 };
 
 const Navigation = ({ isOpen, setIsOpen, setPage, onServiceSelect }) => {
@@ -194,19 +193,14 @@ const Navigation = ({ isOpen, setIsOpen, setPage, onServiceSelect }) => {
                 <div className="pt-12 border-t border-white/10 space-y-6">
                     <p className="text-xs text-white/50 tracking-[0.2em] uppercase font-mono">Connect With Us</p>
                     <div className="flex gap-8 text-white/50">
-                        {SOCIAL_LINKS.instagram && (
-                            <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-[#C5A059] transition-colors">
-                                <Instagram className="w-5 h-5" />
-                            </a>
-                        )}
                         {SOCIAL_LINKS.linkedin && (
                             <a href={SOCIAL_LINKS.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-[#C5A059] transition-colors">
                                 <Linkedin className="w-5 h-5" />
                             </a>
                         )}
-                        {SOCIAL_LINKS.facebook && (
-                            <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer" className="hover:text-[#C5A059] transition-colors">
-                                <Facebook className="w-5 h-5" />
+                        {SOCIAL_LINKS.youtube && (
+                            <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noopener noreferrer" className="hover:text-[#C5A059] transition-colors">
+                                <Youtube className="w-5 h-5" />
                             </a>
                         )}
                     </div>

@@ -228,10 +228,12 @@ const AIChatbot = ({ setPage = () => {} }) => {
         try {
             if (!CHATBOT_API_URL) throw new Error('Chatbot URL not configured');
 
+            const enrichedQuery = `${trimmed}\n\nSystem Instruction: You are the AI Concierge for Adroit Design. Be dynamic, conversational, and professional. If you do not know the answer to a question, do not make up information. Instead, reply EXACTLY with: "I'm not completely sure about that. Please connect with Harry at (+91) 9940064343 or email us at info@adroitdesigns.in for more details."`;
+
             const response = await fetch(CHATBOT_API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: trimmed }),
+                body: JSON.stringify({ query: enrichedQuery }),
             });
 
             if (!response.ok) throw new Error(`API ${response.status}`);

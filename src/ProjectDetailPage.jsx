@@ -182,7 +182,7 @@ export default function ProjectDetailPage({ project, onBack }) {
                                             <img
                                                 src={resolveImageSrc(img)}
                                                 alt={`${project.title} - ${idx + 1}`}
-                                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                                                className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105"
                                                 onError={(e) => {
                                                     e.target.onerror = null;
                                                     e.target.src = 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800';
