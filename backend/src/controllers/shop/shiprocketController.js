@@ -252,4 +252,15 @@ const assignAwbAPI = async (shipment_id) => {
     return result;
 };
 
-module.exports = { getToken, createShipment, trackShipment, generateLabel, generateInvoice, cancelShipment, trackAwbServer, assignAwbAPI };
+// ── Get Pickup Locations ───────────────────────────────────────────────────────
+const getPickupLocations = async (req, res) => {
+    try {
+        const data = await srRequest('GET', '/settings/company/pickup');
+        res.json({ success: true, data: data.data.shipping_address || [] });
+    } catch (err) {
+        console.error('getPickupLocations error:', err);
+        res.status(500).json({ success: false, message: 'Failed to fetch pickup locations from Shiprocket' });
+    }
+};
+
+module.exports = { getToken, createShipment, trackShipment, generateLabel, generateInvoice, cancelShipment, trackAwbServer, assignAwbAPI, getPickupLocations };

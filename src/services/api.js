@@ -316,6 +316,7 @@ export const orderAPI = {
 // Shop Pickup Locations API
 export const pickupLocationsAPI = {
     getAll:  ()          => apiCall('/shop/pickup-locations'),
+    getShiprocketLocations: () => apiCall('/shop/pickup-locations/shiprocket'),
     create:  (data)      => apiCall('/shop/pickup-locations',      { method: 'POST',   body: JSON.stringify(data) }),
     update:  (id, data)  => apiCall(`/shop/pickup-locations/${id}`, { method: 'PUT',    body: JSON.stringify(data) }),
     remove:  (id)        => apiCall(`/shop/pickup-locations/${id}`, { method: 'DELETE' }),
