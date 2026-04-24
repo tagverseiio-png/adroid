@@ -100,7 +100,7 @@ const ProgressBar = ({ status }) => {
 const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRefresh }) => {
     const [order, setOrder]               = useState(initialOrder);
     const [newStatus, setNewStatus]       = useState(initialOrder.order_status);
-    const [pickupLoc, setPickupLoc]       = useState(initialOrder.pickup_location_name || 'Primary');
+    const [pickupLoc, setPickupLoc]       = useState(initialOrder.pickup_location_name || 'Franklin');
     const [updating, setUpdating]         = useState(false);
     const [cancelling, setCancelling]     = useState(false);
     const [verifying, setVerifying]       = useState(false);
@@ -557,7 +557,7 @@ const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRef
                                                 </option>
                                             ))
                                         ) : (
-                                            <option value="Primary" className="bg-[#111]">Default Warehouse (Primary)</option>
+                                            <option value="Franklin" className="bg-[#111]">Default Warehouse (Franklin)</option>
                                         )}
                                     </select>
                                     {pickupLoc && (

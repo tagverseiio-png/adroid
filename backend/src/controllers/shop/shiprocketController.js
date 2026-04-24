@@ -117,8 +117,8 @@ const createShipment = async (order) => {
 
     const totalWeightKg = parseFloat((Math.max(10, totalWeightGrams) / 1000).toFixed(3));
 
-    // Pickup location: use the one set by admin, fallback to 'Primary'
-    const pickupLocation = (order.pickup_location_name || 'Primary').trim();
+    // Pickup location: use the one set by admin, fallback to 'Franklin'
+    const pickupLocation = (order.pickup_location_name || 'Franklin').trim();
 
     const nameParts = (order.customer_name || 'Customer').trim().split(' ');
     const firstName = nameParts[0] || 'Customer';
