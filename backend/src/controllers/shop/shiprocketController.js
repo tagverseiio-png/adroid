@@ -131,8 +131,11 @@ const createShipment = async (order) => {
     console.log('[Shiprocket] Delivery address:', address.city, address.state, address.pincode);
     console.log(`[Shiprocket] Package size: ${maxL}x${maxB}x${maxH}cm, Weight: ${totalWeightKg}kg`);
 
+    // Append timestamp to order_id to prevent Shiprocket duplicate collisions on retries
+    const uniqueOrderId = `${order.order_number}-${Math.floor(Date.now() / 1000)}`;
+
     const payload = {
-        order_id:                  order.order_number,
+        order_id:                  uniqueOrderId,
         order_date:                new Date(order.created_at).toISOString().slice(0, 10),
         pickup_location:           pickupLocation,
         comment:                   order.notes || `Adroit Design Order ${order.order_number}`,
