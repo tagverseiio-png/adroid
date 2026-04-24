@@ -149,4 +149,24 @@ const trackShipment = async (req, res) => {
     }
 };
 
-module.exports = { getToken, createShipment, trackShipment };
+// ── Generate Label ───────────────────────────────────────────────────────────
+const generateLabel = async (shipment_ids) => {
+    return await srRequest('POST', '/courier/generate/label', { shipment_id: shipment_ids });
+};
+
+// ── Generate Invoice ─────────────────────────────────────────────────────────
+const generateInvoice = async (order_ids) => {
+    return await srRequest('POST', '/orders/print/invoice', { ids: order_ids });
+};
+
+// ── Cancel Shipment ──────────────────────────────────────────────────────────
+const cancelShipment = async (awbs) => {
+    return await srRequest('POST', '/orders/cancel/awbs', { awbs });
+};
+
+// ── Track AWB (Server Side) ──────────────────────────────────────────────────
+const trackAwbServer = async (awb) => {
+    return await srRequest('GET', `/courier/track/awb/${awb}`);
+};
+
+module.exports = { getToken, createShipment, trackShipment, generateLabel, generateInvoice, cancelShipment, trackAwbServer };

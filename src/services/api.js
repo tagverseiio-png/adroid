@@ -307,6 +307,9 @@ export const orderAPI = {
         method: 'POST',
         body: JSON.stringify({ pickup_location_name: pickupLocation }),
     }),
+    generateLabel:   (id) => apiCall(`/shop/orders/${id}/generate-label`, { method: 'POST' }),
+    generateInvoice: (id) => apiCall(`/shop/orders/${id}/generate-invoice`, { method: 'POST' }),
+    syncShiprocket:  (id) => apiCall(`/shop/orders/${id}/sync-shiprocket`, { method: 'POST' }),
 };
 
 // Shop Pickup Locations API

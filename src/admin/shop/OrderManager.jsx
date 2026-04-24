@@ -116,6 +116,49 @@ const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRef
         setTimeout(() => setToast(null), 4000);
     };
 
+    const handleGenerateLabel = async () => {
+        try {
+            const res = await orderAPI.generateLabel(order.id);
+            if (res.data?.label_url) {
+                window.open(res.data.label_url, '_blank');
+                showToast('Label opened in new tab', 'success');
+            } else {
+                showToast('Label URL not found in response', 'error');
+            }
+        } catch (err) {
+            showToast(err.message || 'Failed to generate label', 'error');
+        }
+    };
+
+    const handleGenerateInvoice = async () => {
+        try {
+            const res = await orderAPI.generateInvoice(order.id);
+            if (res.data?.invoice_url) {
+                window.open(res.data.invoice_url, '_blank');
+                showToast('Invoice opened in new tab', 'success');
+            } else {
+                showToast('Invoice URL not found in response', 'error');
+            }
+        } catch (err) {
+            showToast(err.message || 'Failed to generate invoice', 'error');
+        }
+    };
+
+    const handleSyncShiprocket = async () => {
+        try {
+            const res = await orderAPI.syncShiprocket(order.id);
+            if (res.newStatus && res.newStatus !== order.order_status) {
+                setOrder(o => ({ ...o, order_status: res.newStatus }));
+                showToast(`Status synced: ${res.newStatus}`, 'success');
+                onRefresh();
+            } else {
+                showToast('Synced. Status unchanged.', 'success');
+            }
+        } catch (err) {
+            showToast(err.message || 'Failed to sync status', 'error');
+        }
+    };
+
     const items   = Array.isArray(order.items)            ? order.items            : JSON.parse(order.items || '[]');
     const addr    = typeof order.shipping_address === 'string' ? JSON.parse(order.shipping_address) : (order.shipping_address || {});
     const addrStr = [addr.line1, addr.line2, addr.city, addr.state, addr.pincode].filter(Boolean).join(', ');
@@ -431,6 +474,22 @@ const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRef
                                 {order.courier_name           && <InfoBlock label="Courier"           value={order.courier_name} />}
                                 {order.shiprocket_order_id    && <InfoBlock label="Shiprocket ID"     value={order.shiprocket_order_id} mono />}
                                 {order.pickup_location_name   && <InfoBlock label="Pickup From"       value={order.pickup_location_name} />}
+                            </div>
+                            <div className="mt-4 flex flex-wrap gap-2">
+                                <button onClick={handleGenerateLabel} className="px-3 py-1.5 bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 text-[10px] uppercase font-bold tracking-wider rounded border border-violet-500/30 transition-colors">
+                                    Label PDF
+                                </button>
+                                <button onClick={handleGenerateInvoice} className="px-3 py-1.5 bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 text-[10px] uppercase font-bold tracking-wider rounded border border-violet-500/30 transition-colors">
+                                    Invoice PDF
+                                </button>
+                                <button onClick={handleSyncShiprocket} className="px-3 py-1.5 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 text-[10px] uppercase font-bold tracking-wider rounded border border-sky-500/30 transition-colors flex items-center gap-1">
+                                    <RefreshCw size={10} /> Sync Status
+                                </button>
+                                {order.tracking_url && (
+                                    <a href={order.tracking_url} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-white/70 text-[10px] uppercase font-bold tracking-wider rounded border border-white/10 transition-colors flex items-center gap-1">
+                                        Track Live
+                                    </a>
+                                )}
                             </div>
                         </div>
                     )}

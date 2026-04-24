@@ -1,5 +1,5 @@
 const { pool } = require('../../config/database');
-const { createShipment } = require('./shiprocketController');
+const { createShipment, generateLabel, generateInvoice, cancelShipment, trackAwbServer } = require('./shiprocketController');
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -380,6 +380,15 @@ const cancelOrder = async (req, res) => {
             return res.status(400).json({ success: false, message: `Cannot cancel an order with status "${order.order_status}"` });
         }
 
+        // Cancel Shiprocket AWB if present
+        if (order.awb_code) {
+            try {
+                await cancelShipment([order.awb_code]);
+            } catch (err) {
+                console.error('Failed to cancel Shiprocket AWB:', err);
+            }
+        }
+
         // Restore stock
         const items = Array.isArray(order.items) ? order.items : JSON.parse(order.items || '[]');
         for (const item of items) {
@@ -472,4 +481,66 @@ const lookupOrder = async (req, res) => {
     }
 };
 
-module.exports = { createOrder, getAll, getStats, getByOrderNumber, updateStatus, cancelOrder, triggerShipment, lookupOrder };
+// ── POST /api/shop/orders/:id/generate-label ─────────────────────────────────
+const generateLabelForOrder = async (req, res) => {
+    try {
+        const orderRes = await pool.query(`SELECT shipment_id FROM shop_orders WHERE id = $1`, [req.params.id]);
+        if (!orderRes.rows.length) return res.status(404).json({ success: false, message: 'Order not found' });
+        const { shipment_id } = orderRes.rows[0];
+        if (!shipment_id) return res.status(400).json({ success: false, message: 'No shipment ID for this order' });
+
+        const data = await generateLabel([parseInt(shipment_id)]);
+        res.json({ success: true, data });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Failed to generate label: ' + err.message });
+    }
+};
+
+// ── POST /api/shop/orders/:id/generate-invoice ───────────────────────────────
+const generateInvoiceForOrder = async (req, res) => {
+    try {
+        const orderRes = await pool.query(`SELECT shiprocket_order_id FROM shop_orders WHERE id = $1`, [req.params.id]);
+        if (!orderRes.rows.length) return res.status(404).json({ success: false, message: 'Order not found' });
+        const { shiprocket_order_id } = orderRes.rows[0];
+        if (!shiprocket_order_id) return res.status(400).json({ success: false, message: 'No Shiprocket order ID' });
+
+        const data = await generateInvoice([parseInt(shiprocket_order_id)]);
+        res.json({ success: true, data });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Failed to generate invoice: ' + err.message });
+    }
+};
+
+// ── POST /api/shop/orders/:id/sync-shiprocket ────────────────────────────────
+const syncShiprocketStatus = async (req, res) => {
+    try {
+        const orderRes = await pool.query(`SELECT id, awb_code, order_status FROM shop_orders WHERE id = $1`, [req.params.id]);
+        if (!orderRes.rows.length) return res.status(404).json({ success: false, message: 'Order not found' });
+        const order = orderRes.rows[0];
+        if (!order.awb_code) return res.status(400).json({ success: false, message: 'No AWB to track' });
+
+        const data = await trackAwbServer(order.awb_code);
+        if (data.tracking_data && data.tracking_data.shipment_status) {
+            let newStatus = order.order_status;
+            const srStatus = data.tracking_data.track_status ? data.tracking_data.track_status : 0;
+            
+            // Shiprocket statuses: 6=Shipped, 7=Delivered, 8=Cancelled, 9=RTO, 17=Out for Delivery
+            if (srStatus === 7) newStatus = 'delivered';
+            else if (srStatus === 17) newStatus = 'out_for_delivery';
+            else if (srStatus === 6) newStatus = 'shipped';
+            else if (srStatus === 8) newStatus = 'cancelled';
+
+            if (newStatus !== order.order_status) {
+                await pool.query(`UPDATE shop_orders SET order_status = $1, updated_at = NOW() WHERE id = $2`, [newStatus, order.id]);
+            }
+            
+            res.json({ success: true, data: data.tracking_data, newStatus });
+        } else {
+            res.json({ success: true, data: data, message: 'No status update' });
+        }
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Failed to sync status: ' + err.message });
+    }
+};
+
+module.exports = { createOrder, getAll, getStats, getByOrderNumber, updateStatus, cancelOrder, triggerShipment, lookupOrder, generateLabelForOrder, generateInvoiceForOrder, syncShiprocketStatus };

@@ -2,7 +2,8 @@ const express = require('express');
 const router  = express.Router();
 const {
     createOrder, getAll, getStats, getByOrderNumber,
-    updateStatus, cancelOrder, triggerShipment, lookupOrder
+    updateStatus, cancelOrder, triggerShipment, lookupOrder,
+    generateLabelForOrder, generateInvoiceForOrder, syncShiprocketStatus
 } = require('../../controllers/shop/orderController');
 const auth = require('../../middleware/auth');
 const { requireAdmin } = require('../../middleware/auth');
@@ -28,5 +29,8 @@ router.get('/:orderNumber', auth, getByOrderNumber);
 router.patch('/:id/status',          auth, requireAdmin, updateStatus);
 router.patch('/:id/cancel',          auth, requireAdmin, cancelOrder);
 router.post('/:id/create-shipment',  auth, requireAdmin, triggerShipment);
+router.post('/:id/generate-label',   auth, requireAdmin, generateLabelForOrder);
+router.post('/:id/generate-invoice', auth, requireAdmin, generateInvoiceForOrder);
+router.post('/:id/sync-shiprocket',  auth, requireAdmin, syncShiprocketStatus);
 
 module.exports = router;
