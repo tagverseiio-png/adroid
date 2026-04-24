@@ -100,7 +100,7 @@ const ProgressBar = ({ status }) => {
 const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRefresh }) => {
     const [order, setOrder]               = useState(initialOrder);
     const [newStatus, setNewStatus]       = useState(initialOrder.order_status);
-    const [pickupLoc, setPickupLoc]       = useState(initialOrder.pickup_location_name || (pickupLocations && pickupLocations.length > 0 ? pickupLocations[0].pickup_location : 'Franklin'));
+    const [pickupLoc, setPickupLoc]       = useState(initialOrder.pickup_location_name || '');
     const [updating, setUpdating]         = useState(false);
     const [cancelling, setCancelling]     = useState(false);
     const [verifying, setVerifying]       = useState(false);
@@ -116,6 +116,16 @@ const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRef
         setToast({ msg, type });
         setTimeout(() => setToast(null), 4000);
     };
+
+    // Ensure pickupLoc is valid once pickupLocations load
+    useEffect(() => {
+        if (pickupLocations && pickupLocations.length > 0) {
+            const isValid = pickupLocations.some(loc => loc.pickup_location === pickupLoc);
+            if (!isValid) {
+                setPickupLoc(pickupLocations[0].pickup_location);
+            }
+        }
+    }, [pickupLocations, pickupLoc]);
 
     const handleGenerateLabel = async () => {
         try {

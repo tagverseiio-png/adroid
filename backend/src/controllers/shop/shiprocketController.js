@@ -135,7 +135,6 @@ const createShipment = async (order) => {
         order_id:                  order.order_number,
         order_date:                new Date(order.created_at).toISOString().slice(0, 10),
         pickup_location:           pickupLocation,
-        channel_id:                '',
         comment:                   order.notes || `Adroit Design Order ${order.order_number}`,
         billing_customer_name:     firstName,
         billing_last_name:         lastName,
