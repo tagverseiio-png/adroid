@@ -39,6 +39,11 @@ const createOrder = async (req, res) => {
             await client.query('ROLLBACK');
             return res.status(400).json({ success: false, message: 'Invalid email address' });
         }
+        const cleanedPhone = phone.replace(/[^0-9]/g, '');
+        if (cleanedPhone.length < 10) {
+            await client.query('ROLLBACK');
+            return res.status(400).json({ success: false, message: 'Please provide a valid 10-digit phone number' });
+        }
         if (!Array.isArray(cartItems) || cartItems.length > 50) {
             await client.query('ROLLBACK');
             return res.status(400).json({ success: false, message: 'Invalid cart (max 50 items)' });
@@ -74,7 +79,7 @@ const createOrder = async (req, res) => {
         // Validate & fetch products + check stock
         const productIds = cartItems.map(i => i.product_id);
         const prodRes = await client.query(
-            `SELECT id, name, sku, price, sale_price, stock_qty, published
+            `SELECT id, name, sku, price, sale_price, stock_qty, published, weight_grams, dimensions
              FROM shop_products WHERE id = ANY($1) AND published = true`,
             [productIds]
         );
@@ -96,7 +101,16 @@ const createOrder = async (req, res) => {
             const unitPrice = parseFloat(prod.sale_price || prod.price);
             const lineTotal = unitPrice * ci.qty;
             subtotal += lineTotal;
-            itemsSnapshot.push({ product_id: prod.id, name: prod.name, sku: prod.sku, qty: ci.qty, unit_price: unitPrice, total_price: lineTotal });
+            itemsSnapshot.push({ 
+                product_id: prod.id, 
+                name: prod.name, 
+                sku: prod.sku, 
+                qty: ci.qty, 
+                unit_price: unitPrice, 
+                total_price: lineTotal,
+                weight_grams: prod.weight_grams || 0,
+                dimensions: prod.dimensions || {}
+            });
         }
 
         // Apply coupon — SELECT FOR UPDATE locks the row inside the transaction
@@ -341,23 +355,81 @@ const updateStatus = async (req, res) => {
 
             } catch (shipErr) {
                 console.error('[Shiprocket] createShipment failed:', shipErr.message);
-                // Don't block status update; just return warning
-                const updatedOrder = (await pool.query(`SELECT * FROM shop_orders WHERE id = $1`, [order.id])).rows[0];
-                return res.json({
-                    success: true,
-                    message: 'Status updated but Shiprocket shipment failed: ' + shipErr.message,
-                    shiprocket_error: shipErr.message,
-                    data: updatedOrder
+                // Revert status to prevent Ghost State
+                await pool.query(
+                    `UPDATE shop_orders SET order_status = $1, updated_at = NOW() WHERE id = $2`,
+                    [order.order_status, order.id]
+                );
+                return res.status(400).json({
+                    success: false,
+                    message: 'Shiprocket creation failed: ' + shipErr.message
                 });
             }
         }
 
         const updatedOrder = (await pool.query(`SELECT * FROM shop_orders WHERE id = $1`, [order.id])).rows[0];
-        res.json({ success: true, data: updatedOrder, message: 'Status updated' });
-
+        res.json({ success: true, message: 'Status updated successfully', data: updatedOrder });
     } catch (err) {
         console.error('updateStatus error:', err);
         res.status(500).json({ success: false, message: 'Failed to update status' });
+    }
+};
+
+// ── POST /api/shop/orders/:id/assign-awb — Admin manually assigns AWB ───────
+const assignAwb = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const order = (await pool.query(`SELECT * FROM shop_orders WHERE id = $1`, [id])).rows[0];
+        if (!order || !order.shipment_id) return res.status(400).json({ success: false, message: 'No shipment ID found' });
+
+        const { assignAwbAPI } = require('./shiprocketController');
+        const awbResult = await assignAwbAPI(order.shipment_id);
+
+        if (awbResult.response && awbResult.response.data && awbResult.response.data.awb_code) {
+            const data = awbResult.response.data;
+            await pool.query(
+                `UPDATE shop_orders SET awb_code = $1, courier_name = $2, updated_at = NOW() WHERE id = $3`,
+                [data.awb_code, data.courier_name, order.id]
+            );
+            return res.json({ success: true, message: 'AWB Assigned Successfully', data: { awb_code: data.awb_code, courier_name: data.courier_name } });
+        } else {
+            return res.status(400).json({ success: false, message: awbResult.message || 'Failed to assign AWB. Ensure wallet has balance.', full_error: awbResult });
+        }
+    } catch (err) {
+        console.error('assignAwb error:', err);
+        res.status(500).json({ success: false, message: 'Failed to assign AWB' });
+    }
+};
+
+// ── POST /api/shop/orders/webhook/shiprocket — Tracking updates ─────────────
+const shiprocketWebhook = async (req, res) => {
+    try {
+        const data = req.body;
+        console.log('[Shiprocket Webhook] Received:', data.awb);
+
+        if (!data || !data.awb) return res.status(200).send('OK');
+
+        let newStatus = null;
+        const srStatus = (data.current_status || '').toUpperCase();
+
+        if (srStatus.includes('DELIVERED')) newStatus = 'delivered';
+        else if (srStatus.includes('OUT FOR DELIVERY')) newStatus = 'out_for_delivery';
+        else if (srStatus.includes('RTO') || srStatus.includes('RETURN')) newStatus = 'returned';
+        else if (srStatus.includes('CANCELED') || srStatus.includes('CANCELLED')) newStatus = 'cancelled';
+        else if (srStatus.includes('SHIPPED') || srStatus.includes('IN TRANSIT') || srStatus.includes('PICKED UP')) newStatus = 'shipped';
+
+        if (newStatus) {
+            await pool.query(
+                `UPDATE shop_orders SET order_status = $1, updated_at = NOW() WHERE awb_code = $2`,
+                [newStatus, data.awb]
+            );
+            console.log(`[Shiprocket Webhook] Updated AWB ${data.awb} to ${newStatus}`);
+        }
+
+        res.status(200).send('OK');
+    } catch (err) {
+        console.error('[Shiprocket Webhook] Error:', err.message);
+        res.status(200).send('Error');
     }
 };
 
@@ -543,4 +615,18 @@ const syncShiprocketStatus = async (req, res) => {
     }
 };
 
-module.exports = { createOrder, getAll, getStats, getByOrderNumber, updateStatus, cancelOrder, triggerShipment, lookupOrder, generateLabelForOrder, generateInvoiceForOrder, syncShiprocketStatus };
+module.exports = {
+    createOrder,
+    getAll,
+    getStats,
+    getByOrderNumber,
+    updateStatus,
+    assignAwb,
+    cancelOrder,
+    triggerShipment,
+    lookupOrder,
+    generateLabelForOrder,
+    generateInvoiceForOrder,
+    syncShiprocketStatus,
+    shiprocketWebhook
+};

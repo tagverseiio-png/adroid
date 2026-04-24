@@ -1,4 +1,5 @@
 const https = require('https');
+const { pool } = require('../../config/database');
 
 const SHIPROCKET_EMAIL    = process.env.SHIPROCKET_EMAIL    || '';
 const SHIPROCKET_PASSWORD = process.env.SHIPROCKET_PASSWORD || '';
@@ -71,16 +72,53 @@ const createShipment = async (order) => {
         ? JSON.parse(order.shipping_address)
         : (order.shipping_address || {});
 
-    const items = (typeof order.items === 'string' ? JSON.parse(order.items) : order.items)
-        .map(item => ({
+    const orderItemsParsed = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+    
+    const items = orderItemsParsed.map(item => ({
             name:          item.name,
             sku:           item.sku || String(item.product_id),
             units:         item.qty,
             selling_price: String(parseFloat(item.unit_price).toFixed(2)),
         }));
 
-    // Pickup location: use the one set by admin, fallback to 'Primary'
-    const pickupLocation = (order.pickup_location_name || 'Primary').trim();
+    // Calculate weight and dimensions dynamically
+    let totalWeightGrams = 0;
+    let maxL = 0, maxB = 0, maxH = 0;
+
+    for (const item of orderItemsParsed) {
+        let weight = item.weight_grams;
+        let dims = item.dimensions;
+
+        // Fallback for older orders missing snapshot data
+        if (weight === undefined || dims === undefined) {
+            try {
+                const prodRes = await pool.query(`SELECT weight_grams, dimensions FROM shop_products WHERE id = $1`, [item.product_id]);
+                if (prodRes.rows.length) {
+                    weight = prodRes.rows[0].weight_grams;
+                    dims = typeof prodRes.rows[0].dimensions === 'string' ? JSON.parse(prodRes.rows[0].dimensions) : prodRes.rows[0].dimensions;
+                }
+            } catch (e) {
+                console.error('[Shiprocket] Fallback weight fetch failed:', e.message);
+            }
+        }
+
+        const qty = item.qty || 1;
+        totalWeightGrams += (parseInt(weight) || 500) * qty;
+        
+        dims = dims || {};
+        const l = parseFloat(dims.length || dims.l || 20);
+        const b = parseFloat(dims.breadth || dims.width || dims.b || dims.w || 15);
+        const h = parseFloat(dims.height || dims.h || 10);
+
+        if (l > maxL) maxL = l;
+        if (b > maxB) maxB = b;
+        maxH += (h * qty); // Assume stacking
+    }
+
+    const totalWeightKg = parseFloat((Math.max(10, totalWeightGrams) / 1000).toFixed(3));
+
+    // Pickup location: use the one set by admin, fallback to 'Franklin'
+    const pickupLocation = (order.pickup_location_name || 'Franklin').trim();
 
     const nameParts = (order.customer_name || 'Customer').trim().split(' ');
     const firstName = nameParts[0] || 'Customer';
@@ -91,6 +129,7 @@ const createShipment = async (order) => {
     console.log('[Shiprocket] Creating shipment for order:', order.order_number);
     console.log('[Shiprocket] Pickup location:', pickupLocation);
     console.log('[Shiprocket] Delivery address:', address.city, address.state, address.pincode);
+    console.log(`[Shiprocket] Package size: ${maxL}x${maxB}x${maxH}cm, Weight: ${totalWeightKg}kg`);
 
     const payload = {
         order_id:                  order.order_number,
@@ -116,10 +155,10 @@ const createShipment = async (order) => {
         transaction_charges:       0,
         total_discount:            parseFloat(order.discount_amount || 0),
         sub_total:                 parseFloat(order.subtotal),
-        length:                    20,
-        width:                     15,
-        height:                    10,
-        weight:                    0.5,
+        length:                    Math.max(1, maxL),
+        breadth:                   Math.max(1, maxB),
+        height:                    Math.max(1, maxH),
+        weight:                    totalWeightKg,
     };
 
     console.log('[Shiprocket] Payload:', JSON.stringify(payload, null, 2));
@@ -198,4 +237,9 @@ const trackAwbServer = async (awb) => {
     return await srRequest('GET', `/courier/track/awb/${awb}`);
 };
 
-module.exports = { getToken, createShipment, trackShipment, generateLabel, generateInvoice, cancelShipment, trackAwbServer };
+// ── Assign AWB (Server Side) ────────────────────────────────────────────────
+const assignAwbAPI = async (shipment_id) => {
+    return await srRequest('POST', '/courier/assign/awb', { shipment_id });
+};
+
+module.exports = { getToken, createShipment, trackShipment, generateLabel, generateInvoice, cancelShipment, trackAwbServer, assignAwbAPI };

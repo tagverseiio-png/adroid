@@ -109,6 +109,7 @@ const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRef
     const [paidMethod, setPaidMethod]     = useState('UPI');
     const [paidTxnId, setPaidTxnId]       = useState('');
     const [paidNote, setPaidNote]         = useState('');
+    const [assigning, setAssigning]       = useState(false);
     const [toast, setToast]               = useState(null); // { msg, type: 'success'|'error'|'warn' }
 
     const showToast = (msg, type = 'success') => {
@@ -157,6 +158,19 @@ const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRef
         } catch (err) {
             showToast(err.message || 'Failed to sync status', 'error');
         }
+    };
+
+    const handleAssignAwb = async () => {
+        setAssigning(true);
+        try {
+            const res = await orderAPI.assignAwb(order.id);
+            setOrder(o => ({ ...o, awb_code: res.data.awb_code, courier_name: res.data.courier_name }));
+            showToast('AWB assigned successfully!', 'success');
+            onRefresh();
+        } catch (err) {
+            showToast(err.message || 'Failed to assign AWB. Ensure wallet has balance.', 'error');
+        }
+        setAssigning(false);
     };
 
     const items   = Array.isArray(order.items)            ? order.items            : JSON.parse(order.items || '[]');
@@ -485,6 +499,15 @@ const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRef
                                 <button onClick={handleSyncShiprocket} className="px-3 py-1.5 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 text-[10px] uppercase font-bold tracking-wider rounded border border-sky-500/30 transition-colors flex items-center gap-1">
                                     <RefreshCw size={10} /> Sync Status
                                 </button>
+                                {!order.awb_code && (
+                                    <button 
+                                        onClick={handleAssignAwb} 
+                                        disabled={assigning}
+                                        className="px-3 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-[10px] uppercase font-bold tracking-wider rounded border border-emerald-500/30 transition-colors flex items-center gap-1 disabled:opacity-50"
+                                    >
+                                        {assigning ? <Loader2 size={10} className="animate-spin" /> : <RefreshCw size={10} />} Assign Courier (AWB)
+                                    </button>
+                                )}
                                 {order.tracking_url && (
                                     <a href={order.tracking_url} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-white/70 text-[10px] uppercase font-bold tracking-wider rounded border border-white/10 transition-colors flex items-center gap-1">
                                         Track Live

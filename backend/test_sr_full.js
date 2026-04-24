@@ -15,7 +15,7 @@ async function runTest() {
     const dummyOrder = {
         order_number: 'TEST-' + Date.now(),
         created_at: new Date().toISOString(),
-        pickup_location_name: 'Primary',
+        pickup_location_name: 'Franklin', // Fixed to match valid location
         notes: 'Test order from terminal',
         customer_name: 'Test Adroit',
         customer_email: 'test@adroitdesigns.in',

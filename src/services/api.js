@@ -302,6 +302,7 @@ export const orderAPI = {
         method: 'PATCH',
         body: JSON.stringify({ status, pickup_location_name: pickupLocation }),
     }),
+    assignAwb:    (id)  => apiCall(`/shop/orders/${id}/assign-awb`,           { method: 'POST' }),
     cancelOrder:     (id)  => apiCall(`/shop/orders/${id}/cancel`,            { method: 'PATCH' }),
     createShipment:  (id, pickupLocation) => apiCall(`/shop/orders/${id}/create-shipment`, {
         method: 'POST',

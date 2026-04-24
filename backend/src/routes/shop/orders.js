@@ -3,7 +3,8 @@ const router  = express.Router();
 const {
     createOrder, getAll, getStats, getByOrderNumber,
     updateStatus, cancelOrder, triggerShipment, lookupOrder,
-    generateLabelForOrder, generateInvoiceForOrder, syncShiprocketStatus
+    generateLabelForOrder, generateInvoiceForOrder, syncShiprocketStatus,
+    assignAwb, shiprocketWebhook
 } = require('../../controllers/shop/orderController');
 const auth = require('../../middleware/auth');
 const { requireAdmin } = require('../../middleware/auth');
@@ -15,6 +16,9 @@ router.post('/', createOrder);
 
 // Customer self-lookup by order number + email — no PII leak without both
 router.get('/lookup', lookupOrder);
+
+// ── Webhooks ──────────────────────────────────────────────────────────────────
+router.post('/webhook/shiprocket', shiprocketWebhook);
 
 // ── Admin Only ────────────────────────────────────────────────────────────────
 // All admin routes require a valid token AND admin role
@@ -32,5 +36,6 @@ router.post('/:id/create-shipment',  auth, requireAdmin, triggerShipment);
 router.post('/:id/generate-label',   auth, requireAdmin, generateLabelForOrder);
 router.post('/:id/generate-invoice', auth, requireAdmin, generateInvoiceForOrder);
 router.post('/:id/sync-shiprocket',  auth, requireAdmin, syncShiprocketStatus);
+router.post('/:id/assign-awb',       auth, requireAdmin, assignAwb);
 
 module.exports = router;
