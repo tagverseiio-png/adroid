@@ -82,6 +82,12 @@ const createShipment = async (order) => {
     // Pickup location: use the one set by admin, fallback to 'Primary'
     const pickupLocation = (order.pickup_location_name || 'Primary').trim();
 
+    const nameParts = (order.customer_name || 'Customer').trim().split(' ');
+    const firstName = nameParts[0] || 'Customer';
+    const lastName  = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '.';
+
+    const phone = (order.customer_phone || '').replace(/[^0-9]/g, '').slice(-10);
+
     console.log('[Shiprocket] Creating shipment for order:', order.order_number);
     console.log('[Shiprocket] Pickup location:', pickupLocation);
     console.log('[Shiprocket] Delivery address:', address.city, address.state, address.pincode);
@@ -92,23 +98,23 @@ const createShipment = async (order) => {
         pickup_location:           pickupLocation,
         channel_id:                '',
         comment:                   order.notes || `Adroit Design Order ${order.order_number}`,
-        billing_customer_name:     order.customer_name,
-        billing_last_name:         '',
-        billing_address:           address.line1 || '',
+        billing_customer_name:     firstName,
+        billing_last_name:         lastName,
+        billing_address:           address.line1 || 'No Address Line 1',
         billing_address_2:         address.line2 || '',
-        billing_city:              address.city  || '',
-        billing_pincode:           String(address.pincode || address.pin || ''),
-        billing_state:             address.state || '',
+        billing_city:              address.city  || 'Unknown',
+        billing_pincode:           String(address.pincode || address.pin || '').replace(/[^0-9]/g, '').slice(0, 6),
+        billing_state:             address.state || 'Unknown',
         billing_country:           'India',
-        billing_email:             order.customer_email,
-        billing_phone:             order.customer_phone,
+        billing_email:             order.customer_email || 'noemail@adroitdesigns.in',
+        billing_phone:             phone.length === 10 ? phone : '9999999999',
         shipping_is_billing:       true,
         order_items:               items,
         payment_method:            order.payment_status === 'paid' ? 'Prepaid' : 'COD',
         shipping_charges:          parseFloat(order.shipping_charge || 0),
         giftwrap_charges:          0,
         transaction_charges:       0,
-        total_discount:             parseFloat(order.discount_amount || 0),
+        total_discount:            parseFloat(order.discount_amount || 0),
         sub_total:                 parseFloat(order.subtotal),
         length:                    20,
         width:                     15,
@@ -127,12 +133,35 @@ const createShipment = async (order) => {
         throw new Error(`Shiprocket order creation failed: ${errorMsg}`);
     }
 
+    let awb_code = result.awb_code || null;
+    let courier_name = result.courier_name || null;
+    let tracking_url = result.tracking_url || null;
+
+    // Automatically call Step 5: Assign AWB as per Shiprocket API Docs
+    if (result.shipment_id && !awb_code) {
+        try {
+            console.log(`[Shiprocket] Auto-assigning AWB for shipment_id: ${result.shipment_id}`);
+            const awbPayload = { shipment_id: result.shipment_id };
+            const awbResult = await srRequest('POST', '/courier/assign/awb', awbPayload);
+            console.log('[Shiprocket] AWB Assignment Response:', JSON.stringify(awbResult, null, 2));
+
+            if (awbResult.response && awbResult.response.data) {
+                awb_code     = awbResult.response.data.awb_code     || awb_code;
+                courier_name = awbResult.response.data.courier_name || courier_name;
+                tracking_url = awbResult.response.data.track_url    || tracking_url;
+            }
+        } catch (awbErr) {
+            console.error('[Shiprocket] Failed to auto-assign AWB:', awbErr.message);
+            // We don't throw here because the order was successfully created in Shiprocket.
+        }
+    }
+
     return {
         shiprocket_order_id: String(result.order_id),
         shipment_id:         result.shipment_id ? String(result.shipment_id) : null,
-        awb_code:            result.awb_code    || null,
-        courier_name:        result.courier_name || null,
-        tracking_url:        result.tracking_url || null,
+        awb_code,
+        courier_name,
+        tracking_url,
     };
 };
 

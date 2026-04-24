@@ -466,13 +466,13 @@ const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRef
                     )}
 
                     {/* Shipment info */}
-                    {order.awb_code && (
+                    {order.shiprocket_order_id && (
                         <div className="bg-violet-400/5 border border-violet-400/15 rounded-xl px-4 py-3">
                             <p className="text-white/35 text-[10px] uppercase tracking-wider mb-2">Shipment (Shiprocket)</p>
                             <div className="grid grid-cols-2 gap-2">
-                                <InfoBlock label="AWB Code"       value={order.awb_code}             mono />
+                                {order.awb_code               && <InfoBlock label="AWB Code"          value={order.awb_code}             mono />}
                                 {order.courier_name           && <InfoBlock label="Courier"           value={order.courier_name} />}
-                                {order.shiprocket_order_id    && <InfoBlock label="Shiprocket ID"     value={order.shiprocket_order_id} mono />}
+                                <InfoBlock label="Shiprocket ID" value={order.shiprocket_order_id} mono />
                                 {order.pickup_location_name   && <InfoBlock label="Pickup From"       value={order.pickup_location_name} />}
                             </div>
                             <div className="mt-4 flex flex-wrap gap-2">
@@ -500,7 +500,7 @@ const OrderDetailModal = ({ order: initialOrder, pickupLocations, onClose, onRef
                             <p className="text-white/35 text-[10px] uppercase tracking-widest font-bold">Admin Actions</p>
 
                             {/* Pickup location — free text input */}
-                            {order.payment_status === 'paid' && !order.awb_code && (
+                            {order.payment_status === 'paid' && !order.shiprocket_order_id && (
                                 <div>
                                     <label className="block text-white/50 text-xs mb-1.5 font-medium">
                                         <Warehouse size={11} className="inline mr-1" />
