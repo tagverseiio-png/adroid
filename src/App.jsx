@@ -328,11 +328,10 @@ const App = () => {
 
       {/* Header - Always dark blur */}
       <motion.header
-        className={`fixed top-0 w-full z-30 transition-all duration-500 border-b ${
-          scrolled
+        className={`fixed top-0 w-full z-30 transition-all duration-500 border-b ${scrolled
             ? "bg-[#050505]/95 backdrop-blur-2xl border-white/10 py-3 md:py-4 shadow-2xl"
             : "bg-[#050505]/75 backdrop-blur-xl border-white/5 py-4 md:py-5"
-        } ${isNavOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+          } ${isNavOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.2, delay: 3 }}
@@ -377,32 +376,31 @@ const App = () => {
                   onMouseEnter={openDesktopServicesMenu}
                   onMouseLeave={closeDesktopServicesMenuWithDelay}
                 >
-                <div className="bg-black/95 border border-white/10 backdrop-blur-md p-3 shadow-2xl">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      handlePageChange('Services');
-                      setIsDesktopServicesOpen(false);
-                    }}
-                    className="w-full text-left px-3 py-2 text-[10px] tracking-[0.2em] uppercase text-white/70 hover:text-[#C5A059] hover:bg-white/5 transition-colors"
-                  >
-                    View All Services
-                  </button>
-                  <div className="h-px bg-white/10 my-2" />
-                  {SERVICES_QUICK_ACCESS.map((service) => (
+                  <div className="bg-black/95 border border-white/10 backdrop-blur-md p-3 shadow-2xl">
                     <button
-                      key={service.id}
                       type="button"
                       onClick={() => {
-                        handleServiceSelectFromMenu(service);
+                        handlePageChange('Services');
                         setIsDesktopServicesOpen(false);
                       }}
-                      className="w-full text-left px-3 py-2 text-[11px] tracking-[0.12em] uppercase text-white/60 hover:text-[#C5A059] hover:bg-white/5 transition-colors"
+                      className="w-full text-left px-3 py-2 text-[10px] tracking-[0.2em] uppercase text-white/70 hover:text-[#C5A059] hover:bg-white/5 transition-colors"
                     >
-                      {service.title}
                     </button>
-                  ))}
-                </div>
+                    <div className="h-px bg-white/10 my-2" />
+                    {SERVICES_QUICK_ACCESS.map((service) => (
+                      <button
+                        key={service.id}
+                        type="button"
+                        onClick={() => {
+                          handleServiceSelectFromMenu(service);
+                          setIsDesktopServicesOpen(false);
+                        }}
+                        className="w-full text-left px-3 py-2 text-[11px] tracking-[0.12em] uppercase text-white/60 hover:text-[#C5A059] hover:bg-white/5 transition-colors"
+                      >
+                        {service.title}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

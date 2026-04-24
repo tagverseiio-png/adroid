@@ -158,13 +158,7 @@ const Navigation = ({ isOpen, setIsOpen, setPage, onServiceSelect }) => {
 
                                     {isServicesOpen && (
                                         <div className="mt-5 ml-12 grid gap-2">
-                                            <button
-                                                type="button"
-                                                onClick={() => { setPage('Services'); setIsOpen(false); }}
-                                                className="text-left text-[11px] md:text-xs uppercase tracking-[0.22em] text-white/60 hover:text-[#C5A059] transition-colors"
-                                            >
-                                                View All Services
-                                            </button>
+
                                             {SERVICES_QUICK_ACCESS.map((service) => (
                                                 <button
                                                     key={service.id}
