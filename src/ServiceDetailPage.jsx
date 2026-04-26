@@ -275,7 +275,7 @@ const ServiceDetailPage = ({ service, setPage, onBack, onStartProject, onSchedul
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="text-2xl md:text-5xl text-justify font-logo uppercase leading-tight mb-6 md:mb-8 tracking-wide">
+            <h2 className="text-2xl md:text-5xl font-logo uppercase leading-tight mb-6 md:mb-8 tracking-wide">
               {content.philosophy.title}
             </h2>
             <div className="w-16 md:w-20 h-1 bg-gradient-to-r from-[#C5A059] to-transparent" />
@@ -286,7 +286,7 @@ const ServiceDetailPage = ({ service, setPage, onBack, onStartProject, onSchedul
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-base md:text-xl leading-relaxed text-justify text-stone-600 pt-0"
+            className="text-base md:text-xl leading-relaxed text-stone-600 pt-0"
           >
             {content.philosophy.text}
           </motion.p>

@@ -136,8 +136,8 @@ export default function ProjectsPage({ initialDivision, onDivisionUsed }) {
           <div className="relative group">
             <div className="absolute -inset-4 bg-[#C5A059]/10 rounded-full blur-2xl group-hover:bg-[#C5A059]/20 transition-all duration-700" />
             <div className="relative flex flex-col items-center md:items-end">
-              <span className="text-5xl sm:text-6xl md:text-8xl font-logo text-[#C5A059] leading-none mb-2">{projects.length || '59'}</span>
-              <span className="text-[9px] md:text-xs font-bold tracking-[0.4em] text-white/40 uppercase whitespace-nowrap">Total Masterpieces</span>
+              <span className="text-4xl sm:text-5xl md:text-7xl font-logo text-[#C5A059] leading-none mb-2">{projects.length || '59'}</span>
+              <span className="text-[8px] md:text-[10px] font-bold tracking-[0.4em] text-white/40 uppercase whitespace-nowrap">Total Masterpieces</span>
             </div>
           </div>
           
