@@ -228,38 +228,51 @@ const AIChatbot = ({ setPage = () => {} }) => {
         try {
             if (!CHATBOT_API_URL) throw new Error('Chatbot URL not configured');
 
-            const enrichedQuery = `${trimmed}\n\nSystem Instruction: You are the AI Concierge for Adroit Design. Be dynamic, conversational, and professional. If you do not know the answer to a question, do not make up information. Instead, reply EXACTLY with: "I'm not completely sure about that. Please connect with Harry at (+91) 9940064343 or email us at info@adroitdesigns.in for more details."`;
-
             const response = await fetch(CHATBOT_API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: enrichedQuery }),
+                body: JSON.stringify({ query: trimmed }),
             });
 
             if (!response.ok) throw new Error(`API ${response.status}`);
 
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
-            let buffer = '';
             let assistantText = '';
             const assistantMsgId = Date.now() + 1;
 
             setMessages((prev) => [...prev, { id: assistantMsgId, role: 'assistant', text: '', projects: null }]);
 
+            const updateAssistantMessage = (text) => {
+                setMessages((prev) =>
+                    prev.map((message) =>
+                        message.id === assistantMsgId ? { ...message, text } : message,
+                    ),
+                );
+            };
+
             while (true) {
                 const { value, done } = await reader.read();
-                if (done) break;
-                buffer += decoder.decode(value, { stream: true });
-
-                if (buffer.includes('[END]')) {
-                    assistantText = buffer.split('[END]')[0].trim();
+                if (done) {
+                    assistantText += decoder.decode();
                     break;
                 }
-                assistantText = buffer.trim();
-                setMessages((prev) =>
-                    prev.map((m) => (m.id === assistantMsgId ? { ...m, text: assistantText } : m)),
-                );
+
+                const chunk = decoder.decode(value, { stream: true });
+                const endMarkerIndex = chunk.indexOf('[END]');
+                const nextChunk = endMarkerIndex >= 0 ? chunk.slice(0, endMarkerIndex) : chunk;
+
+                if (nextChunk) {
+                    assistantText += nextChunk;
+                    updateAssistantMessage(assistantText);
+                }
+
+                if (endMarkerIndex >= 0) {
+                    break;
+                }
             }
+
+            assistantText = assistantText.trim();
 
             // Find relevant projects based on conversation context
             const relevantProjects = findRelevantProjects(trimmed, assistantText);
