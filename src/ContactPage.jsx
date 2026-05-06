@@ -248,7 +248,7 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                                     <Mail size={16} />  fm@adroitdesigns.in
                                                 </a>
                                                 <a href="tel:+914445561113" className="flex items-center gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-sm font-light">
-                                                    <Phone size={16} /> (+91) 44-45561113
+                                                    <Phone size={16} /> 00 44-45561113
                                                 </a>
                                                 <a href="tel:9940064343" className="flex items-center gap-4 text-white/50 hover:text-[#C5A059] transition-colors text-sm font-light">
                                                     <Phone size={16} /> 9940064343
