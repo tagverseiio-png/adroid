@@ -291,7 +291,7 @@ const AIChatbot = ({ setPage = () => {} }) => {
                 {
                     id: Date.now() + 2,
                     role: 'assistant',
-                    text: "I'm having trouble connecting right now. You can reach us directly at info@adroitdesigns.in or call (+91) 44-45561113.",
+                    text: "I'm having trouble connecting right now. You can reach us directly at info@adroitdesigns.in or call 00 44-45561113.",
                     projects: null,
                 },
             ]);
