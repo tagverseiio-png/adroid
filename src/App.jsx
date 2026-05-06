@@ -214,6 +214,13 @@ const App = () => {
         setSelectedService(null);
         setCurrentPage('Contact Us');
         window.setTimeout(() => window.scrollTo(0, 0), 0);
+      } else if (hash.startsWith('#/shop/product/')) {
+        // Handle product sharing URLs
+        const productSlug = hash.replace('#/shop/product/', '');
+        setCurrentPage('Shop');
+        // Load product by slug - the ProductDetail component will handle this
+        setSelectedShopProduct({ slug: productSlug, id: productSlug });
+        window.setTimeout(() => window.scrollTo(0, 0), 0);
       }
     };
 
