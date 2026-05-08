@@ -173,8 +173,8 @@ const Footer = ({ setPage, setProjectDivision }) => {
 
                 {/* Copyright */}
                 <div className="flex items-center gap-4 text-center flex-col md:flex-row">
-                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-[#C5A059] flex items-center justify-center text-[#C5A059] font-bold text-lg md:text-xl">
-                        C
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-[#C5A059] flex items-center justify-center overflow-hidden">
+                        <img src="/logo.png" alt="Adroit Design Logo" className="w-full h-full object-contain p-1.5" />
                     </div>
                     <p className="text-[9px] lg:text-xs uppercase tracking-[0.2em] md:tracking-[0.3em] text-white/40 font-bold font-sans max-w-[250px] md:max-w-none">
                         © 2026 ADROIT DESIGN INDIA PRIVATE LIMITED

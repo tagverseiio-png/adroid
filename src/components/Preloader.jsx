@@ -11,7 +11,15 @@ const Preloader = ({ setLoading }) => {
             transition={{ duration: 0.6, delay: 1.2, ease: [0.76, 0, 0.24, 1] }}
             onAnimationComplete={() => setLoading(false)}
         >
-            <div className="overflow-hidden relative px-6 text-center">
+            <div className="overflow-hidden relative px-6 text-center flex flex-col items-center">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="mb-6"
+                >
+                    <img src="/logo.png" alt="Adroit Design Logo" className="w-20 h-20 md:w-24 md:h-24 object-contain" />
+                </motion.div>
                 <motion.h1
                     className="text-white font-logo text-3xl md:text-6xl tracking-[0.2em] md:tracking-[0.4em] uppercase font-bold"
                     initial={{ y: 100 }}
