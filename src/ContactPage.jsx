@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, Mail, MapPin, Phone, Linkedin, Youtube, Building2, UserPlus, MessageSquare } from 'lucide-react';
 import { inquiriesAPI, uploadAPI } from './services/api';
+import { trackLead } from './utils/googleTag';
 
 const CONTACT_SECTIONS = [
     { id: 'enquiry', label: 'Project Enquiry', icon: MessageSquare },
@@ -40,6 +41,12 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
             };
 
             await inquiriesAPI.create(inquiryData);
+
+            trackLead({
+                lead_source: 'contact_page',
+                lead_type: activeSection,
+                page_path: window.location.pathname,
+            });
 
             setIsSuccess(true);
             setFormState({ name: '', email: '', subject: '', message: '', company: '', phone: '', category: '', subCategory: '' });

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useScroll, useTransform, motion } from "framer-motion";
+import { trackLead } from './utils/googleTag';
 import { ArrowLeft, CheckCircle2, Award, Users, TrendingUp, Hammer, Building2, Cog, ShieldCheck, Leaf, Zap, ClipboardCheck } from "lucide-react";
 import BackButton from "./components/BackButton";
 
@@ -411,12 +412,17 @@ const ServiceDetailPage = ({ service, setPage, onBack, onStartProject, onSchedul
               <button
                 type="button"
                 onClick={() => {
+                    trackLead({
+                      lead_source: 'service_detail_start_project',
+                      service_name: service?.title || 'service_detail',
+                      page_path: window.location.pathname,
+                    });
                   if (onStartProject) {
                     onStartProject();
                     return;
                   }
                   if (setPage) setPage('Contact Us');
-                  window.location.hash = 'contact-enquiry';
+                    window.history.pushState({}, document.title, '/contact');
                 }}
                 className="px-6 py-3.5 md:px-8 md:py-4 bg-stone-900 text-white hover:bg-[#C5A059] transition-colors duration-300 text-sm md:text-lg"
               >
@@ -425,12 +431,17 @@ const ServiceDetailPage = ({ service, setPage, onBack, onStartProject, onSchedul
               <button
                 type="button"
                 onClick={() => {
+                    trackLead({
+                      lead_source: 'service_detail_schedule_call',
+                      service_name: service?.title || 'service_detail',
+                      page_path: window.location.pathname,
+                    });
                   if (onScheduleCall) {
                     onScheduleCall();
                     return;
                   }
                   if (setPage) setPage('Contact Us');
-                  window.location.hash = 'contact-enquiry';
+                    window.history.pushState({}, document.title, '/contact');
                 }}
                 className="px-6 py-3.5 md:px-8 md:py-4 border border-stone-300 hover:border-stone-900 hover:bg-stone-900 hover:text-white transition-all duration-300 text-sm md:text-lg"
               >

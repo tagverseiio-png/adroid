@@ -83,7 +83,7 @@ const ProductDetail = ({ product: initialProduct, onBack, onGoToCheckout }) => {
 
     const getShareUrl = () => {
         const slug = product?.slug || product?.id;
-        return `${window.location.origin}${window.location.pathname}#/shop/product/${slug}`;
+        return `${window.location.origin}/shop/product/${slug}`;
     };
 
     const handleCopyLink = () => {

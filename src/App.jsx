@@ -103,6 +103,137 @@ const SERVICES_QUICK_ACCESS = [
   },
 ];
 
+const slugifyRoute = (value) => String(value || '')
+  .toLowerCase()
+  .replace(/&/g, 'and')
+  .replace(/[^a-z0-9]+/g, '-')
+  .replace(/^-+|-+$/g, '');
+
+const SERVICE_LOOKUP = Object.fromEntries(
+  SERVICES_QUICK_ACCESS.map((service) => [slugifyRoute(service.title), service])
+);
+
+const PATH_TO_PAGE = {
+  '/': 'Home',
+  '/about': 'Profile',
+  '/services': 'Services',
+  '/projects': 'Projects',
+  '/insights': 'Insights',
+  '/shop': 'Shop',
+  '/careers': 'Careers',
+  '/contact': 'Contact Us',
+};
+
+const PAGE_TO_PATH = {
+  Home: '/',
+  Profile: '/about',
+  Services: '/services',
+  Projects: '/projects',
+  Insights: '/insights',
+  Shop: '/shop',
+  Careers: '/careers',
+  'Contact Us': '/contact',
+};
+
+const normalizePathname = (pathname) => {
+  const trimmed = String(pathname || '').replace(/\/+$/, '');
+  return trimmed || '/';
+};
+
+const readRouteState = () => {
+  const pathname = normalizePathname(window.location.pathname);
+  const searchParams = new URLSearchParams(window.location.search);
+  const hash = (window.location.hash || '').toLowerCase();
+
+  if (searchParams.get('mode') === 'admin') {
+    return { page: 'Admin' };
+  }
+
+  if (hash === '#contact-enquiry') {
+    return { page: 'Contact Us', contactSection: 'enquiry' };
+  }
+
+  if (hash.startsWith('#/shop/product/')) {
+    const slug = hash.replace('#/shop/product/', '');
+    return { page: 'Shop', selectedShopProduct: { slug, id: slug } };
+  }
+
+  if (pathname.startsWith('/shop/product/')) {
+    const slug = pathname.replace('/shop/product/', '');
+    return { page: 'Shop', selectedShopProduct: { slug, id: slug } };
+  }
+
+  if (pathname === '/shop/checkout') {
+    return { page: 'Shop', isCheckout: true };
+  }
+
+  if (pathname.startsWith('/services/')) {
+    const slug = pathname.replace('/services/', '');
+    return { page: 'Services', selectedService: SERVICE_LOOKUP[slug] || null };
+  }
+
+  if (pathname === '/contact') {
+    return { page: 'Contact Us', contactSection: searchParams.get('section') || 'enquiry' };
+  }
+
+  if (pathname === '/services') {
+    const serviceSlug = searchParams.get('service');
+    return {
+      page: 'Services',
+      selectedService: serviceSlug ? SERVICE_LOOKUP[serviceSlug] || null : null,
+    };
+  }
+
+  return { page: PATH_TO_PAGE[pathname] || 'Home' };
+};
+
+const buildRoutePath = ({ page, selectedService, selectedShopProduct, isCheckout, contactSection }) => {
+  if (page === 'Admin') {
+    return '/?mode=admin';
+  }
+
+  if (page === 'Shop') {
+    if (isCheckout) return '/shop/checkout';
+    if (selectedShopProduct?.slug || selectedShopProduct?.id) {
+      const slug = selectedShopProduct.slug || selectedShopProduct.id;
+      return `/shop/product/${slug}`;
+    }
+    return '/shop';
+  }
+
+  if (page === 'Services') {
+    if (selectedService?.title) {
+      return `/services/${slugifyRoute(selectedService.title)}`;
+    }
+    return '/services';
+  }
+
+  if (page === 'Contact Us') {
+    return contactSection && contactSection !== 'enquiry'
+      ? `/contact?section=${encodeURIComponent(contactSection)}`
+      : '/contact';
+  }
+
+  if (page === 'Profile') return '/about';
+  if (page === 'Projects') return '/projects';
+  if (page === 'Insights') return '/insights';
+  if (page === 'Careers') return '/careers';
+
+  return PAGE_TO_PATH[page] || '/';
+};
+
+const getPageTitle = ({ page, selectedService, selectedShopProduct, isCheckout }) => {
+  if (page === 'Profile') return 'About Us';
+  if (page === 'Contact Us') return 'Contact Us';
+  if (page === 'Projects') return 'Projects';
+  if (page === 'Insights') return 'Insights';
+  if (page === 'Careers') return 'Careers';
+  if (page === 'Shop' && isCheckout) return 'Checkout';
+  if (page === 'Shop' && (selectedShopProduct?.slug || selectedShopProduct?.id)) return 'Product Details';
+  if (page === 'Services' && selectedService?.title) return selectedService.title;
+  return page;
+};
+
 // --- Lazy Blog Imports ---
 const BlogPage = React.lazy(() => import('./blog/BlogPage'));
 const BlogPost = React.lazy(() => import('./blog/BlogPost'));
@@ -122,6 +253,7 @@ import Preloader from './components/Preloader';
 import Navigation from './components/Navigation';
 const AIChatbot = React.lazy(() => import('./components/AIChatbot'));
 import Footer from './components/Footer';
+import { trackPageView } from './utils/googleTag';
 
 // --- Suspense Fallback ---
 const PageLoader = () => (
@@ -139,7 +271,7 @@ const App = () => {
   const [isDesktopServicesOpen, setIsDesktopServicesOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const servicesMenuCloseTimeoutRef = useRef(null);
-  const [contactSection] = useState('enquiry');
+  const [contactSection, setContactSection] = useState('enquiry');
 
   // Handle Header Scroll Effect
   useEffect(() => {
@@ -168,7 +300,7 @@ const App = () => {
   // Scroll to top on page change
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [currentPage, adminPage, selectedPost]);
+  }, [currentPage, adminPage, selectedPost, selectedService, selectedShopProduct, isCheckout]);
 
   useEffect(() => {
     if (currentPage === 'Admin') return;
@@ -209,25 +341,53 @@ const App = () => {
 
   useEffect(() => {
     const applyHashRoute = () => {
-      const hash = (window.location.hash || '').toLowerCase();
-      if (hash === '#contact-enquiry') {
-        setSelectedService(null);
-        setCurrentPage('Contact Us');
-        window.setTimeout(() => window.scrollTo(0, 0), 0);
-      } else if (hash.startsWith('#/shop/product/')) {
-        // Handle product sharing URLs
-        const productSlug = hash.replace('#/shop/product/', '');
-        setCurrentPage('Shop');
-        // Load product by slug - the ProductDetail component will handle this
-        setSelectedShopProduct({ slug: productSlug, id: productSlug });
-        window.setTimeout(() => window.scrollTo(0, 0), 0);
+      const route = readRouteState();
+
+      if (route.page === 'Admin') {
+        setCurrentPage('Admin');
+        return;
       }
+
+      setCurrentPage(route.page);
+      setSelectedService(route.selectedService || null);
+      setSelectedShopProduct(route.selectedShopProduct || null);
+      setSelectedPost(route.selectedPost || null);
+      setIsCheckout(Boolean(route.isCheckout));
+      setContactSection(route.contactSection || 'enquiry');
+
+      window.setTimeout(() => window.scrollTo(0, 0), 0);
     };
 
     applyHashRoute();
     window.addEventListener('hashchange', applyHashRoute);
-    return () => window.removeEventListener('hashchange', applyHashRoute);
+    window.addEventListener('popstate', applyHashRoute);
+    return () => {
+      window.removeEventListener('hashchange', applyHashRoute);
+      window.removeEventListener('popstate', applyHashRoute);
+    };
   }, []);
+
+  useEffect(() => {
+    if (currentPage === 'Admin') return;
+
+    const nextPath = buildRoutePath({
+      page: currentPage,
+      selectedService,
+      selectedShopProduct,
+      isCheckout,
+      contactSection,
+    });
+
+    const currentUrl = `${normalizePathname(window.location.pathname)}${window.location.search || ''}`;
+    if (currentUrl !== nextPath) {
+      window.history.pushState({}, document.title, nextPath);
+    }
+
+    const pageTitle = getPageTitle({ page: currentPage, selectedService, selectedShopProduct, isCheckout });
+    document.title = `Adroit Design | ${pageTitle}`;
+
+    trackPageView({ pagePath: nextPath, pageTitle });
+  }, [currentPage, selectedService, selectedShopProduct, isCheckout, contactSection]);
 
   // Check URL for Admin Access on initial mount
   const adminCheckRef = useRef(true);
@@ -246,9 +406,17 @@ const App = () => {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    setSelectedPost(null);
+    setSelectedShopProduct(null);
+    setIsCheckout(false);
+    setContactSection('enquiry');
+
     if (page === 'Services') {
       setSelectedService(null);
+      return;
     }
+
+    setSelectedService(null);
   };
 
   const handleServiceSelectFromMenu = (service) => {
@@ -259,13 +427,13 @@ const App = () => {
   const handleStartProjectFromService = () => {
     setSelectedService(null);
     setCurrentPage('Contact Us');
-    window.location.hash = 'contact-enquiry';
+    setContactSection('enquiry');
   };
 
   const handleScheduleCallFromService = () => {
     setSelectedService(null);
     setCurrentPage('Contact Us');
-    window.location.hash = 'contact-enquiry';
+    setContactSection('enquiry');
   };
 
   const openDesktopServicesMenu = () => {

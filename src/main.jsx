@@ -3,6 +3,12 @@ import './index.css'
 import App from './App.jsx'
 import { CartProvider } from './context/CartContext.jsx'
 
+const ga4Id = import.meta.env.VITE_GA4_ID;
+
+if (ga4Id && typeof window.gtag === 'function') {
+  window.gtag('config', ga4Id, { send_page_view: false });
+}
+
 const CHUNK_RELOAD_KEY = 'adroit_chunk_reload_once';
 
 const isChunkLoadError = (event) => {

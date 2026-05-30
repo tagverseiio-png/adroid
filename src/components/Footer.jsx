@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, ArrowUp, Linkedin, Youtube } from 'lucide-react';
 import { inquiriesAPI } from '../services/api';
+import { trackLead } from '../utils/googleTag';
 
 const CONTACT_ADDRESS = import.meta.env.VITE_CONTACT_ADDRESS;
 const CONTACT_EMAILS = import.meta.env.VITE_CONTACT_EMAILS;
@@ -54,6 +55,10 @@ const Footer = ({ setPage, setProjectDivision }) => {
             });
 
             if (response.success) {
+                trackLead({
+                    lead_source: 'footer_quick_enquiry',
+                    page_path: window.location.pathname,
+                });
                 setSubmitMessage('✓ Thank you! We will get back to you soon.');
                 setFormData({ name: '', phone: '', email: '' });
                 setTimeout(() => setSubmitMessage(''), 3000);
