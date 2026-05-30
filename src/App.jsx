@@ -116,6 +116,7 @@ const SERVICE_LOOKUP = Object.fromEntries(
 const PATH_TO_PAGE = {
   '/': 'Home',
   '/about': 'Profile',
+  '/service': 'Services',
   '/services': 'Services',
   '/projects': 'Projects',
   '/insights': 'Insights',
@@ -127,7 +128,7 @@ const PATH_TO_PAGE = {
 const PAGE_TO_PATH = {
   Home: '/',
   Profile: '/about',
-  Services: '/services',
+  Services: '/service',
   Projects: '/projects',
   Insights: '/insights',
   Shop: '/shop',
@@ -167,6 +168,11 @@ const readRouteState = () => {
     return { page: 'Shop', isCheckout: true };
   }
 
+  if (pathname.startsWith('/service/')) {
+    const slug = pathname.replace('/service/', '');
+    return { page: 'Services', selectedService: SERVICE_LOOKUP[slug] || null };
+  }
+
   if (pathname.startsWith('/services/')) {
     const slug = pathname.replace('/services/', '');
     return { page: 'Services', selectedService: SERVICE_LOOKUP[slug] || null };
@@ -177,6 +183,14 @@ const readRouteState = () => {
   }
 
   if (pathname === '/services') {
+    const serviceSlug = searchParams.get('service');
+    return {
+      page: 'Services',
+      selectedService: serviceSlug ? SERVICE_LOOKUP[serviceSlug] || null : null,
+    };
+  }
+
+  if (pathname === '/service') {
     const serviceSlug = searchParams.get('service');
     return {
       page: 'Services',
@@ -203,9 +217,9 @@ const buildRoutePath = ({ page, selectedService, selectedShopProduct, isCheckout
 
   if (page === 'Services') {
     if (selectedService?.title) {
-      return `/services/${slugifyRoute(selectedService.title)}`;
+      return `/service/${slugifyRoute(selectedService.title)}`;
     }
-    return '/services';
+    return '/service';
   }
 
   if (page === 'Contact Us') {
