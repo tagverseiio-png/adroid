@@ -42,6 +42,13 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
 
             await inquiriesAPI.create(inquiryData);
 
+            // Google Ads conversion tracking for successful contact inquiries.
+            if (activeSection === 'enquiry' && typeof window !== 'undefined' && typeof window.gtag === 'function') {
+                window.gtag('event', 'conversion', {
+                    send_to: 'AW-957803764',
+                });
+            }
+
             trackLead({
                 lead_source: 'contact_page',
                 lead_type: activeSection,
