@@ -55,9 +55,17 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                 page_path: window.location.pathname,
             });
 
+            // Push event to Google Tag Manager
+            if (typeof window !== 'undefined') {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    event: 'form_submission_success',
+                    formType: activeSection
+                });
+            }
+
             setIsSuccess(true);
             setFormState({ name: '', email: '', subject: '', message: '', company: '', phone: '', category: '', subCategory: '' });
-            setTimeout(() => setIsSuccess(false), 5000);
         } catch (error) {
             console.error('Submission error:', error);
             alert('Failed to submit. Please try again.');
