@@ -20,7 +20,6 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
         name: '', email: '', subject: '', message: '', company: '', phone: '', category: '', subCategory: ''
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -64,8 +63,11 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                 });
             }
 
-            setIsSuccess(true);
             setFormState({ name: '', email: '', subject: '', message: '', company: '', phone: '', category: '', subCategory: '' });
+            
+            // Navigate to thanks page
+            window.history.pushState({}, '', '/contact/thanks');
+            window.dispatchEvent(new PopStateEvent('popstate'));
         } catch (error) {
             console.error('Submission error:', error);
             alert('Failed to submit. Please try again.');
@@ -386,15 +388,7 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                             )}
                         </AnimatePresence>
 
-                        {isSuccess && (
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-[#050505] flex items-center justify-center z-50 p-12 text-center">
-                                <div>
-                                    <h3 className="text-2xl font-logo text-[#C5A059] mb-4">Thank You</h3>
-                                    <p className="text-white/60 font-sans">Your submission has been received. Our team will review and contact you shortly.</p>
-                                    <button onClick={() => setIsSuccess(false)} className="mt-8 text-[10px] tracking-widest uppercase underline decoration-[#C5A059] underline-offset-8">Close</button>
-                                </div>
-                            </motion.div>
-                        )}
+
                     </motion.div>
                 </div>
             </div>

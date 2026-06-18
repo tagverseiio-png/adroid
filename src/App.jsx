@@ -18,6 +18,7 @@ const ServicesPage = React.lazy(() => import('./ServicesPage'));
 const ServiceDetailPage = React.lazy(() => import('./ServiceDetailPage'));
 const AboutPage = React.lazy(() => import('./AboutPage'));
 const ContactPage = React.lazy(() => import('./ContactPage'));
+const ContactThanksPage = React.lazy(() => import('./ContactThanksPage'));
 const CareersPage = React.lazy(() => import('./CareersPage'));
 
 // --- Lazy Shop Imports ---
@@ -123,6 +124,7 @@ const PATH_TO_PAGE = {
   '/shop': 'Shop',
   '/careers': 'Careers',
   '/contact': 'Contact Us',
+  '/contact/thanks': 'Contact Thanks',
 };
 
 const PAGE_TO_PATH = {
@@ -134,6 +136,7 @@ const PAGE_TO_PATH = {
   Shop: '/shop',
   Careers: '/careers',
   'Contact Us': '/contact',
+  'Contact Thanks': '/contact/thanks',
 };
 
 const normalizePathname = (pathname) => {
@@ -176,6 +179,10 @@ const readRouteState = () => {
   if (pathname.startsWith('/services/')) {
     const slug = pathname.replace('/services/', '');
     return { page: 'Services', selectedService: SERVICE_LOOKUP[slug] || null };
+  }
+
+  if (pathname === '/contact/thanks') {
+    return { page: 'Contact Thanks' };
   }
 
   if (pathname === '/contact') {
@@ -228,6 +235,8 @@ const buildRoutePath = ({ page, selectedService, selectedShopProduct, isCheckout
       : '/contact';
   }
 
+  if (page === 'Contact Thanks') return '/contact/thanks';
+
   if (page === 'Profile') return '/about';
   if (page === 'Projects') return '/projects';
   if (page === 'Insights') return '/insights';
@@ -239,6 +248,7 @@ const buildRoutePath = ({ page, selectedService, selectedShopProduct, isCheckout
 const getPageTitle = ({ page, selectedService, selectedShopProduct, isCheckout }) => {
   if (page === 'Profile') return 'About Us';
   if (page === 'Contact Us') return 'Contact Us';
+  if (page === 'Contact Thanks') return 'Thank You';
   if (page === 'Projects') return 'Projects';
   if (page === 'Insights') return 'Insights';
   if (page === 'Careers') return 'Careers';
@@ -687,6 +697,7 @@ const App = () => {
           )}
           {currentPage === 'Profile' && <AboutPage />}
           {currentPage === 'Contact Us' && <ContactPage initialSection={contactSection} />}
+          {currentPage === 'Contact Thanks' && <ContactThanksPage />}
           {currentPage === 'Careers' && <CareersPage />}
           {currentPage === 'Shop' && (
             isCheckout ? (
