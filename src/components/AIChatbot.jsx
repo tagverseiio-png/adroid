@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { MessageSquare, X, Loader, ArrowRight, Send, RotateCcw, Sparkles } from 'lucide-react';
+import { MessageSquare, X, Loader, ArrowRight, Send, RotateCcw, Sparkles, Phone } from 'lucide-react';
 import { projectsAPI, normalizeAssetUrl } from '../services/api';
 
 const CHATBOT_API_URL = import.meta.env.VITE_CHATBOT_URL;
@@ -332,23 +332,47 @@ const AIChatbot = ({ setPage = () => {} }) => {
     /* ── Render ─────────────────────────────────────────────────────── */
     return (
         <>
-            {/* Floating Action Button */}
-            <motion.div
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-40"
-            >
-                <button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="relative bg-[#0a0a0a] text-white p-4 rounded-full shadow-2xl cursor-pointer hover:bg-[#C5A059] transition-colors duration-500 border border-white/10"
-                    aria-label={isOpen ? 'Close chat' : 'Open chat'}
+            {/* Floating Action Buttons Container */}
+            <div className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-40 flex flex-col gap-4 items-end">
+                {/* Call Button */}
+                <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                 >
-                    {isOpen ? <X size={20} /> : <MessageSquare size={20} />}
-                    {!isOpen && (
-                        <span className="absolute -top-1 -right-1 w-3 h-3 bg-[#C5A059] rounded-full animate-pulse" />
-                    )}
-                </button>
-            </motion.div>
+                    <a
+                        href="tel:+919940064343"
+                        onClick={(e) => {
+                            if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+                                window.gtag('event', 'conversion', {
+                                    'send_to': 'AW-957803764/G2R0CI32lKQcEPTZ28gD'
+                                });
+                            }
+                        }}
+                        className="flex items-center justify-center w-[52px] h-[52px] bg-[#C5A059] text-black rounded-full shadow-2xl hover:bg-white transition-colors duration-500 border border-black/10"
+                        aria-label="Call us"
+                        title="Call +91 99400 64343"
+                    >
+                        <Phone size={20} className="fill-current" />
+                    </a>
+                </motion.div>
+
+                {/* Chatbot Button */}
+                <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                >
+                    <button
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="relative flex items-center justify-center w-[52px] h-[52px] bg-[#0a0a0a] text-white rounded-full shadow-2xl cursor-pointer hover:bg-[#C5A059] transition-colors duration-500 border border-white/10"
+                        aria-label={isOpen ? 'Close chat' : 'Open chat'}
+                    >
+                        {isOpen ? <X size={20} /> : <MessageSquare size={20} />}
+                        {!isOpen && (
+                            <span className="absolute -top-1 -right-1 w-3 h-3 bg-[#C5A059] rounded-full animate-pulse" />
+                        )}
+                    </button>
+                </motion.div>
+            </div>
 
             <AnimatePresence>
                 {isOpen && (
