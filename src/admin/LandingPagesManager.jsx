@@ -7,7 +7,7 @@ export default function LandingPagesManager({ onNavigate }) {
 
     const fetchPages = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('adroit_token');
             const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
             const res = await fetch(`${apiUrl}/api/landing-pages`, {
                 headers: { 'Authorization': `Bearer ${token}` }
@@ -33,7 +33,7 @@ export default function LandingPagesManager({ onNavigate }) {
         const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('adroit_token');
             const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
             const res = await fetch(`${apiUrl}/api/landing-pages`, {
                 method: 'POST',
@@ -54,7 +54,7 @@ export default function LandingPagesManager({ onNavigate }) {
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this page?")) return;
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('adroit_token');
             const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
             await fetch(`${apiUrl}/api/landing-pages/${id}`, {
                 method: 'DELETE',
@@ -69,7 +69,7 @@ export default function LandingPagesManager({ onNavigate }) {
     const handleToggleStatus = async (id, currentStatus) => {
         const newStatus = currentStatus === 'published' ? 'draft' : 'published';
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('adroit_token');
             const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
             await fetch(`${apiUrl}/api/landing-pages/${id}`, {
                 method: 'PUT',

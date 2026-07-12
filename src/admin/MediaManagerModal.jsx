@@ -8,7 +8,7 @@ export default function MediaManagerModal({ isOpen, onClose, onSelect }) {
 
     const fetchMedia = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('adroit_token');
             const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
             const res = await fetch(`${apiUrl}/api/lp-media`, {
                 headers: { 'Authorization': `Bearer ${token}` }
@@ -37,7 +37,7 @@ export default function MediaManagerModal({ isOpen, onClose, onSelect }) {
         formData.append('image', file);
 
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('adroit_token');
             const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
             const res = await fetch(`${apiUrl}/api/lp-media`, {
                 method: 'POST',
@@ -60,7 +60,7 @@ export default function MediaManagerModal({ isOpen, onClose, onSelect }) {
         e.stopPropagation();
         if(!window.confirm("Delete this image?")) return;
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('adroit_token');
             const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
             await fetch(`${apiUrl}/api/lp-media/${id}`, {
                 method: 'DELETE',
