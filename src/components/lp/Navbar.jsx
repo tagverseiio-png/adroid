@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import LeadFormModal from "./LeadFormModal";
 
 export default function Navbar() {
@@ -42,8 +42,8 @@ export default function Navbar() {
           <a href="#why" onClick={() => setIsOpen(false)}>Why Adroit</a>
           <a href="#process" onClick={() => setIsOpen(false)}>Process</a>
           <a href="#faq" onClick={() => setIsOpen(false)}>FAQ</a>
-          <button
-            className="btn solid"
+          <button 
+            className="btn solid" 
             style={{ justifyContent: "center" }}
             onClick={() => {
               setIsOpen(false);

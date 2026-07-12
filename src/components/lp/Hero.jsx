@@ -23,9 +23,10 @@ export default function Hero({ data = {} }) {
       <section className="hero" id="top">
         <div className="wrap hero-wrap">
           <div className="hero-content">
-            {eyebrow && <p className="eyebrow hero-eyebrow">{eyebrow}</p>}
+            <p className="eyebrow hero-eyebrow" dangerouslySetInnerHTML={{ __html: eyebrow }} />
             <h1 className="hero-h1" dangerouslySetInnerHTML={{ __html: headline }} />
             <p className="lead" dangerouslySetInnerHTML={{ __html: sub_headline }} />
+            
             <div className="hero-ctas">
               {primary_cta && (
                 <button className="btn solid" onClick={() => setIsModalOpen(true)}>
@@ -38,6 +39,7 @@ export default function Hero({ data = {} }) {
                 </a>
               )}
             </div>
+            
             {stats && stats.length > 0 && (
               <div className="hero-stats">
                 {stats.map((s, i) => (
@@ -49,16 +51,18 @@ export default function Hero({ data = {} }) {
               </div>
             )}
           </div>
+          
           <div className="hero-image-wrapper">
             <img
               src={image_url}
-              alt="Hero"
+              alt="Building Architecture"
               className="hero-building-img"
             />
           </div>
         </div>
       </section>
-      <LeadFormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} data={data} />
+      
+      <LeadFormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );
 }

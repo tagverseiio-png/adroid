@@ -1,42 +1,66 @@
-import React from "react";
+import React, { useState } from "react";
+import LeadFormModal from "./LeadFormModal";
 
 export default function Services({ data = {} }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const {
-    eyebrow = "CORE SERVICES",
-    headline = "Comprehensive Solutions",
+    eyebrow = "ONE PARTNER. COMPLETE PROJECT DELIVERY.",
+    headline = "Corporate & Commercial Interior Services",
     items = [
       {
-        title: "Interior Design",
-        desc: "Award-winning corporate and commercial interior design focusing on functionality and brand identity."
-      },
-      {
-        title: "Turnkey Fit-Out",
-        desc: "End-to-end execution of interior projects, managing everything from procurement to final installation."
+        title: "Corporate & Commercial Interior Design",
+        desc: "Functional, efficient and inspiring workplaces designed around your business requirements, operations and brand identity."
       },
       {
         title: "Design & Build",
-        desc: "Integrated project delivery with single-point accountability for both design and construction phases."
+        desc: "Integrated design, engineering, procurement and execution under a single point of responsibility."
+      },
+      {
+        title: "Turnkey Interior Execution",
+        desc: "End-to-end execution covering interiors, civil works, MEP, furniture, specialist installations and final handover."
+      },
+      {
+        title: "Project Management",
+        desc: "Professional planning, cost control, quality management and project monitoring for predictable outcomes."
       }
-    ]
+    ],
+    primary_cta = "Request a Free Site Visit"
   } = data;
 
   return (
-    <section className="services">
-      <div className="wrap">
-        <div className="section-head">
-          {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-          {headline && <h2 dangerouslySetInnerHTML={{ __html: headline }} />}
+    <>
+      <section className="services" id="services">
+        <div className="wrap">
+          <div className="section-head">
+            {eyebrow && <p className="eyebrow" dangerouslySetInnerHTML={{ __html: eyebrow }} />}
+            {headline && <h2 dangerouslySetInnerHTML={{ __html: headline }} />}
+          </div>
+          
+          <div className="svc-grid">
+            {items && items.map((service, index) => (
+              <div className="svc-card" key={index}>
+                <span className="idx">{String(index + 1).padStart(2, '0')}</span>
+                <h3>{service.title}</h3>
+                <p>{service.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ textAlign: "center", marginTop: "48px" }}>
+            {primary_cta && (
+              <button
+                className="btn solid"
+                onClick={() => setIsModalOpen(true)}
+              >
+                {primary_cta}
+              </button>
+            )}
+          </div>
         </div>
-        <div className="services-grid">
-          {items && items.map((service, index) => (
-            <div className="service-card" key={index}>
-              <div className="sc-icon">0{index + 1}</div>
-              <h3>{service.title}</h3>
-              <p>{service.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+      </section>
+      
+      <LeadFormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} data={data} />
+    </>
   );
 }

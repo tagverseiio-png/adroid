@@ -1,50 +1,78 @@
 import React, { useState } from "react";
+import LeadFormModal from "./LeadFormModal";
 
 export default function FAQ({ data = {} }) {
-  const [openIndex, setOpenIndex] = useState(0);
+  const [openIndex, setOpenIndex] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const {
     eyebrow = "FAQ",
     headline = "Frequently Asked Questions",
     items = [
       {
-        question: "What is a Design & Build contract?",
-        answer: "In a Design & Build contract, Adroit Design takes full responsibility for both the architectural/interior design and the construction/fit-out execution. This ensures a single point of contact, better cost control, and faster project delivery."
+        question: "Does Adroit provide complete Design & Build services?",
+        answer: "Yes. Our services can cover Interior Design, Engineering, MEP, Procurement, Execution, Project Management and final handover."
       },
       {
-        question: "Do you handle statutory approvals?",
-        answer: "Yes, our team assists in obtaining necessary statutory approvals and NOCs required for commercial and corporate interior projects."
+        question: "What types of projects does Adroit undertake?",
+        answer: "We specialise in medium to large-scale Corporate and Commercial Interior Projects."
       },
       {
-        question: "What is the typical timeline for an office interior project?",
-        answer: "Timelines vary based on project scale and complexity. However, a standard 10,000 sq.ft. corporate office fit-out typically takes 45 to 60 days from design sign-off."
+        question: "Can Adroit undertake projects across multiple locations?",
+        answer: "Yes. We undertake projects across Chennai, Bengaluru and other locations based on project requirements."
+      },
+      {
+        question: "How does Adroit manage project quality and costs?",
+        answer: "Through detailed BOQs, systematic project planning, cost monitoring, QA/QC procedures and professional project management."
       }
-    ]
+    ],
+    primary_cta = "Ask Us a Question"
   } = data;
 
-  const toggle = (i) => setOpenIndex(openIndex === i ? -1 : i);
+  const toggleFAQ = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
 
   return (
-    <section className="faq bg-paper" id="faq">
-      <div className="wrap">
-        <div className="section-head text-center">
-          {eyebrow && <p className="eyebrow justify-center">{eyebrow}</p>}
-          {headline && <h2 dangerouslySetInnerHTML={{ __html: headline }} />}
-        </div>
-        <div className="faq-list">
-          {items && items.map((faq, i) => (
-            <div className={`faq-item ${openIndex === i ? 'open' : ''}`} key={i}>
-              <button className="faq-q" onClick={() => toggle(i)}>
-                {faq.question}
-                <span className="faq-icon"></span>
-              </button>
-              <div className="faq-a">
-                <p>{faq.answer}</p>
+    <>
+      <section className="faq" id="faq">
+        <div className="wrap">
+          <div className="section-head">
+            {eyebrow && <p className="eyebrow" style={{ visibility: eyebrow ? 'visible' : 'hidden' }} dangerouslySetInnerHTML={{ __html: eyebrow }} />}
+            {headline && <h2 dangerouslySetInnerHTML={{ __html: headline }} />}
+          </div>
+          
+          <div className="faq-list">
+            {items && items.map((faq, idx) => (
+              <div key={idx} className={`faq-item ${openIndex === idx ? "open" : ""}`}>
+                <button className="faq-q" onClick={() => toggleFAQ(idx)}>
+                  {faq.question}
+                  <span className="plus">+</span>
+                </button>
+                <div
+                  className="faq-a"
+                  style={{ maxHeight: openIndex === idx ? "500px" : "0" }}
+                >
+                  <p>{faq.answer}</p>
+                </div>
               </div>
+            ))}
+          </div>
+
+          {primary_cta && (
+            <div style={{ textAlign: "center", marginTop: "48px" }}>
+              <button
+                className="btn solid"
+                onClick={() => setIsModalOpen(true)}
+              >
+                {primary_cta}
+              </button>
             </div>
-          ))}
+          )}
         </div>
-      </div>
-    </section>
+      </section>
+      
+      <LeadFormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} data={data} />
+    </>
   );
 }

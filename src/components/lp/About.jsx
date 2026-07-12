@@ -1,43 +1,53 @@
-import React from "react";
+import React, { useState } from "react";
+import AdroitLogo from './AdroitLogo';
+import LeadFormModal from './LeadFormModal';
 
 export default function About({ data = {} }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const {
-    eyebrow = "A LEGACY OF EXCELLENCE",
-    headline = "Adroit Design India Pvt. Ltd. is a multi-disciplinary architecture and interior design firm.",
-    body = "Since 2003, we have successfully delivered comprehensive Design & Build solutions for leading corporate brands across India. Our expertise spans corporate offices, commercial centers, healthcare facilities, and hospitality venues.<br/><br/>With an in-house team of architects, engineers, and project managers, we ensure seamless execution from initial concept to final handover.",
-    stats = [
-      { num: "20+", lbl: "Years in Business" },
-      { num: "500+", lbl: "Completed Projects" },
-      { num: "Pan India", lbl: "Presence" }
-    ],
-    image_url = "https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=2000&auto=format&fit=crop"
+    eyebrow = "TRUSTED BY LEADING BUSINESSES",
+    headline = "Adroit partners with Corporates, Institutions and Businesses to design and deliver high-quality workplaces and commercial environments.",
+    primary_cta = "GET A FREE VISIT"
   } = data;
 
   return (
-    <section className="about">
-      <div className="wrap">
-        <div className="about-grid">
-          <div className="about-content">
-            {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-            {headline && <h2 style={{ marginBottom: "24px" }} dangerouslySetInnerHTML={{ __html: headline }} />}
-            {body && <p className="body-text" dangerouslySetInnerHTML={{ __html: body }} />}
-            
-            {stats && stats.length > 0 && (
-              <div style={{ display: 'flex', gap: '32px', marginTop: '40px' }}>
-                {stats.map((s, i) => (
-                  <div key={i}>
-                    <div style={{ fontSize: '24px', fontFamily: 'var(--display)', color: 'var(--brass)' }}>{s.num}</div>
-                    <div style={{ fontSize: '12px', opacity: 0.6 }}>{s.lbl}</div>
-                  </div>
-                ))}
-              </div>
-            )}
+    <>
+      <section className="about" id="trusted" style={{ textAlign: "center" }}>
+        <div className="wrap">
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "15px", marginBottom: "20px" }}>
+            <span style={{ width: "40px", height: "1px", backgroundColor: "#050505" }}></span>
+            <p style={{ color: "#050505", margin: 0, letterSpacing: "2px", fontSize: "14px", fontWeight: "600" }} dangerouslySetInnerHTML={{ __html: eyebrow }}></p>
+            <span style={{ width: "40px", height: "1px", backgroundColor: "#050505" }}></span>
           </div>
-          <div className="about-image">
-            <img src={image_url} alt="About Us" />
+          
+          <p style={{ maxWidth: "600px", margin: "0 auto 40px", fontSize: "20px", color: "#050505", fontWeight: "700", lineHeight: "1.75" }} dangerouslySetInnerHTML={{ __html: headline }} />
+          
+          <div className="client-logos" style={{ display: "flex", gap: "30px", justifyContent: "center", flexWrap: "wrap", marginBottom: "40px" }}>
+            <AdroitLogo width="300" height="112" textColor="#050505" />
+          </div>
+
+          <div style={{ marginTop: "20px" }}>
+            <button onClick={() => setIsModalOpen(true)} style={{
+              display: "inline-block",
+              backgroundColor: "#c29b62",
+              color: "#111111",
+              padding: "16px 32px",
+              textDecoration: "none",
+              fontSize: "14px",
+              fontWeight: "600",
+              letterSpacing: "2px",
+              border: "none",
+              cursor: "pointer",
+              fontFamily: "inherit"
+            }}>
+              {primary_cta}
+            </button>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+      
+      <LeadFormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} data={data} />
+    </>
   );
 }

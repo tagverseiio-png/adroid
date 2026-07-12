@@ -136,14 +136,14 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
 
     const DEFAULT_SCHEMAS = {
         hero: { eyebrow: "", headline: "", sub_headline: "", primary_cta: "", secondary_cta: "", image_url: "", stats: [] },
-        about: { eyebrow: "", headline: "", body: "", image_url: "", stats: [] },
-        services: { eyebrow: "", headline: "", items: [] },
-        portfolio: { eyebrow: "", headline: "", featured_projects: [] },
-        why_us: { eyebrow: "", headline: "", items: [] },
-        process: { eyebrow: "", headline: "", steps: [] },
-        testimonials: { eyebrow: "", headline: "", items: [] },
-        faq: { eyebrow: "", headline: "", items: [] },
-        contact: { eyebrow: "", headline: "", body: "", address: "", phone: "", email: "" }
+        about: { eyebrow: "", headline: "", primary_cta: "" },
+        services: { eyebrow: "", headline: "", primary_cta: "", items: [] },
+        portfolio: { eyebrow: "", headline: "", primary_cta: "", featured_projects: [] },
+        why_us: { eyebrow: "", headline: "", primary_cta: "", image_url: "", items: [] },
+        process: { eyebrow: "", headline: "", sub_headline: "", primary_cta: "", steps: [] },
+        testimonials: { eyebrow: "", headline: "", primary_cta: "", items: [] },
+        faq: { eyebrow: "", headline: "", primary_cta: "", items: [] },
+        contact: { eyebrow: "", headline: "", body: "" }
     };
 
     if (loading || !page) return <div className="p-10 text-center text-white/50 pt-24">Loading editor...</div>;

@@ -7,51 +7,90 @@ export default function Portfolio({ data = {} }) {
   const {
     eyebrow = "PROJECTS THAT DEMONSTRATE OUR CAPABILITIES.",
     headline = "Explore projects where Adroit united design, engineering, and execution to deliver success.",
-    cta_text = "See Full Portfolio",
-    featured_projects = []
+    featured_projects = [],
+    primary_cta = "See Full Portfolio"
   } = data;
+
+  const defaultProjects = [
+    {
+      title: "Tech Park HQ, 28,000 sq.ft.",
+      category: "Office Interior · Turnkey Fit-Out",
+      tag: "Corporate Office",
+      image: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop"
+    },
+    {
+      title: "Flagship Fashion Showroom",
+      category: "Commercial Interior · Retail Design",
+      tag: "Retail",
+      image: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=800&auto=format&fit=crop"
+    },
+    {
+      title: "Financial Services Office",
+      category: "Corporate Interior · Renovation",
+      tag: "Corporate Office",
+      image: "https://images.unsplash.com/photo-1556761175-4b46a572b786?q=80&w=800&auto=format&fit=crop"
+    },
+    {
+      title: "Boutique Restaurant Interior",
+      category: "Commercial Interior · Turnkey Build",
+      tag: "Hospitality",
+      image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop"
+    },
+    {
+      title: "Multi-Speciality Clinic Fit-Out",
+      category: "Commercial Interior · Turnkey Fit-Out",
+      tag: "Healthcare",
+      image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=800&auto=format&fit=crop"
+    },
+    {
+      title: "IT Campus Workspace Expansion",
+      category: "Corporate Interior · Space Planning",
+      tag: "Corporate Office",
+      image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=800&auto=format&fit=crop"
+    }
+  ];
+
+  const projectsToDisplay = featured_projects.length > 0 ? featured_projects : defaultProjects;
 
   return (
     <section className="portfolio" id="projects">
       <div className="wrap">
         <div className="section-head" style={{ maxWidth: "100%" }}>
-          {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+          {eyebrow && <p className="eyebrow" dangerouslySetInnerHTML={{ __html: eyebrow }} />}
           {headline && <h2 style={{ lineHeight: 1.2, maxWidth: "100%" }} dangerouslySetInnerHTML={{ __html: headline }} />}
         </div>
         
-        {featured_projects && featured_projects.length > 0 ? (
-          <div className="proj-grid">
-            {featured_projects.map((proj, idx) => (
-              <div className="proj-card" key={idx}>
-                <div className="proj-thumb">
-                  <img src={proj.image || "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop"} alt={proj.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  {proj.category && <span className="tag">{proj.category}</span>}
-                </div>
-                <div className="proj-info">
-                  <h4>{proj.title}</h4>
-                  {proj.subtitle && <p>{proj.subtitle}</p>}
-                </div>
+        <div className="proj-grid">
+          {projectsToDisplay.map((proj, idx) => (
+            <div className="proj-card" key={idx}>
+              <div className="proj-thumb">
+                <img 
+                  src={proj.image} 
+                  alt={proj.title} 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                />
+                <span className="tag">{proj.tag || proj.category.split('·')[0].trim()}</span>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div style={{ textAlign: "center", padding: "40px", color: "var(--line)" }}>
-            No projects selected for this campaign.
-          </div>
-        )}
+              <div className="proj-info">
+                <h4>{proj.title}</h4>
+                <p>{proj.category}</p>
+              </div>
+            </div>
+          ))}
+        </div>
 
-        {/* CTA Button */}
-        {cta_text && (
+        {primary_cta && (
           <div style={{ textAlign: "center", marginTop: "48px" }}>
             <button
               className="btn solid"
               onClick={() => setIsModalOpen(true)}
             >
-              {cta_text}
+              {primary_cta}
             </button>
           </div>
         )}
       </div>
+      
       <LeadFormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} data={data} />
     </section>
   );

@@ -1,52 +1,77 @@
-import React from "react";
+import React, { useState } from "react";
+import LeadFormModal from "./LeadFormModal";
 
 export default function WhyUs({ data = {} }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const {
-    eyebrow = "WHY ADROIT?",
-    headline = "The Adroit Advantage",
+    eyebrow = "Why Adroit",
+    headline = "Built For Businesses Where Quality, Cost And Timelines Matter.",
     items = [
       {
-        title: "Single Point of Responsibility",
-        desc: "We manage the entire project lifecycle, eliminating the hassle of coordinating with multiple vendors and contractors."
+        title: "Single-Point Accountability",
+        desc: "One experienced team coordinating your project from concept to successful completion."
       },
       {
-        title: "In-House Expertise",
-        desc: "Our team comprises seasoned architects, interior designers, MEP engineers, and project managers under one roof."
+        title: "Multidisciplinary Expertise",
+        desc: "Integrated Interior Design, Civil, MEP, Procurement and Project Management capabilities."
       },
       {
-        title: "Value Engineering",
-        desc: "We optimize designs to deliver maximum impact within your budget, without compromising on quality."
+        title: "Transparent Project Control",
+        desc: "Detailed BOQs, cost monitoring, progress tracking and systematic project management."
       },
       {
-        title: "Transparent Process",
-        desc: "Clear timelines, detailed BOQs, and regular progress updates keep you informed at every stage."
+        title: "Quality-Focused Execution",
+        desc: "Structured QA/QC procedures throughout project execution and final handover."
       }
-    ]
+    ],
+    primary_cta = "Talk To Our Consultant",
+    image_url = "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1200&auto=format&fit=crop"
   } = data;
 
   return (
-    <section className="why-us">
-      <div className="wrap">
-        <div className="section-head">
-          {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-          {headline && <h2 dangerouslySetInnerHTML={{ __html: headline }} />}
-        </div>
-        <div className="why-grid">
-          {items && items.map((item, index) => (
-            <div className="why-card" key={index}>
-              <div className="why-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-              </div>
-              <div className="why-text">
-                <h3>{item.title}</h3>
-                <p>{item.desc}</p>
-              </div>
+    <>
+      <section className="why" id="why">
+        <div className="wrap why-grid">
+          <div>
+            {eyebrow && <p className="eyebrow" dangerouslySetInnerHTML={{ __html: eyebrow }} />}
+            {headline && <h2 className="section-h2" style={{ marginBottom: "34px" }} dangerouslySetInnerHTML={{ __html: headline }} />}
+            
+            <div className="why-list">
+              {items && items.map((item, index) => (
+                <div className="why-item" key={index}>
+                  <span className="mark">→</span>
+                  <div>
+                    <h4>{item.title}</h4>
+                    <p>{item.desc}</p>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+
+            {primary_cta && (
+              <div className="why-cta-container">
+                <button
+                  className="btn solid"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  {primary_cta}
+                </button>
+              </div>
+            )}
+          </div>
+          
+          <div className="why-visual">
+            <img
+              src={image_url}
+              alt="Why Adroit"
+              loading="lazy"
+            />
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+      
+      <LeadFormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} data={data} />
+    </>
   );
 }
