@@ -57,7 +57,7 @@ router.post('/', auth, async (req, res) => {
         const result = await query(
             `INSERT INTO landing_pages (name, slug, status, sections, sections_order, seo) 
              VALUES ($1, $2, 'draft', $3, $4, $5) RETURNING *`,
-            [name, slug, defaultSections, defaultOrder, {}]
+            [name, slug, JSON.stringify(defaultSections), JSON.stringify(defaultOrder), JSON.stringify({})]
         );
         res.status(201).json({ success: true, data: result.rows[0] });
     } catch (error) {
@@ -83,7 +83,13 @@ router.put('/:id', auth, async (req, res) => {
                 seo = COALESCE($4, seo),
                 updated_at = NOW()
              WHERE id = $5 RETURNING *`,
-            [status ?? c.status, sections ?? c.sections, sections_order ?? c.sections_order, seo ?? c.seo, id]
+            [
+                status ?? c.status, 
+                sections ? JSON.stringify(sections) : c.sections, 
+                sections_order ? JSON.stringify(sections_order) : c.sections_order, 
+                seo ? JSON.stringify(seo) : c.seo, 
+                id
+            ]
         );
         res.json({ success: true, data: result.rows[0] });
     } catch (error) {
