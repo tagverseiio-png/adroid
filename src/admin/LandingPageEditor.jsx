@@ -247,7 +247,11 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
                                                 {value.map((proj, idx) => (
                                                     <div key={idx} className="flex items-center justify-between bg-black p-2 rounded border border-white/5">
                                                         <div className="flex items-center gap-3">
-                                                            <img src={proj.image || "https://via.placeholder.com/100"} className="w-12 h-10 object-cover rounded"/>
+                                                            {proj.image ? (
+                                                                <img src={proj.image} className="w-12 h-10 object-cover rounded"/>
+                                                            ) : (
+                                                                <div className="w-12 h-10 bg-white/5 border border-white/10 rounded flex items-center justify-center text-[10px] text-white/30">No Img</div>
+                                                            )}
                                                             <div>
                                                                 <div className="text-sm text-white font-bold">{proj.title}</div>
                                                                 <div className="text-xs text-white/40">{proj.category}</div>

@@ -11,46 +11,7 @@ export default function Portfolio({ data = {} }) {
     primary_cta = "See Full Portfolio"
   } = data;
 
-  const defaultProjects = [
-    {
-      title: "Tech Park HQ, 28,000 sq.ft.",
-      category: "Office Interior · Turnkey Fit-Out",
-      tag: "Corporate Office",
-      image: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop"
-    },
-    {
-      title: "Flagship Fashion Showroom",
-      category: "Commercial Interior · Retail Design",
-      tag: "Retail",
-      image: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=800&auto=format&fit=crop"
-    },
-    {
-      title: "Financial Services Office",
-      category: "Corporate Interior · Renovation",
-      tag: "Corporate Office",
-      image: "https://images.unsplash.com/photo-1556761175-4b46a572b786?q=80&w=800&auto=format&fit=crop"
-    },
-    {
-      title: "Boutique Restaurant Interior",
-      category: "Commercial Interior · Turnkey Build",
-      tag: "Hospitality",
-      image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop"
-    },
-    {
-      title: "Multi-Speciality Clinic Fit-Out",
-      category: "Commercial Interior · Turnkey Fit-Out",
-      tag: "Healthcare",
-      image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=800&auto=format&fit=crop"
-    },
-    {
-      title: "IT Campus Workspace Expansion",
-      category: "Corporate Interior · Space Planning",
-      tag: "Corporate Office",
-      image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=800&auto=format&fit=crop"
-    }
-  ];
-
-  const projectsToDisplay = featured_projects.length > 0 ? featured_projects : defaultProjects;
+  const projectsToDisplay = featured_projects || [];
 
   return (
     <section className="portfolio" id="projects">
