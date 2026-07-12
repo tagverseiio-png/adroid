@@ -6,7 +6,7 @@ import ProjectPickerModal from './ProjectPickerModal';
 export default function LandingPageEditor({ pageId, onNavigate }) {
     const [page, setPage] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [saving, setPublishing... useState(false);
+    const [saving, setSaving] = useState(false);
     
     // Editor State
     const [selectedSection, setSelectedSection] = useState(null);
@@ -39,7 +39,7 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
     }, [pageId]);
 
     const handleSave = async () => {
-        setPublishing...ue);
+        setSaving(true);
         try {
             const token = localStorage.getItem('adroit_token');
             const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
@@ -53,7 +53,7 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
         } catch (error) {
             alert(error.message);
         } finally {
-            setPublishing...lse);
+            setSaving(false);
         }
     };
 
