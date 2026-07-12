@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./lp-globals.css";
 
 // Import Landing Page Sections
+import Navbar from "./Navbar";
 import Hero from "./Hero";
 import About from "./About";
 import Services from "./Services";
@@ -30,11 +31,31 @@ export default function LandingPageRenderer({ slug }) {
           throw new Error("Failed to load landing page");
         }
         const json = await res.json();
-        setData(json.data);
+        
+        // Normalize any relative image URLs from the database
+        const normalizeImages = (obj) => {
+            if (typeof obj !== 'object' || obj === null) return obj;
+            if (Array.isArray(obj)) return obj.map(normalizeImages);
+            
+            const newObj = {};
+            for (const key in obj) {
+                let val = obj[key];
+                if (typeof val === 'string' && val.startsWith('/uploads')) {
+                    val = `${apiUrl}${val}`;
+                } else if (typeof val === 'object') {
+                    val = normalizeImages(val);
+                }
+                newObj[key] = val;
+            }
+            return newObj;
+        };
+
+        const normalizedData = normalizeImages(json.data);
+        setData(normalizedData);
         
         // Update document title if SEO data exists
-        if (json.data.seo?.title) {
-          document.title = json.data.seo.title;
+        if (normalizedData.seo?.title) {
+          document.title = normalizedData.seo.title;
         }
       } catch (err) {
         setError(err.message);
@@ -78,6 +99,7 @@ export default function LandingPageRenderer({ slug }) {
 
   return (
     <div className="lp-scope">
+      <Navbar />
       <main>
         {data.sections_order.map((key) => {
           const sectionConfig = data.sections[key];

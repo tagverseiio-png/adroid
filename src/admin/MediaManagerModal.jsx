@@ -6,10 +6,11 @@ export default function MediaManagerModal({ isOpen, onClose, onSelect }) {
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
 
+    const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
+
     const fetchMedia = async () => {
         try {
             const token = localStorage.getItem('adroit_token');
-            const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
             const res = await fetch(`${apiUrl}/api/lp-media`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -61,7 +62,6 @@ export default function MediaManagerModal({ isOpen, onClose, onSelect }) {
         if(!window.confirm("Delete this image?")) return;
         try {
             const token = localStorage.getItem('adroit_token');
-            const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
             await fetch(`${apiUrl}/api/lp-media/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
@@ -99,8 +99,8 @@ export default function MediaManagerModal({ isOpen, onClose, onSelect }) {
                     ) : (
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                             {media.map(m => (
-                                <div key={m.id} className="group relative aspect-video bg-black rounded-lg overflow-hidden border border-white/10 hover:border-[#C5A059] cursor-pointer" onClick={() => onSelect(m.url)}>
-                                    <img src={m.url} alt={m.filename} className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
+                                <div key={m.id} className="group relative aspect-video bg-black rounded-lg overflow-hidden border border-white/10 hover:border-[#C5A059] cursor-pointer" onClick={() => onSelect(m.url.startsWith('http') ? m.url : `${apiUrl}${m.url}`)}>
+                                    <img src={m.url.startsWith('http') ? m.url : `${apiUrl}${m.url}`} alt={m.filename} className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
                                     
                                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                         <div className="bg-[#C5A059] text-black px-3 py-1 rounded font-bold text-sm flex items-center gap-1">
