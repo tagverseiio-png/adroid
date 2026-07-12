@@ -134,10 +134,23 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
         updateSectionContent(sectionKey, fieldKey, arr);
     };
 
+    const DEFAULT_SCHEMAS = {
+        hero: { eyebrow: "", headline: "", sub_headline: "", primary_cta: "", secondary_cta: "", image_url: "", stats: [] },
+        about: { eyebrow: "", headline: "", body: "", image_url: "", stats: [] },
+        services: { eyebrow: "", headline: "", items: [] },
+        portfolio: { eyebrow: "", headline: "", featured_projects: [] },
+        why_us: { eyebrow: "", headline: "", items: [] },
+        process: { eyebrow: "", headline: "", steps: [] },
+        testimonials: { eyebrow: "", headline: "", items: [] },
+        faq: { eyebrow: "", headline: "", items: [] },
+        contact: { eyebrow: "", headline: "", body: "", address: "", phone: "", email: "" }
+    };
+
     if (loading || !page) return <div className="p-10 text-center text-white/50 pt-24">Loading editor...</div>;
 
     const currentSectionConfig = page.sections[selectedSection];
-    const currentContent = currentSectionConfig?.content || {};
+    const defaultContent = DEFAULT_SCHEMAS[selectedSection] || {};
+    const currentContent = { ...defaultContent, ...(currentSectionConfig?.content || {}) };
 
     return (
         <div className="flex h-screen pt-16 bg-[#080808]">

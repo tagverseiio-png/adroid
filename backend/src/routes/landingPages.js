@@ -16,7 +16,7 @@ router.get('/', auth, async (req, res) => {
 // GET single landing page by Slug (Public)
 router.get('/:slug', async (req, res) => {
     try {
-        const result = await query('SELECT * FROM landing_pages WHERE slug = $1 AND status = $2', [req.params.slug, 'published']);
+        const result = await query('SELECT * FROM landing_pages WHERE slug = $1', [req.params.slug]);
         if (result.rows.length === 0) {
             return res.status(404).json({ success: false, message: 'Landing page not found' });
         }
