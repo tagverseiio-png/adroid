@@ -8,7 +8,7 @@ export default function LandingPagesManager({ onNavigate }) {
     const fetchPages = async () => {
         try {
             const token = localStorage.getItem('token');
-            const apiUrl = import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in';
+            const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
             const res = await fetch(`${apiUrl}/api/landing-pages`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -34,7 +34,7 @@ export default function LandingPagesManager({ onNavigate }) {
         
         try {
             const token = localStorage.getItem('token');
-            const apiUrl = import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in';
+            const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
             const res = await fetch(`${apiUrl}/api/landing-pages`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
@@ -55,7 +55,7 @@ export default function LandingPagesManager({ onNavigate }) {
         if (!window.confirm("Are you sure you want to delete this page?")) return;
         try {
             const token = localStorage.getItem('token');
-            const apiUrl = import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in';
+            const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
             await fetch(`${apiUrl}/api/landing-pages/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
@@ -70,7 +70,7 @@ export default function LandingPagesManager({ onNavigate }) {
         const newStatus = currentStatus === 'published' ? 'draft' : 'published';
         try {
             const token = localStorage.getItem('token');
-            const apiUrl = import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in';
+            const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
             await fetch(`${apiUrl}/api/landing-pages/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },

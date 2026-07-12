@@ -23,7 +23,7 @@ export default function LeadForm({ onSuccess, landingPageSlug, data = {} }) {
     };
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "https://api.adroitdesigns.in";
+      const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
       const res = await fetch(`${apiUrl}/api/lp-leads`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

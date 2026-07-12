@@ -9,7 +9,7 @@ export default function LandingPageLeads() {
     const fetchLeads = async () => {
         try {
             const token = localStorage.getItem('token');
-            const apiUrl = import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in';
+            const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
             const res = await fetch(`${apiUrl}/api/lp-leads`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -31,7 +31,7 @@ export default function LandingPageLeads() {
     const updateStatus = async (id, status) => {
         try {
             const token = localStorage.getItem('token');
-            const apiUrl = import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in';
+            const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
             await fetch(`${apiUrl}/api/lp-leads/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },

@@ -23,7 +23,7 @@ export default function LandingPageRenderer({ slug }) {
     
     async function fetchData() {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || "https://api.adroitdesigns.in";
+        const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
         const res = await fetch(`${apiUrl}/api/landing-pages/${slug}`);
         if (!res.ok) {
           if (res.status === 404) throw new Error("Landing Page not found");

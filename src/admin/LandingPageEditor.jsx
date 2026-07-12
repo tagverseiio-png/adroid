@@ -18,7 +18,7 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
         const fetchPage = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const apiUrl = import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in';
+                const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
                 const res = await fetch(`${apiUrl}/api/landing-pages/admin/${pageId}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -42,7 +42,7 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
         setSaving(true);
         try {
             const token = localStorage.getItem('token');
-            const apiUrl = import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in';
+            const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
             const res = await fetch(`${apiUrl}/api/landing-pages/${pageId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },

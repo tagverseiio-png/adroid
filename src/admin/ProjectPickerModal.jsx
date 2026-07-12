@@ -10,7 +10,7 @@ export default function ProjectPickerModal({ isOpen, onClose, onSelect }) {
         if (!isOpen) return;
         const fetchProjects = async () => {
             try {
-                const apiUrl = import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in';
+                const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
                 const res = await fetch(`${apiUrl}/api/projects`);
                 if (res.ok) {
                     const data = await res.json();
