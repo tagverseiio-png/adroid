@@ -64,8 +64,8 @@ export default function ProjectPickerModal({ isOpen, onClose, onSelect }) {
                             {filtered.map(p => (
                                 <div key={p.id} onClick={() => onSelect(p)} className="flex items-center gap-4 p-2 rounded-lg hover:bg-white/5 cursor-pointer border border-transparent hover:border-white/10 transition-colors">
                                     <div className="w-16 h-12 bg-black rounded overflow-hidden flex-shrink-0 border border-white/10">
-                                        {p.images && p.images[0] ? (
-                                            <img src={p.images[0]} alt={p.title} className="w-full h-full object-cover opacity-80" />
+                                        {p.cover_image ? (
+                                            <img src={p.cover_image} alt={p.title} className="w-full h-full object-cover opacity-80" />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center text-white/20 text-xs">No Img</div>
                                         )}

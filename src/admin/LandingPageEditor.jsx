@@ -101,7 +101,7 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
                 id: project.id,
                 title: project.title,
                 category: project.category,
-                image: project.images?.[0] || ""
+                image: project.cover_image || ""
             };
             updateSectionContent('portfolio', 'featured_projects', [...currentProjects, newProject]);
         }
