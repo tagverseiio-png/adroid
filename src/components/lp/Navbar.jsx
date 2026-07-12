@@ -23,7 +23,7 @@ export default function Navbar() {
           </a>
 
           <div className="nav-cta">
-            <button className="btn solid" onClick={() => setIsModalOpen(true)}>
+            <button className="btn" onClick={() => setIsModalOpen(true)}>
               Get a Quote
             </button>
             <button className="menu-btn" aria-label="Menu" onClick={() => setIsOpen(!isOpen)}>

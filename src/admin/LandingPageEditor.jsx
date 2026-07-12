@@ -6,7 +6,7 @@ import ProjectPickerModal from './ProjectPickerModal';
 export default function LandingPageEditor({ pageId, onNavigate }) {
     const [page, setPage] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
+    const [saving, setPublishing... useState(false);
     
     // Editor State
     const [selectedSection, setSelectedSection] = useState(null);
@@ -39,7 +39,7 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
     }, [pageId]);
 
     const handleSave = async () => {
-        setSaving(true);
+        setPublishing...ue);
         try {
             const token = localStorage.getItem('adroit_token');
             const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
@@ -53,7 +53,7 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
         } catch (error) {
             alert(error.message);
         } finally {
-            setSaving(false);
+            setPublishing...lse);
         }
     };
 
@@ -192,8 +192,13 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
                     <a href={`/p/${page.slug}`} target="_blank" rel="noreferrer" className="w-full py-2 bg-white/5 text-white/80 rounded-lg text-sm font-bold flex items-center justify-center gap-2 hover:bg-white/10 transition-colors">
                         <Eye size={16}/> Live Preview
                     </a>
-                    <button onClick={handleSave} disabled={saving} className="w-full py-2 bg-[#C5A059] text-black rounded-lg text-sm font-bold flex items-center justify-center gap-2 hover:bg-[#d4b472] transition-colors">
-                        <Save size={16}/> {saving ? "Saving..." : "Save Changes"}
+                    <button
+                        onClick={handleSave}
+                        disabled={saving}
+                        className="bg-[#C5A059] text-black px-6 py-2 rounded font-bold hover:bg-[#d4b472] transition-colors disabled:opacity-50 flex items-center gap-2"
+                    >
+                        <Save size={18} />
+                        {saving ? 'Publishing...' : 'Publish'}
                     </button>
                 </div>
             </div>
@@ -225,6 +230,7 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
                                                     <ImageIcon size={16}/> Browse Library
                                                 </button>
                                             </div>
+                                            <p className="text-[10px] text-white/30 italic">Click "Browse Library" to select or replace this image.</p>
                                         </div>
                                     );
                                 }
