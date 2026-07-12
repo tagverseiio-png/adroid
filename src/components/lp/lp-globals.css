@@ -130,7 +130,7 @@ html {
 }
 
 /* ---------- NAV ---------- */
-header {
+.lp-scope header {
   position: fixed;
   top: 0;
   left: 0;
@@ -142,7 +142,7 @@ header {
   transition: box-shadow 0.3s ease;
 }
 
-nav {
+.lp-scope nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -406,7 +406,7 @@ nav {
 }
 
 /* ---------- SECTION GENERIC ---------- */
-section {
+.lp-scope section {
   padding: 110px 0;
 }
 
