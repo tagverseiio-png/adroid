@@ -20,6 +20,7 @@ const AboutPage = React.lazy(() => import('./AboutPage'));
 const ContactPage = React.lazy(() => import('./ContactPage'));
 const ContactThanksPage = React.lazy(() => import('./ContactThanksPage'));
 const CareersPage = React.lazy(() => import('./CareersPage'));
+const LandingPageRenderer = React.lazy(() => import('./components/lp/LandingPageRenderer'));
 
 // --- Lazy Shop Imports ---
 const ShopPage = React.lazy(() => import('./shop/ShopPage'));
@@ -153,6 +154,11 @@ const readRouteState = () => {
     return { page: 'Admin' };
   }
 
+  if (pathname.startsWith('/p/')) {
+    const slug = pathname.replace('/p/', '');
+    return { page: 'LandingPage', slug };
+  }
+
   if (hash === '#contact-enquiry') {
     return { page: 'Contact Us', contactSection: 'enquiry' };
   }
@@ -208,9 +214,13 @@ const readRouteState = () => {
   return { page: PATH_TO_PAGE[pathname] || 'Home' };
 };
 
-const buildRoutePath = ({ page, selectedService, selectedShopProduct, isCheckout, contactSection }) => {
+const buildRoutePath = ({ page, selectedService, selectedShopProduct, isCheckout, contactSection, slug }) => {
   if (page === 'Admin') {
     return '/?mode=admin';
+  }
+
+  if (page === 'LandingPage') {
+    return `/p/${slug}`;
   }
 
   if (page === 'Shop') {
@@ -271,6 +281,9 @@ const BlogManager = React.lazy(() => import('./admin/BlogManager'));
 const Inquiries = React.lazy(() => import('./admin/Inquiries'));
 const ProductManager = React.lazy(() => import('./admin/shop/ProductManager'));
 const OrderManager = React.lazy(() => import('./admin/shop/OrderManager'));
+const LandingPagesManager = React.lazy(() => import('./admin/LandingPagesManager'));
+const LandingPageLeads = React.lazy(() => import('./admin/LandingPageLeads'));
+const LandingPageEditor = React.lazy(() => import('./admin/LandingPageEditor'));
 
 // --- Always-loaded Component Imports ---
 import Preloader from './components/Preloader';
@@ -378,6 +391,10 @@ const App = () => {
       setSelectedPost(route.selectedPost || null);
       setIsCheckout(Boolean(route.isCheckout));
       setContactSection(route.contactSection || 'enquiry');
+      
+      if (route.page === 'LandingPage') {
+        window.__landingPageSlug = route.slug;
+      }
 
       window.setTimeout(() => window.scrollTo(0, 0), 0);
     };
@@ -400,6 +417,7 @@ const App = () => {
       selectedShopProduct,
       isCheckout,
       contactSection,
+      slug: window.__landingPageSlug
     });
 
     const currentUrl = `${normalizePathname(window.location.pathname)}${window.location.search || ''}`;
@@ -504,6 +522,9 @@ const App = () => {
           {adminPage === 'inquiries' && <Inquiries />}
           {adminPage === 'shop-products' && <ProductManager />}
           {adminPage === 'shop-orders' && <OrderManager />}
+          {adminPage === 'landing-pages' && <LandingPagesManager onNavigate={setAdminPage} />}
+          {adminPage === 'lp-leads' && <LandingPageLeads />}
+          {adminPage.startsWith('lp-editor-') && <LandingPageEditor pageId={adminPage.replace('lp-editor-', '')} onNavigate={setAdminPage} />}
         </AdminLayout>
       </Suspense>
     );
@@ -526,10 +547,11 @@ const App = () => {
 
 
       {/* Header - Always dark blur */}
+      {currentPage !== 'LandingPage' && (
       <motion.header
         className={`fixed top-0 w-full z-30 transition-all duration-500 border-b ${scrolled
-            ? "bg-[#050505]/95 backdrop-blur-2xl border-white/10 py-3 md:py-4 shadow-2xl"
-            : "bg-[#050505]/75 backdrop-blur-xl border-white/5 py-4 md:py-5"
+          ? "bg-[#050505]/95 backdrop-blur-2xl border-white/10 py-3 md:py-4 shadow-2xl"
+          : "bg-[#050505]/75 backdrop-blur-xl border-white/5 py-4 md:py-5"
           } ${isNavOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -664,6 +686,7 @@ const App = () => {
           </div>
         </div>
       </motion.header>
+      )}
 
       <Navigation
         isOpen={isNavOpen}
@@ -699,6 +722,7 @@ const App = () => {
           {currentPage === 'Contact Us' && <ContactPage initialSection={contactSection} />}
           {currentPage === 'Contact Thanks' && <ContactThanksPage />}
           {currentPage === 'Careers' && <CareersPage />}
+          {currentPage === 'LandingPage' && <LandingPageRenderer slug={window.__landingPageSlug} />}
           {currentPage === 'Shop' && (
             isCheckout ? (
               <CheckoutPage onBack={() => setIsCheckout(false)} />
@@ -712,8 +736,12 @@ const App = () => {
       </Suspense>
 
       <CartDrawer onCheckout={() => { setIsCheckout(true); setCurrentPage('Shop'); }} />
-      <Suspense fallback={null}><AIChatbot setPage={setCurrentPage} /></Suspense>
-      <Footer setPage={handlePageChange} setProjectDivision={setProjectDivision} />
+      {currentPage !== 'LandingPage' && (
+        <>
+          <Suspense fallback={null}><AIChatbot setPage={setCurrentPage} /></Suspense>
+          <Footer setPage={handlePageChange} setProjectDivision={setProjectDivision} />
+        </>
+      )}
     </div>
   );
 };

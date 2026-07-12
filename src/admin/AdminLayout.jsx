@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutDashboard, FolderOpen, PenTool, MessageSquare, LogOut, Menu, X, ShoppingBag, Package, Tag } from 'lucide-react';
+import { LayoutDashboard, FolderOpen, PenTool, MessageSquare, LogOut, Menu, X, ShoppingBag, Package, Tag, MousePointerClick, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const MENU_ITEMS = [
@@ -7,7 +7,10 @@ const MENU_ITEMS = [
     { id: 'projects', label: 'Projects', icon: FolderOpen },
     { id: 'blog', label: 'Blog', icon: PenTool },
     { id: 'inquiries', label: 'Enquiries', icon: MessageSquare },
-    { id: 'divider-shop', label: null, icon: null }, // visual divider
+    { id: 'divider-lp', label: null, icon: null },
+    { id: 'landing-pages', label: 'Landings', icon: MousePointerClick },
+    { id: 'lp-leads', label: 'LP Leads', icon: Users },
+    { id: 'divider-shop', label: null, icon: null },
     { id: 'shop-products', label: 'Products', icon: ShoppingBag },
     { id: 'shop-orders', label: 'Orders', icon: Package },
 ];
