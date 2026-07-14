@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, Mail, MapPin, Phone, Linkedin, Youtube, Building2, UserPlus, MessageSquare } from 'lucide-react';
 import { inquiriesAPI, uploadAPI } from './services/api';
 import { trackLead } from './utils/googleTag';
+
+// Cloudflare Turnstile site key (public key, safe to expose)
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || '';
 
 const CONTACT_SECTIONS = [
     { id: 'enquiry', label: 'Project Enquiry', icon: MessageSquare },
@@ -20,9 +23,69 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
         name: '', email: '', subject: '', message: '', company: '', phone: '', category: '', subCategory: ''
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState('');
+    const enquiryTurnstileRef = useRef(null);
+    const vendorTurnstileRef = useRef(null);
+    const enquiryWidgetId = useRef(null);
+    const vendorWidgetId = useRef(null);
+
+    // Render or re-render Turnstile widget when active section changes
+    useEffect(() => {
+        if (!TURNSTILE_SITE_KEY) return;
+
+        const renderWidget = (ref, widgetIdRef) => {
+            if (!ref.current || !window.turnstile) return;
+            if (widgetIdRef.current != null) return;
+            widgetIdRef.current = window.turnstile.render(ref.current, {
+                sitekey: TURNSTILE_SITE_KEY,
+                theme: 'dark',
+                size: 'compact',
+                callback: (token) => setTurnstileToken(token),
+                'expired-callback': () => setTurnstileToken(''),
+                'error-callback': () => setTurnstileToken(''),
+            });
+        };
+
+        const tryRender = () => {
+            if (!window.turnstile) return;
+            // Reset token on section switch
+            setTurnstileToken('');
+            if (activeSection === 'enquiry') {
+                // Clean up vendor widget if lingering
+                if (vendorWidgetId.current != null) {
+                    window.turnstile.remove(vendorWidgetId.current);
+                    vendorWidgetId.current = null;
+                }
+                renderWidget(enquiryTurnstileRef, enquiryWidgetId);
+            } else if (activeSection === 'vendor') {
+                // Clean up enquiry widget if lingering
+                if (enquiryWidgetId.current != null) {
+                    window.turnstile.remove(enquiryWidgetId.current);
+                    enquiryWidgetId.current = null;
+                }
+                renderWidget(vendorTurnstileRef, vendorWidgetId);
+            }
+        };
+
+        if (window.turnstile) {
+            tryRender();
+        } else {
+            const interval = setInterval(() => {
+                if (window.turnstile) { clearInterval(interval); tryRender(); }
+            }, 200);
+            return () => clearInterval(interval);
+        }
+    }, [activeSection]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Require CAPTCHA token if site key is configured
+        if (TURNSTILE_SITE_KEY && !turnstileToken) {
+            alert('Please complete the security check before submitting.');
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
@@ -37,6 +100,10 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                 type: activeSection,
                 company: formState.company || null,
                 portfolio_link: formState.portfolio_link || null,
+                // Honeypot field value (always blank for real users)
+                website: formState._honeypot || '',
+                // Cloudflare Turnstile token
+                cf_turnstile_response: turnstileToken,
             };
 
             await inquiriesAPI.create(inquiryData);
@@ -64,7 +131,13 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
             }
 
             setFormState({ name: '', email: '', subject: '', message: '', company: '', phone: '', category: '', subCategory: '' });
-            
+            setTurnstileToken('');
+            // Reset Turnstile widget
+            if (window.turnstile) {
+                const wid = activeSection === 'enquiry' ? enquiryWidgetId.current : vendorWidgetId.current;
+                if (wid != null) window.turnstile.reset(wid);
+            }
+
             // Navigate to thanks page
             window.history.pushState({}, '', '/contact/thanks');
             window.dispatchEvent(new PopStateEvent('popstate'));
@@ -199,6 +272,21 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                     </p>
 
                                     <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
+                                        {/* ── Honeypot trap (hidden from real users) ── */}
+                                        <div style={{ position: 'absolute', left: '-9999px', top: '-9999px', height: 0, overflow: 'hidden' }} aria-hidden="true">
+                                            <label htmlFor="cp-enq-website">Website</label>
+                                            <input
+                                                type="text"
+                                                id="cp-enq-website"
+                                                name="_honeypot"
+                                                tabIndex="-1"
+                                                autoComplete="off"
+                                                value={formState._honeypot || ''}
+                                                onChange={handleChange}
+                                                placeholder="Leave this blank"
+                                            />
+                                        </div>
+
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
                                             <input type="text" name="name" placeholder="Full Name" required value={formState.name} className={inputClasses} onChange={handleChange} />
                                             <input type="email" name="email" placeholder="Email Address" required value={formState.email} className={inputClasses} onChange={handleChange} />
@@ -240,7 +328,17 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                         )}
                                         <textarea name="message" placeholder="Message / Specifications" rows={4} required value={formState.message} className={`${inputClasses} resize-none`} onChange={handleChange} />
 
-                                        <button type="submit" disabled={isSubmitting} className="group relative px-8 md:px-10 py-4 md:py-5 bg-[#C5A059] text-black text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase transition-all duration-300 hover:bg-white">
+                                        {/* ── Cloudflare Turnstile CAPTCHA ── */}
+                                        {TURNSTILE_SITE_KEY && (
+                                            <div>
+                                                <div ref={enquiryTurnstileRef} />
+                                                {!turnstileToken && (
+                                                    <p className="text-white/30 text-[11px] mt-2 font-sans">Please complete the security check above to submit.</p>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        <button type="submit" disabled={isSubmitting || (TURNSTILE_SITE_KEY && !turnstileToken)} className="group relative px-8 md:px-10 py-4 md:py-5 bg-[#C5A059] text-black text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase transition-all duration-300 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed">
                                             <span className="flex items-center gap-3">
                                                 {isSubmitting ? 'Processing...' : 'Send Inquiry'}
                                                 <ArrowRight size={16} />
@@ -325,6 +423,21 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                     <p className="text-white/40 text-[13px] md:text-sm mb-10 md:mb-12 font-sans tracking-wide">Join our network of premium suppliers and contractors.</p>
 
                                     <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
+                                        {/* ── Honeypot trap (hidden from real users) ── */}
+                                        <div style={{ position: 'absolute', left: '-9999px', top: '-9999px', height: 0, overflow: 'hidden' }} aria-hidden="true">
+                                            <label htmlFor="cp-vendor-website">Website</label>
+                                            <input
+                                                type="text"
+                                                id="cp-vendor-website"
+                                                name="_honeypot"
+                                                tabIndex="-1"
+                                                autoComplete="off"
+                                                value={formState._honeypot || ''}
+                                                onChange={handleChange}
+                                                placeholder="Leave this blank"
+                                            />
+                                        </div>
+
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
                                             <input type="text" name="company" placeholder="Company Name" required value={formState.company} className={inputClasses} onChange={handleChange} />
                                             <input type="text" name="name" placeholder="Contact Person" required value={formState.name} className={inputClasses} onChange={handleChange} />
@@ -377,7 +490,17 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                             </div>
                                         </div>
 
-                                        <button type="submit" disabled={isSubmitting} className="group relative px-8 md:px-10 py-4 md:py-5 bg-white text-black text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase transition-all duration-300 hover:bg-[#C5A059] hover:text-white">
+                                        {/* ── Cloudflare Turnstile CAPTCHA ── */}
+                                        {TURNSTILE_SITE_KEY && (
+                                            <div>
+                                                <div ref={vendorTurnstileRef} />
+                                                {!turnstileToken && (
+                                                    <p className="text-white/30 text-[11px] mt-2 font-sans">Please complete the security check above to submit.</p>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        <button type="submit" disabled={isSubmitting || (TURNSTILE_SITE_KEY && !turnstileToken)} className="group relative px-8 md:px-10 py-4 md:py-5 bg-white text-black text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase transition-all duration-300 hover:bg-[#C5A059] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed">
                                             <span className="flex items-center gap-3">
                                                 {isSubmitting ? 'Registering...' : 'Register as Vendor'}
                                                 <UserPlus size={16} />

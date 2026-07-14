@@ -1,13 +1,72 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+
+// Cloudflare Turnstile site key (public key, safe to expose)
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || '';
 
 export default function LeadFormModal({ isOpen, onClose, data = {} }) {
   const [loading, setLoading] = useState(false);
-  
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const turnstileRef = useRef(null);
+  const widgetIdRef = useRef(null);
+
   if (!isOpen) return null;
+
+  // Render Cloudflare Turnstile widget when modal opens
+  useEffect(() => {
+    if (!TURNSTILE_SITE_KEY || !turnstileRef.current) return;
+    if (!isOpen) return;
+
+    const renderWidget = () => {
+      if (!window.turnstile) return;
+      if (widgetIdRef.current != null) return;
+
+      widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
+        sitekey: TURNSTILE_SITE_KEY,
+        theme: 'light',
+        size: 'compact',
+        callback: (token) => {
+          setTurnstileToken(token);
+        },
+        'expired-callback': () => {
+          setTurnstileToken('');
+        },
+        'error-callback': () => {
+          setTurnstileToken('');
+        },
+      });
+    };
+
+    if (window.turnstile) {
+      renderWidget();
+    } else {
+      const interval = setInterval(() => {
+        if (window.turnstile) {
+          clearInterval(interval);
+          renderWidget();
+        }
+      }, 200);
+      return () => clearInterval(interval);
+    }
+
+    // Cleanup on unmount / close
+    return () => {
+      if (window.turnstile && widgetIdRef.current != null) {
+        window.turnstile.remove(widgetIdRef.current);
+        widgetIdRef.current = null;
+      }
+    };
+  }, [isOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    // Require CAPTCHA token if site key is configured
+    if (TURNSTILE_SITE_KEY && !turnstileToken) {
+      alert("Please complete the security check before submitting.");
+      setLoading(false);
+      return;
+    }
 
     const formData = {
       name: e.target.name.value,
@@ -15,7 +74,11 @@ export default function LeadFormModal({ isOpen, onClose, data = {} }) {
       phone: e.target.phone.value,
       category: e.target.category.value,
       brief: e.target.brief.value,
-      source: data?.source || 'Landing Page - Modal Form'
+      source: data?.source || 'Landing Page - Modal Form',
+      // Honeypot field — always empty for real users
+      website: e.target.website.value,
+      // Turnstile CAPTCHA token
+      cf_turnstile_response: turnstileToken,
     };
 
     try {
@@ -27,12 +90,17 @@ export default function LeadFormModal({ isOpen, onClose, data = {} }) {
         },
         body: JSON.stringify(formData)
       });
-      
+
       if (res.ok) {
         e.target.reset();
+        setTurnstileToken('');
+        if (window.turnstile && widgetIdRef.current != null) {
+          window.turnstile.reset(widgetIdRef.current);
+        }
         window.location.href = "/thank-you";
       } else {
-        alert("Failed to submit inquiry. Please try again or contact us directly.");
+        const errorData = await res.json().catch(() => ({}));
+        alert(errorData.message || "Failed to submit inquiry. Please try again or contact us directly.");
       }
     } catch (err) {
       console.error(err);
@@ -56,6 +124,19 @@ export default function LeadFormModal({ isOpen, onClose, data = {} }) {
 
         {/* Form */}
         <form className="qe-form" onSubmit={handleSubmit}>
+          {/* ── Honeypot trap (hidden from real users, bots fill this) ─────── */}
+          <div style={{ position: 'absolute', left: '-9999px', top: '-9999px', height: 0, overflow: 'hidden' }} aria-hidden="true">
+            <label htmlFor="lfm-website">Website</label>
+            <input
+              type="text"
+              id="lfm-website"
+              name="website"
+              tabIndex="-1"
+              autoComplete="off"
+              placeholder="Leave this blank"
+            />
+          </div>
+
           {/* Row 1 */}
           <div className="qe-row">
             <div className="qe-field">
@@ -88,8 +169,19 @@ export default function LeadFormModal({ isOpen, onClose, data = {} }) {
             <textarea name="brief" placeholder="Message / Specifications" rows={4} />
           </div>
 
+          {/* ── Cloudflare Turnstile CAPTCHA widget ──────────────────────── */}
+          {TURNSTILE_SITE_KEY && (
+            <div style={{ marginBottom: '0.75rem' }}>
+              <div ref={turnstileRef} />
+            </div>
+          )}
+
           {/* Submit */}
-          <button type="submit" className="qe-submit" disabled={loading}>
+          <button
+            type="submit"
+            className="qe-submit"
+            disabled={loading || (TURNSTILE_SITE_KEY && !turnstileToken)}
+          >
             {loading ? "SENDING..." : "SEND INQUIRY →"}
           </button>
         </form>

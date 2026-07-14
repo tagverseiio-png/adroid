@@ -82,6 +82,17 @@ const moderateLimiter = rateLimit({
     message: { success: false, message: 'Too many requests on this endpoint. Please slow down.' },
 });
 
+// Form: 3 submissions / 10 min per IP — for public enquiry / lead forms (anti-spam)
+const formLimiter = rateLimit({
+    windowMs: (parseInt(process.env.FORM_RATE_WINDOW) || 10) * 60 * 1000,
+    max: parseInt(process.env.FORM_RATE_LIMIT) || 3,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { success: false, message: 'Too many enquiries from this IP. Please wait 10 minutes and try again.' },
+    // Only count POST requests toward the limit
+    skip: (req) => req.method !== 'POST',
+});
+
 app.use('/api/', globalLimiter);
 
 // ── Health Check ──────────────────────────────────────────────────────────────
@@ -94,7 +105,8 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/projects', require('./routes/projects'));
 app.use('/api/blog', require('./routes/blog'));
-app.use('/api/inquiries', require('./routes/inquiries'));
+// Apply strict form rate limiter to public POST enquiry endpoints
+app.use('/api/inquiries', formLimiter, require('./routes/inquiries'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/analytics', require('./routes/analytics'));
 app.use('/api/odoo', require('./routes/odoo'));
@@ -102,7 +114,8 @@ app.use('/api/jobs', require('./routes/jobs'));
 
 // ── Landing Pages API ────────────────────────────────────────────────────────
 app.use('/api/landing-pages', require('./routes/landingPages'));
-app.use('/api/lp-leads', require('./routes/lpLeads'));
+// formLimiter applied here too — landing page lead submissions
+app.use('/api/lp-leads', formLimiter, require('./routes/lpLeads'));
 app.use('/api/lp-media', require('./routes/lpMedia'));
 
 // ── Shop API Routes ───────────────────────────────────────────────────────────
