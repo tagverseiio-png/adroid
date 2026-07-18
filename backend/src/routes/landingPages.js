@@ -100,7 +100,7 @@ router.put('/:id', auth, async (req, res) => {
 // DELETE landing page (Admin)
 router.delete('/:id', auth, async (req, res) => {
     try {
-        await pool.query('DELETE FROM landing_pages WHERE id = $1', [req.params.id]);
+        await query('DELETE FROM landing_pages WHERE id = $1', [req.params.id]);
         res.json({ success: true, message: 'Deleted' });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
