@@ -4,6 +4,7 @@ import MediaManagerModal from './MediaManagerModal';
 import ProjectPickerModal from './ProjectPickerModal';
 
 export default function LandingPageEditor({ pageId, onNavigate }) {
+    const apiUrl = (import.meta.env.VITE_API_URL || 'https://api.adroitdesigns.in').replace(/\/api\/?$/, '');
     const [page, setPage] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -221,7 +222,7 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
                                             <label className="text-xs font-bold text-white/50 uppercase tracking-widest capitalize">{fieldKey.replace(/_/g, ' ')}</label>
                                             <div className="flex items-center gap-4">
                                                 <div className="w-32 h-20 bg-black rounded border border-white/10 overflow-hidden">
-                                                    {value ? <img src={value} className="w-full h-full object-cover"/> : <div className="w-full h-full flex justify-center items-center text-xs text-white/20">No Image</div>}
+                                                    {value ? <img src={value.startsWith('http') ? value : `${apiUrl}${value}`} className="w-full h-full object-cover"/> : <div className="w-full h-full flex justify-center items-center text-xs text-white/20">No Image</div>}
                                                 </div>
                                                 <button 
                                                     onClick={() => { setCurrentImageField({section: selectedSection, key: fieldKey}); setMediaModalOpen(true); }}

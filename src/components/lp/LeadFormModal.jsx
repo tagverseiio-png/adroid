@@ -9,9 +9,8 @@ export default function LeadFormModal({ isOpen, onClose, data = {} }) {
   const turnstileRef = useRef(null);
   const widgetIdRef = useRef(null);
 
-  if (!isOpen) return null;
-
   // Render Cloudflare Turnstile widget when modal opens
+  // NOTE: All hooks must be declared before any conditional return
   useEffect(() => {
     if (!TURNSTILE_SITE_KEY || !turnstileRef.current) return;
     if (!isOpen) return;
@@ -109,6 +108,9 @@ export default function LeadFormModal({ isOpen, onClose, data = {} }) {
       setLoading(false);
     }
   };
+
+  // Early return AFTER all hooks — this is the correct place
+  if (!isOpen) return null;
 
   return (
     <div className="qe-overlay" onClick={onClose}>

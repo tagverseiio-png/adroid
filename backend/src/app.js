@@ -48,6 +48,7 @@ app.use(express.json({ limit: '64kb' }));
 app.use(express.urlencoded({ extended: true, limit: '64kb' }));
 
 // ── Static Files ──────────────────────────────────────────────────────────────
+// Serves all uploaded files: blog, projects, shop, lp-media, etc.
 app.use('/uploads', express.static(path.join(__dirname, '../uploads'), {
     maxAge: '1y',
     etag: true,

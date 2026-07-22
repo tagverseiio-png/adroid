@@ -9,7 +9,7 @@ const { query } = require('../config/database');
 // Setup multer
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const dir = path.join(__dirname, '../../../public/uploads/lp');
+        const dir = path.join(__dirname, '../../uploads/lp');
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true });
         }
@@ -53,7 +53,7 @@ router.delete('/:id', auth, async (req, res) => {
         if (current.rows.length === 0) return res.status(404).json({ success: false, message: 'Not found' });
         
         const fileUrl = current.rows[0].url;
-        const filePath = path.join(__dirname, '../../../public', fileUrl);
+        const filePath = path.join(__dirname, '../../uploads', fileUrl.replace('/uploads', ''));
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
         }
