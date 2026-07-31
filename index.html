@@ -33,7 +33,7 @@
         'phone_conversion_number': '9940064343'
       });
 
-      function gtag_report_conversion(url) {
+      window.gtag_report_conversion = function(url) {
         var callback = function () {
           if (typeof(url) != 'undefined') {
             window.location = url;
@@ -46,7 +46,7 @@
             'event_callback': callback
         });
         return false;
-      }
+      };
     </script>
 
     <!-- Cloudflare Turnstile CAPTCHA (anti-spam for enquiry forms) -->
