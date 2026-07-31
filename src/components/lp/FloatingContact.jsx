@@ -16,7 +16,7 @@ export default function FloatingContact() {
         zIndex: 9999
       }}>
         {/* Phone Button */}
-        <a href="tel:+919940064343" style={{
+        <a href="tel:+919940064343" onClick={() => window.gtag_report_conversion('tel:+919940064343')} style={{
           width: '60px',
           height: '60px',
           borderRadius: '50%',

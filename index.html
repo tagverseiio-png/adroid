@@ -28,10 +28,25 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-8TNXHZ1TLN');
-      gtag('config', 'AW-957803764', { send_page_view: false });
+      gtag('config', 'AW-957803764');
       gtag('config', 'AW-957803764/G2R0CI32lKQcEPTZ28gD', {
         'phone_conversion_number': '9940064343'
       });
+
+      function gtag_report_conversion(url) {
+        var callback = function () {
+          if (typeof(url) != 'undefined') {
+            window.location = url;
+          }
+        };
+        gtag('event', 'conversion', {
+            'send_to': 'AW-957803764/tIXKCInFvdkcEPTZ28gD',
+            'value': 1.0,
+            'currency': 'INR',
+            'event_callback': callback
+        });
+        return false;
+      }
     </script>
 
     <!-- Cloudflare Turnstile CAPTCHA (anti-spam for enquiry forms) -->
