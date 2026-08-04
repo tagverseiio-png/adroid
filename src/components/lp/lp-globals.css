@@ -1156,7 +1156,7 @@ footer {
 @media (max-width: 680px) {
 
   /* Navbar */
-  .nav-links {
+  .nav-links, .nav-cta .btn {
     display: none !important;
   }
 
@@ -1166,7 +1166,11 @@ footer {
 
   /* Layout */
   .wrap {
-    padding: 0 18px;
+    padding: 0 16px;
+  }
+  
+  .lp-scope nav {
+    padding: 16px 16px;
   }
 
   section {
@@ -1238,7 +1242,7 @@ footer {
   }
 
   .hero p.lead {
-    font-size: 15px;
+    font-size: 12px;
     line-height: 1.75;
     max-width: 100%;
     margin-bottom: 28px;
@@ -1356,15 +1360,21 @@ footer {
 
   /* Floating Contact */
   .floating-contact {
-    right: 20px !important;
-    bottom: 20px !important;
-    gap: 12px !important;
+    right: 12px !important;
+    bottom: 12px !important;
+    gap: 10px !important;
   }
 
   .floating-contact a,
   .floating-contact button {
-    width: 50px !important;
-    height: 50px !important;
+    width: 44px !important;
+    height: 44px !important;
+  }
+  
+  .floating-contact a svg,
+  .floating-contact button svg {
+    width: 20px !important;
+    height: 20px !important;
   }
 }
 
