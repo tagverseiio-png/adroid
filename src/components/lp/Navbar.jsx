@@ -18,8 +18,11 @@ export default function Navbar() {
     <>
       <header style={{ boxShadow: scrolled ? "0 8px 24px rgba(0,0,0,0.25)" : "none" }}>
         <nav>
-          <a href="https://www.adroitdesigns.in/" target="_blank" rel="noopener noreferrer" className="logo">
-            Adroit <span>Design</span>
+          <a href="/" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
+            <img src="/logo.png" alt="Adroit Design Logo" style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
+            <div className="logo" style={{ textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 'bold' }}>
+              ADROIT DESIGN
+            </div>
           </a>
 
           <div className="nav-cta">

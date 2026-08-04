@@ -37,6 +37,7 @@ html {
   background: var(--charcoal);
   color: var(--ink);
   font-family: var(--body);
+  font-size: 11px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -66,6 +67,7 @@ html {
   font-weight: 500;
   line-height: 1.08;
   letter-spacing: -0.01em;
+  text-transform: uppercase;
 }
 
 .eyebrow {
@@ -164,7 +166,7 @@ html {
 .nav-links {
   display: flex;
   gap: 34px;
-  font-size: 14px;
+  font-size: 11px;
 }
 
 .nav-links a {
@@ -293,7 +295,7 @@ html {
 }
 
 .hero p.lead {
-  font-size: 15px;
+  font-size: 12px;
   line-height: 1.7;
   color: var(--blueprint-soft);
   max-width: 580px;
@@ -427,7 +429,7 @@ html {
 .section-head p {
   color: var(--ink-dim);
   margin-top: 18px;
-  font-size: 16px;
+  font-size: 12px;
 }
 
 /* ---------- ABOUT ---------- */
@@ -463,7 +465,7 @@ html {
 .about-copy p {
   color: #050505;
   margin-bottom: 18px;
-  font-size: 16px;
+  font-size: 11px;
   max-width: 520px;
 }
 
@@ -528,14 +530,15 @@ html {
 }
 
 .svc-card h3 {
-  font-size: 21px;
+  font-size: 16px;
   margin-bottom: 12px;
   font-weight: 500;
+  text-transform: uppercase;
 }
 
 .svc-card p {
   color: var(--ink-dim);
-  font-size: 14.5px;
+  font-size: 11px;
 }
 
 /* ---------- PROCESS ---------- */
@@ -590,7 +593,7 @@ html {
 }
 
 .process-subtitle {
-  font-size: 16px;
+  font-size: 12px;
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.60);
   max-width: 580px;
@@ -679,12 +682,13 @@ html {
 
 /* Step title */
 .pstep h4 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
   font-family: var(--display);
   margin-bottom: 8px;
   color: var(--ink);
   letter-spacing: -0.01em;
+  text-transform: uppercase;
 }
 
 /* Short descriptor */
@@ -700,7 +704,7 @@ html {
 
 /* Detail text — always visible */
 .step-detail {
-  font-size: 13.5px;
+  font-size: 11px;
   line-height: 1.65;
   color: rgba(255, 255, 255, 0.55);
 }
@@ -741,13 +745,14 @@ html {
 }
 
 .why-item h4 {
-  font-size: 16.5px;
+  font-size: 16px;
   margin-bottom: 6px;
   font-weight: 500;
+  text-transform: uppercase;
 }
 
 .why-item p {
-  font-size: 14px;
+  font-size: 11px;
   color: var(--ink-dim);
 }
 
@@ -841,13 +846,14 @@ html {
 }
 
 .proj-info h4 {
-  font-size: 17px;
+  font-size: 16px;
   margin-bottom: 6px;
   font-weight: 500;
+  text-transform: uppercase;
 }
 
 .proj-info p {
-  font-size: 13px;
+  font-size: 11px;
   color: var(--ink-dim);
   font-family: var(--mono);
   letter-spacing: 0.02em;
@@ -878,7 +884,7 @@ html {
 .testi-card p.quote {
   font-family: var(--display);
   font-style: italic;
-  font-size: 22px;
+  font-size: 16px;
   line-height: 1.6;
   margin-bottom: 28px;
   color: #050505;
@@ -886,7 +892,7 @@ html {
 
 .testi-card .who {
   font-family: var(--mono);
-  font-size: 13.5px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--blueprint);
@@ -947,7 +953,7 @@ html {
 .faq-a p {
   padding-bottom: 24px;
   color: var(--ink-dim);
-  font-size: 15px;
+  font-size: 11px;
   max-width: 680px;
 }
 
@@ -977,6 +983,7 @@ html {
   max-width: 520px;
   margin: 0 auto 34px;
   color: #050505;
+  font-size: 12px;
 }
 
 .cta-form {
@@ -1391,7 +1398,7 @@ footer {
   position: relative;
   width: 100%;
   max-width: 680px;
-  background: #ffffff;
+  background: #f4f4f4;
   padding: 40px 48px 38px;
   border-radius: 4px;
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);

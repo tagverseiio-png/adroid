@@ -69,8 +69,11 @@ export default function LeadFormModal({ isOpen, onClose, data = {} }) {
 
     const formData = {
       name: e.target.name.value,
+      company: e.target.company?.value,
       email: e.target.email.value,
       phone: e.target.phone.value,
+      location: e.target.location?.value,
+      area: e.target.area?.value,
       category: e.target.category.value,
       brief: e.target.brief.value,
       source: data?.source || 'Landing Page - Modal Form',
@@ -145,7 +148,7 @@ export default function LeadFormModal({ isOpen, onClose, data = {} }) {
               <input type="text" name="name" placeholder="Full Name" required />
             </div>
             <div className="qe-field">
-              <input type="email" name="email" placeholder="Email Address" required />
+              <input type="text" name="company" placeholder="Company Name" required />
             </div>
           </div>
 
@@ -155,6 +158,23 @@ export default function LeadFormModal({ isOpen, onClose, data = {} }) {
               <input type="tel" name="phone" placeholder="Phone Number" required />
             </div>
             <div className="qe-field">
+              <input type="email" name="email" placeholder="Official Email ID" required />
+            </div>
+          </div>
+
+          {/* Row 3 */}
+          <div className="qe-row">
+            <div className="qe-field">
+              <input type="text" name="location" placeholder="Project Location" required />
+            </div>
+            <div className="qe-field">
+              <input type="text" name="area" placeholder="Approximate Project Area" />
+            </div>
+          </div>
+
+          {/* Row 4 */}
+          <div className="qe-row">
+            <div className="qe-field qe-field--full">
               <select name="category" defaultValue="" required>
                 <option value="" disabled>Select Category</option>
                 <option value="Office Interior Design">Office Interior Design</option>
@@ -166,7 +186,7 @@ export default function LeadFormModal({ isOpen, onClose, data = {} }) {
             </div>
           </div>
 
-          {/* Row 3 — full width */}
+          {/* Row 5 — full width */}
           <div className="qe-field qe-field--full">
             <textarea name="brief" placeholder="Message / Specifications" rows={4} />
           </div>

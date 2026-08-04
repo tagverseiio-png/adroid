@@ -42,12 +42,13 @@ export default function Portfolio({ data = {} }) {
 
         {primary_cta && (
           <div style={{ textAlign: "center", marginTop: "48px" }}>
-            <button
+            <a
+              href="/projects"
               className="btn solid"
-              onClick={() => setIsModalOpen(true)}
+              style={{ textDecoration: 'none' }}
             >
               {primary_cta}
-            </button>
+            </a>
           </div>
         )}
       </div>
