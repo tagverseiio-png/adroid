@@ -51,7 +51,6 @@ export default function Process({ data = {} }) {
           </div>
 
           <div className="process-timeline">
-            <div className="timeline-line"></div>
             {steps && steps.map((step, i) => (
               <div className="pstep" key={i}>
                 <div className="pstep-dot"></div>
