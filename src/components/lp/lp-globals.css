@@ -426,7 +426,7 @@ html {
   letter-spacing: 0em;
 }
 
-.section-head p {
+.section-head p:not(.eyebrow) {
   color: var(--ink-dim);
   margin-top: 18px;
   font-size: 12px;
