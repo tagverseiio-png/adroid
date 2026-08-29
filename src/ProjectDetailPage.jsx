@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useScroll, useTransform, motion } from "framer-motion";
 import { ArrowLeft, MapPin, Calendar, Maximize2, CheckCircle2 } from "lucide-react";
 import { normalizeAssetUrl } from "./services/api";
 import BackButton from "./components/BackButton";
+import GalleryLightbox from "./components/GalleryLightbox";
 
 export default function ProjectDetailPage({ project, onBack }) {
     const containerRef = useRef(null);
@@ -14,12 +15,17 @@ export default function ProjectDetailPage({ project, onBack }) {
     const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
     const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
+    const [lightboxOpen, setLightboxOpen] = useState(false);
+    const [lightboxIndex, setLightboxIndex] = useState(0);
+
     // Scroll to top when component mounts
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
     if (!project) return null;
+
+    let galleryImages = [];
 
     const resolveImageSrc = (image) => {
         if (!image) return image;
@@ -152,6 +158,9 @@ export default function ProjectDetailPage({ project, onBack }) {
                 if (resolvedImages.length === 0 && (project.cover_image || project.coverImage)) {
                     resolvedImages = [project.cover_image || project.coverImage];
                 }
+
+                // Store for lightbox access
+                galleryImages = resolvedImages.map(resolveImageSrc);
                 
                 if (resolvedImages.length > 0) {
                     return (
@@ -177,7 +186,8 @@ export default function ProjectDetailPage({ project, onBack }) {
                                             whileInView={{ opacity: 1, scale: 1 }}
                                             viewport={{ once: true, margin: "-100px" }}
                                             transition={{ duration: 0.8, delay: (idx % 3) * 0.1, ease: "easeOut" }}
-                                            className="relative overflow-hidden group aspect-[4/3]"
+                                            className="relative overflow-hidden group aspect-[4/3] cursor-pointer"
+                                            onClick={() => { setLightboxIndex(idx); setLightboxOpen(true); }}
                                         >
                                             <img
                                                 src={resolveImageSrc(img)}
@@ -318,6 +328,14 @@ export default function ProjectDetailPage({ project, onBack }) {
                     <span className="h-[1px] w-0 bg-[#C5A059] group-hover:w-full transition-all duration-300" />
                 </motion.button>
             </div>
+
+            <GalleryLightbox
+                images={galleryImages}
+                currentIndex={lightboxIndex}
+                isOpen={lightboxOpen}
+                onClose={() => setLightboxOpen(false)}
+                onNavigate={setLightboxIndex}
+            />
 
         </motion.div >
     );
