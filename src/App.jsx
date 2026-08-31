@@ -359,6 +359,9 @@ const App = () => {
       prevent: (node) => node.closest('[data-lenis-prevent]'),
     });
 
+    // Expose globally so lightbox/modals can stop/start scroll
+    window.__lenis = lenis;
+
     let rafId;
     function raf(time) {
       if (document.hidden) {
@@ -373,6 +376,7 @@ const App = () => {
     return () => {
       cancelAnimationFrame(rafId);
       lenis.destroy();
+      window.__lenis = null;
     };
   }, [currentPage]);
 

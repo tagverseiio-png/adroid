@@ -217,12 +217,10 @@ export default function ProjectsPage({ initialDivision, onDivisionUsed }) {
               onClick={() => fetchProjectDetails(project.slug)}
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-stone-200">
-                <motion.img
+                <img
                   src={normalizeAssetUrl(project.cover_image || project.coverImage || 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800')}
                   alt={project.title}
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
-                  whileHover={{ scale: 1.1 }}
-                  transition={{ duration: 0.7 }}
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
                   onClick={(e) => {
                     if (window.innerWidth < 1024 && e.currentTarget.classList.contains('grayscale')) {
                       e.currentTarget.classList.remove('grayscale');

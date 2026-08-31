@@ -285,7 +285,7 @@ const FeaturedProjectsSection = ({ setPage }) => {
                     >
                         {/* Image */}
                         <div className="w-full aspect-[4/3] overflow-hidden relative bg-stone-200">
-                            <motion.img
+                            <img
                                 src={normalizeAssetUrl(proj.cover_image || proj.coverImage || IMAGES.hero)}
                                 alt={proj.title}
                                 className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 ease-out group-hover:scale-105"

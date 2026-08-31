@@ -13,18 +13,32 @@ export default function GalleryLightbox({ images, currentIndex, isOpen, onClose,
 
     useEffect(() => {
         if (!isOpen) return;
+
         const handleKey = (e) => {
             if (e.key === "Escape") onClose();
             if (e.key === "ArrowLeft") goPrev();
             if (e.key === "ArrowRight") goNext();
         };
         document.addEventListener("keydown", handleKey);
+
+        // Disable body scroll
         document.body.style.overflow = "hidden";
+
+        // Also stop Lenis smooth scroll if available
+        if (window.__lenis) {
+            window.__lenis.stop();
+        }
+
         return () => {
             document.removeEventListener("keydown", handleKey);
             document.body.style.overflow = "";
+            if (window.__lenis) {
+                window.__lenis.start();
+            }
         };
     }, [isOpen, onClose, goPrev, goNext]);
+
+    if (!images || images.length === 0) return null;
 
     return (
         <AnimatePresence>
@@ -35,11 +49,13 @@ export default function GalleryLightbox({ images, currentIndex, isOpen, onClose,
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
                     className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm"
+                    style={{ isolation: "isolate" }}
                     onClick={onClose}
+                    data-lenis-prevent
                 >
                     {/* Close */}
                     <button
-                        onClick={onClose}
+                        onClick={(e) => { e.stopPropagation(); onClose(); }}
                         className="absolute top-4 right-4 md:top-6 md:right-6 z-10 p-2 text-white/70 hover:text-white transition-colors bg-white/10 rounded-full hover:bg-white/20"
                         aria-label="Close"
                     >
@@ -47,7 +63,7 @@ export default function GalleryLightbox({ images, currentIndex, isOpen, onClose,
                     </button>
 
                     {/* Counter */}
-                    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 text-white/50 text-xs tracking-[0.3em] uppercase font-sans">
+                    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 text-white/50 text-xs tracking-[0.3em] uppercase font-sans select-none">
                         {currentIndex + 1} / {images.length}
                     </div>
 
@@ -74,7 +90,11 @@ export default function GalleryLightbox({ images, currentIndex, isOpen, onClose,
                     )}
 
                     {/* Image */}
-                    <div className="w-full h-full flex items-center justify-center p-12 md:p-20" onClick={(e) => e.stopPropagation()}>
+                    <div
+                        className="flex items-center justify-center"
+                        style={{ width: "100%", height: "100%", padding: "60px 80px" }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <AnimatePresence mode="wait">
                             <motion.img
                                 key={currentIndex}
@@ -84,7 +104,16 @@ export default function GalleryLightbox({ images, currentIndex, isOpen, onClose,
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.95 }}
                                 transition={{ duration: 0.25 }}
-                                className="max-w-full max-h-full object-contain select-none"
+                                style={{
+                                    maxWidth: "100%",
+                                    maxHeight: "calc(100vh - 120px)",
+                                    width: "auto",
+                                    height: "auto",
+                                    objectFit: "contain",
+                                    display: "block",
+                                    userSelect: "none",
+                                    margin: "auto",
+                                }}
                                 draggable={false}
                             />
                         </AnimatePresence>
