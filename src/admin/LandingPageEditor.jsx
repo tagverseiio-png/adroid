@@ -25,6 +25,23 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
                 });
                 if (res.ok) {
                     const data = await res.json();
+                    
+                    // Ensure the page only uses the new layout sections
+                    const validSections = ["hero", "process", "projects", "contact"];
+                    
+                    // Filter out old legacy sections
+                    data.data.sections_order = data.data.sections_order.filter(key => validSections.includes(key));
+                    
+                    // Initialize missing sections (like 'projects' which replaced 'portfolio')
+                    validSections.forEach(vs => {
+                        if (!data.data.sections_order.includes(vs)) {
+                            data.data.sections_order.push(vs);
+                        }
+                        if (!data.data.sections[vs]) {
+                            data.data.sections[vs] = { enabled: true, content: {} };
+                        }
+                    });
+
                     setPage(data.data);
                     if (data.data.sections_order.length > 0) {
                         setSelectedSection(data.data.sections_order[0]);
