@@ -54,7 +54,7 @@ export default function ConsultationModal({ isOpen, onClose }) {
           className="absolute top-4 right-4 text-[#66605B] hover:text-[#2C1D11] bg-[#ECE7DF]/50 hover:bg-[#ECE7DF] p-2 rounded-full transition-colors"
           aria-label="Close Modal"
         >
-          <svg className="w-5 h-5" ="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
@@ -155,8 +155,8 @@ export default function ConsultationModal({ isOpen, onClose }) {
         ) : (
           /* Thank You Screen */
           <div className="text-center py-6 space-y-5">
-            <div className="w-14 h-14 bg-[#B85A32]/10 text-[#B85A32] rounded-full flex items-center justify-center mx-auto">
-              <svg className="w-7 h-7" ="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-14 h-14 bg-[#B85A32]/10 text-[#B85A32] rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -172,7 +172,7 @@ export default function ConsultationModal({ isOpen, onClose }) {
                 href="tel:+919940064343"
                 className="w-full sm:w-auto bg-[#B85A32] hover:bg-[#9A4623] text-white font-semibold text-xs px-5 py-3 rounded shadow transition-all uppercase tracking-wider flex items-center justify-center gap-2"
               >
-                <svg className="w-4 h-4" ="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
                 Call Now: +91 99400 64343

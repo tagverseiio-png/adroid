@@ -48,12 +48,12 @@ const AdroitIcon = ({ width = 48, height = 48, className = "" }) => {
     <svg viewBox="150 0 100 100" width={width} height={height} className={className} xmlns="http://www.w3.org/2000/svg">
       <g>
         {/* Green Triangle segment - between Bottom-Right (162deg, index 2) and Bottom-Left (234deg, index 3) */}
-        <polygon points={`${cx},${cy} ${pts[2].x},${pts[2].y} ${pts[3].x},${pts[3].y}`} ="#7ac142" />
+        <polygon points={`${cx},${cy} ${pts[2].x},${pts[2].y} ${pts[3].x},${pts[3].y}`} fill="#7ac142" />
 
         {/* Concentric pentagons */}
-        <polygon points={ptsInner1.map(p => `${p.x},${p.y}`).join(' ')} ="none" stroke="#888" strokeWidth="0.75" />
-        <polygon points={ptsInner2.map(p => `${p.x},${p.y}`).join(' ')} ="none" stroke="#888" strokeWidth="0.75" />
-        <polygon points={pts.map(p => `${p.x},${p.y}`).join(' ')} ="none" stroke="#888" strokeWidth="0.75" />
+        <polygon points={ptsInner1.map(p => `${p.x},${p.y}`).join(' ')} fill="none" stroke="#888" strokeWidth="0.75" />
+        <polygon points={ptsInner2.map(p => `${p.x},${p.y}`).join(' ')} fill="none" stroke="#888" strokeWidth="0.75" />
+        <polygon points={pts.map(p => `${p.x},${p.y}`).join(' ')} fill="none" stroke="#888" strokeWidth="0.75" />
 
         {/* Spokes */}
         {pts.map((p, i) => (
@@ -62,11 +62,11 @@ const AdroitIcon = ({ width = 48, height = 48, className = "" }) => {
 
         {/* Arrows at the end of spokes */}
         {arrows.map((points, i) => (
-          <polygon key={i} points={points} ="#999" />
+          <polygon key={i} points={points} fill="#999" />
         ))}
 
         {/* Orange Center */}
-        <circle cx={cx} cy={cy} r="5" ="#f58220" />
+        <circle cx={cx} cy={cy} r="5" fill="#f58220" />
       </g>
     </svg>
   );

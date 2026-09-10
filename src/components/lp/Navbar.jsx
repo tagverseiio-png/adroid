@@ -47,7 +47,7 @@ export default function Navbar({ onOpenModal }) {
               className="md:hidden p-2 rounded text-white hover:bg-white/10 transition-colors"
               aria-label="Toggle mobile menu"
             >
-              <svg className="w-6 h-6" ="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {mobileMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (
