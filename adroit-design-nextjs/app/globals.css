@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Beige palette — unchanged */
+  --color-beige-50: #FAF8F5;
+  --color-beige-100: #F5F2EB;
+  --color-beige-150: #EFEAE0;
+  --color-beige-200: #EBE5DA;
+  --color-beige-250: #E2DACD;
+  --color-beige-300: #D6CCBC;
+  --color-beige-400: #B8AB98;
+
+  /* Dark ink / text palette — unchanged */
+  --color-arch-ink: #0F172A;
+  --color-arch-slate: #1E293B;
+  --color-arch-steel: #334155;
+  --color-arch-muted: #64748B;
+  --color-arch-line: #CBD5E1;
+
+  /* ✅ Brand light brown palette */
+  --color-lightblue-50: #F8F4F0;
+  --color-lightblue-100: #EBE2D7;
+  --color-lightblue-200: #D8C3A9;
+  --color-lightblue-300: #C4A179;
+  --color-lightblue-400: #B78D5B;
+  --color-lightblue-500: #A67C52;
+  /* Primary — matches AdroitIcon */
+  --color-lightblue-600: #88623E;
+  /* Deepened for CTA text / hover */
+  --color-lightblue-700: #6B4B2D;
+}
+
+@utility blueprint-grid-beige {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(166, 124, 82, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(166, 124, 82, 0.07) 1px, transparent 1px);
+}
+
+@utility blueprint-grid-dense-beige {
+  background-size: 20px 20px;
+  background-image:
+    linear-gradient(to right, rgba(166, 124, 82, 0.10) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(166, 124, 82, 0.10) 1px, transparent 1px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #EBE5DA;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D8C3A9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #A67C52;
+}
