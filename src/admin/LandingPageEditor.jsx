@@ -136,15 +136,10 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
     };
 
     const DEFAULT_SCHEMAS = {
-        hero: { eyebrow: "", headline: "", sub_headline: "", primary_cta: "", secondary_cta: "", image_url: "", stats: [] },
-        about: { eyebrow: "", headline: "", primary_cta: "" },
-        services: { eyebrow: "", headline: "", primary_cta: "", items: [] },
-        portfolio: { eyebrow: "", headline: "", primary_cta: "", featured_projects: [] },
-        why_us: { eyebrow: "", headline: "", primary_cta: "", image_url: "", items: [] },
-        process: { eyebrow: "", headline: "", sub_headline: "", primary_cta: "", steps: [] },
-        testimonials: { eyebrow: "", headline: "", primary_cta: "", items: [] },
-        faq: { eyebrow: "", headline: "", primary_cta: "", items: [] },
-        contact: { eyebrow: "", headline: "", body: "" }
+        hero: { eyebrow: "Residential Construction Company", headline: "Residential Construction Contractors Chennai", sub_headline: "Design & Build Your Dream Home With Adroit Designs", body: "Adroit Design designs and builds homes end-to-end...", primary_cta: "Get Free Consultation", phone: "+91 99400 64343", image_url: "/hero_image.jpeg", stats: [{label: "15+ Years Experience"}], tags: [{label: "Independent Houses"}] },
+        process: { headline: "Transparent Construction Process", sub_headline: "From the first meeting to handing over the keys...", steps: [{title: "Initial Consultation", desc: "Understanding your vision..."}] },
+        projects: { headline: "Our Recent Residential Projects", sub_headline: "Explore our portfolio...", featured_projects: [] },
+        contact: { headline: "Get in Touch", sub_headline: "Ready to start?", address: "Chennai, India", phone: "+91 99400 64343", email: "info@adroitdesigns.in", map_url: "" }
     };
 
     if (loading || !page) return <div className="p-10 text-center text-white/50 pt-24">Loading editor...</div>;

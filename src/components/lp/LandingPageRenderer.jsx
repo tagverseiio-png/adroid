@@ -3,21 +3,18 @@ import "./lp-globals.css";
 
 // Import Landing Page Sections
 import Navbar from "./Navbar";
-import Hero from "./Hero";
-import About from "./About";
-import Services from "./Services";
-import Portfolio from "./Portfolio";
-import WhyUs from "./WhyUs";
-import Process from "./Process";
-import Testimonials from "./Testimonials";
-import FAQ from "./FAQ";
-import Contact from "./Contact";
-import FloatingContact from "./FloatingContact";
+import HeroSection from "./HeroSection";
+import ProcessSection from "./ProcessSection";
+import ProjectsSection from "./ProjectsSection";
+import ContactSection from "./ContactSection";
+import ConsultationModal from "./ConsultationModal";
+import Footer from "./Footer";
 
 export default function LandingPageRenderer({ slug }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
@@ -32,30 +29,11 @@ export default function LandingPageRenderer({ slug }) {
         }
         const json = await res.json();
         
-        // Normalize any relative image URLs from the database
-        const normalizeImages = (obj) => {
-            if (typeof obj !== 'object' || obj === null) return obj;
-            if (Array.isArray(obj)) return obj.map(normalizeImages);
-            
-            const newObj = {};
-            for (const key in obj) {
-                let val = obj[key];
-                if (typeof val === 'string' && val.startsWith('/uploads')) {
-                    val = `${apiUrl}${val}`;
-                } else if (typeof val === 'object') {
-                    val = normalizeImages(val);
-                }
-                newObj[key] = val;
-            }
-            return newObj;
-        };
-
-        const normalizedData = normalizeImages(json.data);
-        setData(normalizedData);
+        setData(json.data);
         
         // Update document title if SEO data exists
-        if (normalizedData.seo?.title) {
-          document.title = normalizedData.seo.title;
+        if (json.data?.seo?.title) {
+          document.title = json.data.seo.title;
         }
       } catch (err) {
         setError(err.message);
@@ -68,7 +46,7 @@ export default function LandingPageRenderer({ slug }) {
 
   if (loading) {
     return (
-      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#050505', color: '#c5a059' }}>
+      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2C1D11', color: '#B85A32' }}>
         Loading...
       </div>
     );
@@ -76,42 +54,33 @@ export default function LandingPageRenderer({ slug }) {
 
   if (error || !data) {
     return (
-      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#050505', color: 'white', flexDirection: 'column' }}>
-        <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>404</h1>
+      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2C1D11', color: 'white', flexDirection: 'column' }}>
+        <h1 style={{ fontSize: '3rem', marginBottom: '1rem', fontFamily: "'Cormorant Garamond', serif" }}>404</h1>
         <p>{error || "Page Not Found"}</p>
-        <a href="/" style={{ marginTop: '2rem', color: '#c5a059' }}>Return Home</a>
+        <a href="/" style={{ marginTop: '2rem', color: '#B85A32' }}>Return Home</a>
       </div>
     );
   }
 
-  // Component Mapping
-  const sectionMap = {
-    hero: Hero,
-    about: About,
-    services: Services,
-    portfolio: Portfolio,
-    why_us: WhyUs,
-    process: Process,
-    testimonials: Testimonials,
-    faq: FAQ,
-    contact: Contact,
-  };
-
   return (
-    <div className="lp-scope">
-      <Navbar />
+    <div className="lp-scope antialiased">
+      <Navbar onOpenModal={() => setIsModalOpen(true)} />
       <main>
-        {data.sections_order.map((key) => {
-          const sectionConfig = data.sections[key];
-          // Check if section exists in map and is enabled
-          if (sectionMap[key] && sectionConfig?.enabled) {
-            const Component = sectionMap[key];
-            return <Component key={key} data={sectionConfig.content} />;
-          }
-          return null;
-        })}
+        {(!data.sections?.hero || data.sections.hero.enabled !== false) && (
+          <HeroSection onOpenModal={() => setIsModalOpen(true)} data={data.sections?.hero?.content} />
+        )}
+        {(!data.sections?.process || data.sections.process.enabled !== false) && (
+          <ProcessSection onOpenModal={() => setIsModalOpen(true)} data={data.sections?.process?.content} />
+        )}
+        {(!data.sections?.projects || data.sections.projects.enabled !== false) && (
+          <ProjectsSection onOpenModal={() => setIsModalOpen(true)} data={data.sections?.projects?.content} />
+        )}
+        {(!data.sections?.contact || data.sections.contact.enabled !== false) && (
+          <ContactSection onOpenModal={() => setIsModalOpen(true)} data={data.sections?.contact?.content} />
+        )}
       </main>
-      <FloatingContact data={data.sections.contact?.content || {}} />
+      <Footer />
+      <ConsultationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }
