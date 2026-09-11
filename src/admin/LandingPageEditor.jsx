@@ -112,7 +112,7 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
     };
 
     const handleProjectSelect = (project) => {
-        const currentProjects = page.sections['portfolio']?.content?.featured_projects || [];
+        const currentProjects = page.sections['projects']?.content?.featured_projects || [];
         // prevent duplicate
         if (!currentProjects.find(p => p.id === project.id)) {
             const newProject = {
@@ -121,16 +121,16 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
                 category: project.category,
                 image: project.cover_image || ""
             };
-            updateSectionContent('portfolio', 'featured_projects', [...currentProjects, newProject]);
+            updateSectionContent('projects', 'featured_projects', [...currentProjects, newProject]);
         }
         setProjectModalOpen(false);
     };
 
     const removeProject = (index) => {
-        const currentProjects = page.sections['portfolio']?.content?.featured_projects || [];
+        const currentProjects = page.sections['projects']?.content?.featured_projects || [];
         const newArray = [...currentProjects];
         newArray.splice(index, 1);
-        updateSectionContent('portfolio', 'featured_projects', newArray);
+        updateSectionContent('projects', 'featured_projects', newArray);
     };
 
     // Generic Array Handler (for FAQs, Process steps, etc.)
