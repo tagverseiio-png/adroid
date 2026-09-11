@@ -11,7 +11,7 @@ const CustomCursor = () => {
 
     const lerp = (a, b, n) => a + (b - a) * n;
 
-    const animate = useCallback(() => {
+    const animate = useCallback(function loop() {
         if (!isVisible.current) {
             isAnimating.current = false;
             rafId.current = null;
@@ -34,7 +34,7 @@ const CustomCursor = () => {
 
         // Keep animating only while the cursor is catching up.
         if (dx > 0.2 || dy > 0.2) {
-            rafId.current = requestAnimationFrame(animate);
+            rafId.current = requestAnimationFrame(loop);
         } else {
             isAnimating.current = false;
             rafId.current = null;

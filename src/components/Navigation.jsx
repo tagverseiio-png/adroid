@@ -1,6 +1,5 @@
 import React from 'react';
 // eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion';
 import { X, Linkedin, Youtube, ChevronDown } from 'lucide-react';
 
 // Import local images for services

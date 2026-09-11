@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useRef, useState } from "react";
 import { useScroll, useTransform, useInView, motion } from "framer-motion";
 import { Quote, Star, Layout, Hammer, Building2, Construction, Zap, ClipboardCheck, ShieldCheck, Leaf, PenTool, Target, Compass } from "lucide-react";

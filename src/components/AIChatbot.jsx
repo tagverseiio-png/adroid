@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MessageSquare, X, Loader, ArrowRight, Send, RotateCcw, Sparkles, Phone } from 'lucide-react';

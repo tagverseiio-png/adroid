@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
+
 import { Plus, Edit2, Trash2, Star, Eye, EyeOff, Search, Loader2, X, Upload, Package } from 'lucide-react';
 import { shopAPI, categoriesAPI, uploadAPI, normalizeAssetUrl } from '../../services/api';
 

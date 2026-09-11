@@ -21,7 +21,7 @@ const OrderTracking = () => {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [searched, setSearched] = useState(false);
+    
     const [copied, setCopied] = useState(false);
 
     const handleCopy = () => {
@@ -41,7 +41,7 @@ const OrderTracking = () => {
         setLoading(true);
         setError('');
         setOrder(null);
-        setSearched(true);
+        
         try {
             const res = await orderAPI.lookup(orderNumber.trim(), email.trim());
             if (res.success) setOrder(res.data);

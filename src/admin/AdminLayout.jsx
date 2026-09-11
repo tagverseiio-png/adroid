@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { LayoutDashboard, FolderOpen, PenTool, MessageSquare, LogOut, Menu, X, ShoppingBag, Package, Tag, MousePointerClick, Users } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 
 const MENU_ITEMS = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },

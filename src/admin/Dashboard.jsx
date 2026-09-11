@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { ArrowUpRight, Users, Eye, Folder, FileText, Plus, PenTool, MessageSquare, TrendingUp } from 'lucide-react';
 import { projectsAPI, blogAPI, inquiriesAPI, normalizeAssetUrl } from '../services/api';
 

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Lock } from 'lucide-react';
 // eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion';
 import { authAPI } from '../services/api';
 
 const Login = ({ onLogin }) => {

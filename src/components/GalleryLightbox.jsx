@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function GalleryLightbox({ images, currentIndex, isOpen, onClose, onNavigate }) {

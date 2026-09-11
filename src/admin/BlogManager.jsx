@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Upload, Image as ImageIcon } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { blogAPI, uploadAPI, getApiOrigin } from '../services/api';
 
 const MAIN_CATEGORY = 'Insights';

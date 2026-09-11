@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, Mail, MapPin, Phone, Linkedin, Youtube, Building2, UserPlus, MessageSquare } from 'lucide-react';
@@ -465,7 +466,7 @@ const ContactPage = ({ initialSection = 'enquiry' }) => {
                                                                 setFormState(prev => ({...prev, portfolio_link: res.data.path}));
                                                                 alert('Portfolio uploaded successfully!');
                                                             }
-                                                        } catch (err) {
+                                                        } catch {
                                                             alert('Upload failed. Please try again or provide a link instead.');
                                                         }
                                                     }

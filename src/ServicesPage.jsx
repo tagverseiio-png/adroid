@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 // eslint-disable-next-line no-unused-vars
-import { motion } from "framer-motion";
 import SafeImage from "./components/SafeImage";
 
 // Import images directly for production reliability

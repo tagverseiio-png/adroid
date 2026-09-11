@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+
 import { ArrowRight, Calendar, User } from 'lucide-react';
 import { blogAPI, normalizeAssetUrl } from '../services/api';
 

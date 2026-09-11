@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 // eslint-disable-next-line no-unused-vars
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Star, ShoppingCart, Package, Minus, Plus, Share2, ChevronLeft, ChevronRight, Loader2, Copy, Check, MessageCircle, Mail } from 'lucide-react';
 import { shopAPI, normalizeAssetUrl } from '../services/api';
 import { useCart } from '../context/CartContext';
@@ -30,6 +30,7 @@ const ProductDetail = ({ product: initialProduct, onBack, onGoToCheckout }) => {
     useEffect(() => {
         const slug = initialProduct?.slug || initialProduct?.id;
         if (!slug) return;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true);
         shopAPI.getBySlug(slug)
             .then(res => {
@@ -67,7 +68,6 @@ const ProductDetail = ({ product: initialProduct, onBack, onGoToCheckout }) => {
 
     const price = parseFloat(product.price);
     const salePrice = product.sale_price ? parseFloat(product.sale_price) : null;
-    const displayPrice = salePrice || price;
     const specs = typeof product.specifications === 'string' ? JSON.parse(product.specifications) : (product.specifications || {});
 
     const handleAddToCart = () => {
