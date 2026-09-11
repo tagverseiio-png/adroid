@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useState, useEffect, useRef } from 'react';
 import { Plus, Edit2, Trash2, Save, X, Star, Upload, Image as ImageIcon, Camera, ChevronRight, Eye, EyeOff } from 'lucide-react';
-import { AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { projectsAPI, uploadAPI, getApiOrigin, normalizeAssetUrl } from '../services/api';
 import { ARCHITECTURE_CATEGORIES, INTERIOR_CATEGORIES } from '../data/projectCategories';
 

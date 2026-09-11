@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React, { useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, User, Share2, Tag, MessageSquare, Send } from 'lucide-react';
 
 import { normalizeAssetUrl } from '../services/api';

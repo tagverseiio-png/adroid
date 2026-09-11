@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
+import { motion } from 'framer-motion';
 // eslint-disable-next-line no-unused-vars
 
 const Preloader = ({ setLoading }) => {

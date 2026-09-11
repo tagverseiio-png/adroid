@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useState, useEffect, useCallback } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     Package, Truck, Eye, X, Loader2, Search, RefreshCw,
     CheckCircle, XCircle, Clock, AlertTriangle, Ban,

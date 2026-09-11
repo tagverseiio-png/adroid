@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useMemo } from "react";
-import { AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { PROJECTS } from "@/data/projects.data";
 import { CATEGORIES } from "@/data/projectCategories";

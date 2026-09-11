@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useCallback } from "react";
-import { AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function GalleryLightbox({ images, currentIndex, isOpen, onClose, onNavigate }) {

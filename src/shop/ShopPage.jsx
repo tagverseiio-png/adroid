@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 // eslint-disable-next-line no-unused-vars
-import { AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Search, SlidersHorizontal, Star, ShoppingBag, ChevronDown, X, Loader2, ShoppingCart } from 'lucide-react';
 import { shopAPI, categoriesAPI, normalizeAssetUrl } from '../services/api';
 import { useCart } from '../context/CartContext';

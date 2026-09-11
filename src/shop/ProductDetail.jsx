@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 // eslint-disable-next-line no-unused-vars
-import { AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Star, ShoppingCart, Package, Minus, Plus, Share2, ChevronLeft, ChevronRight, Loader2, Copy, Check, MessageCircle, Mail } from 'lucide-react';
 import { shopAPI, normalizeAssetUrl } from '../services/api';
 import { useCart } from '../context/CartContext';

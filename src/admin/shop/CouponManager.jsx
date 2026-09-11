@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React, { useState, useEffect, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { Plus, Trash2, Edit2, X, Loader2, Tag } from 'lucide-react';
 import { couponAPI } from '../../services/api';
 

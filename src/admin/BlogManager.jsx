@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Plus, Edit2, Trash2, Upload, Image as ImageIcon } from 'lucide-react';
 import { blogAPI, uploadAPI, getApiOrigin } from '../services/api';
 

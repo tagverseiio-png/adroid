@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Lock } from 'lucide-react';
 // eslint-disable-next-line no-unused-vars
 import { authAPI } from '../services/api';
