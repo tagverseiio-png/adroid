@@ -43,19 +43,23 @@ export default function HeroSection({ onOpenModal, data = {} }) {
 
             {stats && stats.length > 0 && (
               <div className="flex flex-wrap gap-6 text-sm font-semibold text-[#2C1D11] border-l-4 border-[#B85A32] pl-4 py-1">
-                {stats.map((s, i) => (
-                  <span key={i} className={i === 1 ? "text-[#B85A32]" : ""}>{s.label || s}</span>
-                ))}
+                {stats.map((s, i) => {
+                  const text = typeof s === 'string' ? s : (s.label || s.lbl || s.text || s.value || Object.values(s).find(v => typeof v === 'string') || '');
+                  return <span key={i} className={i === 1 ? "text-[#B85A32]" : ""}>{text}</span>;
+                })}
               </div>
             )}
 
             {tags && tags.length > 0 && (
               <div className="flex flex-wrap gap-2">
-                {tags.map((tag, i) => (
-                  <span key={i} className="text-xs bg-[#ECE7DF]/50 text-[#242220] px-3 py-1 rounded border border-[#ECE7DF]">
-                    {tag.label || tag}
-                  </span>
-                ))}
+                {tags.map((tag, i) => {
+                  const text = typeof tag === 'string' ? tag : (tag.label || tag.lbl || tag.text || tag.value || Object.values(tag).find(v => typeof v === 'string') || '');
+                  return (
+                    <span key={i} className="text-xs bg-[#ECE7DF]/50 text-[#242220] px-3 py-1 rounded border border-[#ECE7DF]">
+                      {text}
+                    </span>
+                  );
+                })}
               </div>
             )}
 
