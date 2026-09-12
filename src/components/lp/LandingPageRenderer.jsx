@@ -79,7 +79,7 @@ export default function LandingPageRenderer({ slug }) {
           <ContactSection onOpenModal={() => setIsModalOpen(true)} data={data.sections?.contact?.content} />
         )}
       </main>
-      <Footer />
+      <Footer data={data.sections?.footer?.content} />
       <ConsultationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );

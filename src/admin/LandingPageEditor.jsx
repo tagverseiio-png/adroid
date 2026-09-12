@@ -27,7 +27,7 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
                     const data = await res.json();
                     
                     // Ensure the page only uses the new layout sections
-                    const validSections = ["hero", "process", "projects", "contact"];
+                    const validSections = ["hero", "process", "projects", "contact", "footer"];
                     
                     // Filter out old legacy sections
                     data.data.sections_order = data.data.sections_order.filter(key => validSections.includes(key));
@@ -156,7 +156,17 @@ export default function LandingPageEditor({ pageId, onNavigate }) {
         hero: { eyebrow: "Residential Construction Company", headline: "Residential Construction Contractors Chennai", sub_headline: "Design & Build Your Dream Home With Adroit Designs", body: "Adroit Design designs and builds homes end-to-end...", primary_cta: "Get Free Consultation", phone: "+91 99400 64343", image_url: "/hero_image.jpeg", stats: [{label: "15+ Years Experience"}], tags: [{label: "Independent Houses"}] },
         process: { headline: "Transparent Construction Process", sub_headline: "From the first meeting to handing over the keys...", steps: [{title: "Initial Consultation", desc: "Understanding your vision..."}] },
         projects: { headline: "Our Recent Residential Projects", sub_headline: "Explore our portfolio...", featured_projects: [] },
-        contact: { headline: "Get in Touch", sub_headline: "Ready to start?", address: "Chennai, India", phone: "+91 99400 64343", email: "info@adroitdesigns.in", map_url: "" }
+        contact: { headline: "Get in Touch", sub_headline: "Ready to start?", address: "Chennai, India", phone: "+91 99400 64343", email: "info@adroitdesigns.in", map_url: "" },
+        footer: {
+            tagline: "Residential architectural design, interiors and turnkey construction — from floor plan to finished home, under one accountable team.",
+            phone_primary: "+91 99400 64343",
+            phone_secondary: "8804736688",
+            email: "fm@adroitdesigns.in",
+            chennai_office: "No 8, MCN Nagar Extension, Thoraipakkam, Chennai - 97.",
+            bengaluru_office: "SFD, P DOT G EMERALD, 16th A Cross Rd, Karuna Nagar, Electronic City Phase 1, Bengaluru - 560100",
+            copyright_text: "© 2026 Adroit Design. All rights reserved.",
+            bottom_tagline: "Residential Construction & Turnkey Architecture"
+        }
     };
 
     if (loading || !page) return <div className="p-10 text-center text-white/50 pt-24">Loading editor...</div>;
